@@ -21,6 +21,7 @@ public class Terminal {
 	private String PinEntry;
 	private String BalanceInquiry;
 	private String HostAdjustment;
+	// ENUM for DeviceType: 'Terminal' 'Software' 'Mobile'
 	private String DeviceType;
 
 

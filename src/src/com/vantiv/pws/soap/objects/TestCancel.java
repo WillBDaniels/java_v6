@@ -7,6 +7,8 @@ Information in this sample code is subject to change without notice and does not
  **/
 package com.vantiv.pws.soap.objects;
 
+import com.vantiv.pws.resources.DataStore;
+import com.vantiv.pws.resources.Utils;
 import com.vantiv.types.payment.transactions.v6.CancelRequest;
 import com.vantiv.types.payment.transactions.v6.PaymentType;
 import com.vantiv.types.payment.transactions.v6.TransactionTypeType;
@@ -28,12 +30,13 @@ public class TestCancel {
 		request.setOriginalTransactionTimestamp(globals
 				.getOriginalTimestampXML());
 		request.setOriginalAuthCode(globals.getAuthorizationCode());
-		request.setOriginalReferenceNumber(globals.getReferenceNumber());
+
 		request.setOriginalSequenceNumber(globals.getSequenceNumber());
-		request.setOriginalSystemTraceId(globals.getSystemTraceId());
+		request.setOriginalSystemTraceId(globals.getOriginalSystemTraceId());
 		request.setReplacementAmount(globals.getReplacementAmountType());
 		request.setReversalReason(globals.getReversalReasonType());
 		request.setOriginalReferenceNumber(globals.getOriginalRefNum());
+
 		request.setDraftLocatorId(globals.getDraftLocatorId());
 		request.setMerchantRefId(globals.getMerchantRefId());
 		request.setNetworkResponseCode(globals.getNetworkResponseCode());

@@ -16095,3 +16095,128 @@ Payload: <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 </soapenv:Envelope>
 
 --------------------------------------
+Outbound Message
+---------------------------
+ID: 1
+Address: https://ws-cert.vantiv.com/merchant/payments-cert/v6
+Encoding: UTF-8
+Http-Method: POST
+Content-Type: text/xml
+Headers: {Accept=[*/*], SOAPAction=[""]}
+Payload: <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <SOAP-ENV:Header xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+    <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+      <wsse:UsernameToken xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+        <wsse:Username>s.MID5.PAY.WS.NP</wsse:Username>
+        <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">Tu2u2AHU</wsse:Password>
+      </wsse:UsernameToken>
+    </wsse:Security>
+  </SOAP-ENV:Header>
+  <soap:Body>
+    <AuthorizeRequest xmlns="urn:com:vantiv:types:payment:transactions:v6" xmlns:ns2="urn:com:vantiv:types:common:v6" xmlns:ns3="urn:com:vantiv:types:payment:systems:v6" xmlns:ns4="urn:com:vantiv:types:payment:instruments:v6" merchant-ref-id="654321" system-trace-id="100001">
+      <Merchant>
+        <MerchantId>4445012916098</MerchantId>
+        <NetworkRouting>2J</NetworkRouting>
+        <MerchantName>ABCDEF</MerchantName>
+        <ClerkNumber>1234</ClerkNumber>
+        <CashierNumber>12345678</CashierNumber>
+        <LaneNumber>123</LaneNumber>
+        <DivisionNumber>000</DivisionNumber>
+        <ChainCode>70110</ChainCode>
+        <StoreNumber>00000001</StoreNumber>
+        <ns3:Terminal>
+          <ns2:IPv4Address>192.0.2.235</ns2:IPv4Address>
+          <ns3:TerminalID>1</ns3:TerminalID>
+          <ns3:SequenceNumber>123456</ns3:SequenceNumber>
+          <ns3:Classification>unspecified</ns3:Classification>
+          <ns3:EntryMode>manual</ns3:EntryMode>
+          <ns3:CardReader>none</ns3:CardReader>
+          <ns3:PinEntry>none</ns3:PinEntry>
+          <ns3:BalanceInquiry>true</ns3:BalanceInquiry>
+          <ns3:HostAdjustment>false</ns3:HostAdjustment>
+        </ns3:Terminal>
+      </Merchant>
+      <TransactionType>present</TransactionType>
+      <TransactionTimestamp>2014-10-14T12:06:12.106-06:00</TransactionTimestamp>
+      <PaymentType>single</PaymentType>
+      <DraftLocatorId>12345678901</DraftLocatorId>
+      <ReferenceNumber>111111111</ReferenceNumber>
+      <TokenRequested>true</TokenRequested>
+      <NetworkResponseCode/>
+      <TransactionAmount currency="USD">2.05</TransactionAmount>
+      <Credit>
+        <ns4:CardholderAddress>
+          <ns2:AddressLine>1234 Main Street</ns2:AddressLine>
+          <ns2:City>Cincinnati</ns2:City>
+          <ns2:State>OH</ns2:State>
+          <ns2:PostalCode>45209</ns2:PostalCode>
+          <ns2:CountryCode>US</ns2:CountryCode>
+        </ns4:CardholderAddress>
+        <ns4:PartialApprovalCode>not_supported</ns4:PartialApprovalCode>
+        <ns4:CardType>visa</ns4:CardType>
+        <ns4:CardKeyed>
+          <ns4:PrimaryAccountNumber>4445222299990007</ns4:PrimaryAccountNumber>
+          <ns4:ExpirationDate>2014-12</ns4:ExpirationDate>
+          <ns4:CardSecurityCode>382</ns4:CardSecurityCode>
+        </ns4:CardKeyed>
+      </Credit>
+      <Tax>
+        <Taxable>false</Taxable>
+        <TaxExempt>false</TaxExempt>
+        <TaxAmount currency="USD">0.00</TaxAmount>
+      </Tax>
+    </AuthorizeRequest>
+  </soap:Body>
+</soap:Envelope>
+
+--------------------------------------
+Inbound Message
+----------------------------
+ID: 1
+Response-Code: 200
+Encoding: ISO-8859-1
+Content-Type: text/xml
+Headers: {Accept=[text/xml], connection=[Keep-Alive], Content-Language=[en-US], content-type=[text/xml], Date=[Tue, 14 Oct 2014 18:06:12 GMT], Server=[WebSphere Application Server/7.0], SOAPAction=[""], transfer-encoding=[chunked], X-Archived-Client-IP=[127.0.0.30], X-Backside-Transport=[OK OK,OK OK], X-Client-IP=[127.0.0.30,10.99.49.26], X-Global-Transaction-ID=[79103329]}
+Payload: <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <ns5:AuthorizeResponse xmlns:ns7="urn:com:vantiv:types:payment:instruments:v6" xmlns:ns6="urn:com:vantiv:types:common:v6" xmlns:ns5="urn:com:vantiv:types:payment:transactions:v6" merchant-ref-id="654321" system-trace-id="100001">
+      <ns5:RequestId>6439a27b-95ac-4af0-b44e-eb792c754065</ns5:RequestId>
+      <ns5:DemoMode>false</ns5:DemoMode>
+      <ns5:ReferenceNumber>022346311</ns5:ReferenceNumber>
+      <ns5:TransactionStatus>authorized</ns5:TransactionStatus>
+      <ns5:TransmissionTimestamp>2014-10-14T18:06:00.000-04:00</ns5:TransmissionTimestamp>
+      <ns5:TransactionTimestamp>2014-10-14T14:06:13.606-04:00</ns5:TransactionTimestamp>
+      <ns5:JulianDay>287</ns5:JulianDay>
+      <ns5:BatchNumber>1</ns5:BatchNumber>
+      <ns5:CardCategory>unknown</ns5:CardCategory>
+      <ns5:AuthorizationCode>46311D</ns5:AuthorizationCode>
+      <ns5:AddressVerificationResult>
+        <ns5:Code>N</ns5:Code>
+        <ns5:Type>no_match_address_no_match_zip</ns5:Type>
+      </ns5:AddressVerificationResult>
+      <ns5:CardSecurityCodeResult>
+        <ns5:Code>M</ns5:Code>
+        <ns5:Type>match</ns5:Type>
+      </ns5:CardSecurityCodeResult>
+      <ns5:PaymentServiceResults>
+        <ns5:VisaResults>
+          <ns5:TransactionId>004287183463110</ns5:TransactionId>
+          <ns5:ValidationCode>TEST</ns5:ValidationCode>
+          <ns5:Ps2000Qualification>E</ns5:Ps2000Qualification>
+        </ns5:VisaResults>
+      </ns5:PaymentServiceResults>
+      <ns5:WorkingKey>                </ns5:WorkingKey>
+      <ns5:TokenizationResult>
+        <ns5:successful>true</ns5:successful>
+        <ns5:tokenType>
+          <ns7:tokenId>0ABB4C</ns7:tokenId>
+          <ns7:tokenValue>6079839289670007</ns7:tokenValue>
+        </ns5:tokenType>
+        <ns5:Last4digit>0007</ns5:Last4digit>
+      </ns5:TokenizationResult>
+    </ns5:AuthorizeResponse>
+  </soapenv:Body>
+</soapenv:Envelope>
+
+--------------------------------------

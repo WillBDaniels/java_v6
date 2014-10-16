@@ -5,7 +5,7 @@ This sample may not, in whole or in part, be copied, photocopied, reproduced, tr
 Use, duplication or disclosure by the U.S. Government is subject to restrictions set forth in an executed license agreement and in subparagraph (c)(1) of the Commercial Computer Software-Restricted Rights Clause at FAR 52.227-19; subparagraph (c)(1)(ii) of the Rights in Technical Data and Computer Software clause at DFARS 252.227-7013, subparagraph (d) of the Commercial Computer Software--Licensing clause at NASA FAR supplement 16-52.227-86; or their equivalent.
 Information in this sample code is subject to change without notice and does not represent a commitment on the part of Vantiv, Inc.  In addition to the foregoing, the Sample Code is subject to the terms and conditions set forth in the Vantiv Terms and Conditions of Use (http://www.apideveloper.vantiv.com) and the Vantiv Privacy Notice (http://www.vantiv.com/Privacy-Notice).  
  **/
-package com.vantiv.pws.soap.objects;
+package com.vantiv.pws.resources;
 
 import java.math.BigDecimal;
 
@@ -43,7 +43,7 @@ import com.vantiv.types.payment.transactions.v6.TaxAmountType;
 
 /**
  * This class stores all values that can be sent to PWS. This class is used as a
- * lookup when creating SOAP objects and sending SOAP messages.
+ * lookup when creating SOAP/JSON objects and sending SOAP/JSON messages.
  * 
  */
 public class DataStore {
@@ -65,7 +65,10 @@ public class DataStore {
 
 	// *************Transaction data***************//
 
+	private String username = "s.MID5.PAY.WS.NP";
+	private String password = "Tu2u2AHU";
 	private long systemTraceId = 100000;
+	private long originalSystemTraceId;
 	private String merchantRefId = "654321";
 	private String referenceNumber = "111111111";
 	private String transactionType = "present";
@@ -1204,6 +1207,30 @@ public class DataStore {
 
 	public void setPurchaseLevel(boolean isPurchaseLevel) {
 		this.isPurchaseLevel = isPurchaseLevel;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public long getOriginalSystemTraceId() {
+		return originalSystemTraceId;
+	}
+
+	public void setOriginalSystemTraceId(long originalSystemTraceId) {
+		this.originalSystemTraceId = originalSystemTraceId;
 	}
 
 }

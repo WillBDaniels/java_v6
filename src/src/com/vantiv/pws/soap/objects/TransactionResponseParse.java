@@ -7,6 +7,7 @@ Information in this sample code is subject to change without notice and does not
  **/
 package com.vantiv.pws.soap.objects;
 
+import com.vantiv.pws.resources.DataStore;
 import com.vantiv.types.payment.transactions.v6.TransactionResponseType;
 
 /*

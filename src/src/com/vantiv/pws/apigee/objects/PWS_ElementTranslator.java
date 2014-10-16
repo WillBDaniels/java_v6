@@ -22,6 +22,12 @@ import com.vantiv.types.payment.transactions.v6.RefundRequest;
 import com.vantiv.types.payment.transactions.v6.TokenizeRequest;
 import com.vantiv.types.payment.transactions.v6.TransactionRequestType;
 
+/**
+ * This class is used to translate a SOAP request to a Json Request (REST). It
+ * is useful if you have consumed the WSDL and have created the java proxy
+ * classes as it will convert the Request Object to a JSON object, which can
+ * then be sent to Apigee through an HTTP post.
+ */
 public class PWS_ElementTranslator {
 
 	private Credentials credentials;

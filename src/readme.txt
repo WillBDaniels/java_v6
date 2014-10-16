@@ -14,7 +14,8 @@ The Java CXF implementation of Vantiv-Developer-Portal sample code demonstrating
 * Please note that if you are unsure of which solution which will match your solution needs you should contact a vantiv solution consultant first before starting any development efforts. Not doing so may lead to lost coding time. 
 
 
-####Folder Contents
+Table of Contents
+=======================
 logs - This folder contains SoapLog.txt and ApigeeLog.txt. These files log the request and responses of all SOAP/REST requests.
 Resources - This folder contains the WSDL (6.0.7) and the log4j properties folder. It is recommended to use log4j, but you can use other logging libraries.
 src - The source folder containing all code.
@@ -55,10 +56,11 @@ src - The source folder containing all code.
 			* TestTokenize.java - Creates an TokenizeRequest object. Values pulled from DataStore.java.
 			* TransactionResponseParse.java -  This class takes a transaction response object from a SOAP response and parses out any useful information from it 
 				to display to the user in a string.
-		* com.vantiv.pws.soap.handlers - 
-			* PaymentsHandlerResolver.java -
-			* SOAPLoggingHandler.java - 
-			* WsseHeaderHandler.java - 
+		* com.vantiv.pws.soap.handlers - These are SOAP handler classes that are necessary for inserting the correct WSSE security information into the SOAP headers. These		
+				should not be modified.
+			* PaymentsHandlerResolver.java - adds the WSSE security data into a SOAP message
+			* SOAPLoggingHandler.java - handler for logging the SOAP messages.
+			* WsseHeaderHandler.java - used by PaymentsHandlerResolver to insert the wsse security info.
 			
 	* com.vantiv.pws.resources - contains classes that are used between both apigee and soap classes. DataStore.java is where all possible values that can be sent to PWS are stored. When a request
 							is sent to PWS or Apigee, the requests are poplulated with values from DataStore.java. In the code this class is constantly referred to as 'globals'. Utils.java contains

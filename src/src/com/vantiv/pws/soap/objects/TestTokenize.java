@@ -7,6 +7,8 @@ Information in this sample code is subject to change without notice and does not
  **/
 package com.vantiv.pws.soap.objects;
 
+import com.vantiv.pws.resources.DataStore;
+import com.vantiv.pws.resources.Utils;
 import com.vantiv.services.merchant.payments.v6.PaymentPortType;
 import com.vantiv.services.merchant.payments.v6.RequestValidationFault;
 import com.vantiv.services.merchant.payments.v6.ServerFault;

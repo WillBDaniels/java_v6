@@ -27,7 +27,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -36,10 +35,11 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
-import com.vantiv.pws.soap.objects.DataStore;
-import com.vantiv.pws.soap.objects.Driver;
+import com.vantiv.pws.apigee.objects.RestDriver;
+import com.vantiv.pws.resources.DataStore;
+import com.vantiv.pws.resources.Utils;
 import com.vantiv.pws.soap.objects.InitializeClient;
-import com.vantiv.pws.soap.objects.Utils;
+import com.vantiv.pws.soap.objects.SoapDriver;
 import com.vantiv.types.payment.transactions.v6.BatchResponseType;
 import com.vantiv.types.payment.transactions.v6.TokenizationResultType;
 import com.vantiv.types.payment.transactions.v6.TransactionResponseType;
@@ -56,7 +56,8 @@ public class Home extends JFrame {
 	private JPanel contentPane;
 	private DataStore globals;
 	private Utils util = new Utils();
-	private Driver driver;
+	private SoapDriver soap_driver;
+	private RestDriver rest_driver;
 
 	private JTextField wsdlLocTxt;
 	private JTextField userNameTxt;
@@ -128,15 +129,13 @@ public class Home extends JFrame {
 	final JComboBox comboBox_CardType;
 	final JComboBox comboBox_CancelType;
 	final JComboBox comboBox_ReversalReason;
-
-	public static JTextArea textArea_Results;
+	final JComboBox comboBox_DeliveryMethod;
 	public static JTextArea textArea_TestScriptLog;
 
 	final JRadioButton radioButton_CardSwiped;
 	final JRadioButton radioButton_CardKeyed;
-
-	final JRadioButton rdbtnSendToApigee;
 	final JRadioButton rdbtnTokenRequested;
+
 
 
 	private JTextField textField_ReferenceNumber;
@@ -149,7 +148,7 @@ public class Home extends JFrame {
 	private JTextField textField_RefundAmt;
 	private JTextField textField_Endpoint;
 	private JTextField textField_PinData;
-	private JTextField textField_TokenResult;
+
 	private JTextField textField_TokenId;
 	private JTextField textField_TokenValue;
 	private JTextField textField_tokenId;
@@ -270,19 +269,6 @@ public class Home extends JFrame {
 		textField_RequestResult.setColumns(10);
 		panel_Main.add(textField_RequestResult);
 
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 414, 659, 125);
-		panel_Main.add(scrollPane);
-
-		textArea_Results = new JTextArea();
-		textArea_Results.setFont(new Font("Monospaced", Font.PLAIN, 11));
-		textArea_Results.setEditable(false);
-		scrollPane.setViewportView(textArea_Results);
-
-		JLabel lblLog = new JLabel("Log");
-		lblLog.setBounds(10, 389, 46, 14);
-		panel_Main.add(lblLog);
-
 		JLabel lblAuthorizationCode = new JLabel("Authorization Code:");
 		lblAuthorizationCode.setBounds(304, 65, 106, 14);
 		panel_Main.add(lblAuthorizationCode);
@@ -363,8 +349,8 @@ public class Home extends JFrame {
 		panel_Main.add(lblNewLabel_1);
 
 		// ************ SEND SOAP BUTTON ************* //
-		JButton btnSendSoap = new JButton("Send Soap");
-		btnSendSoap.setBounds(177, 149, 89, 23);
+		JButton btnSendSoap = new JButton("Send Request");
+		btnSendSoap.setBounds(10, 181, 100, 23);
 		panel_Main.add(btnSendSoap);
 
 		JLabel lblTransactionTimestamp = new JLabel("Reference Number:");
@@ -378,23 +364,23 @@ public class Home extends JFrame {
 		panel_Main.add(textField_ReferenceNumber);
 
 		JLabel lblDeclineCode = new JLabel("Decline Code:");
-		lblDeclineCode.setBounds(10, 194, 72, 14);
+		lblDeclineCode.setBounds(10, 282, 72, 14);
 		panel_Main.add(lblDeclineCode);
 
 		JLabel lblDeclineMessage = new JLabel("Decline Message:");
-		lblDeclineMessage.setBounds(10, 219, 89, 14);
+		lblDeclineMessage.setBounds(10, 307, 89, 14);
 		panel_Main.add(lblDeclineMessage);
 
 		textField_DeclineCode = new JTextField();
 		textField_DeclineCode.setEditable(false);
 		textField_DeclineCode.setColumns(10);
-		textField_DeclineCode.setBounds(95, 191, 100, 20);
+		textField_DeclineCode.setBounds(95, 279, 100, 20);
 		panel_Main.add(textField_DeclineCode);
 
 		textField_DeclineMessage = new JTextField();
 		textField_DeclineMessage.setEditable(false);
 		textField_DeclineMessage.setColumns(10);
-		textField_DeclineMessage.setBounds(95, 216, 169, 20);
+		textField_DeclineMessage.setBounds(95, 304, 169, 20);
 		panel_Main.add(textField_DeclineMessage);
 
 		JLabel lblEndPoint = new JLabel("End Point");
@@ -407,9 +393,6 @@ public class Home extends JFrame {
 		textField_Endpoint.setBounds(106, 84, 158, 20);
 		panel_Main.add(textField_Endpoint);
 
-		rdbtnSendToApigee = new JRadioButton("Send to Apigee?");
-		rdbtnSendToApigee.setBounds(6, 145, 109, 23);
-		panel_Main.add(rdbtnSendToApigee);
 
 		JLabel lblTokenizeResult = new JLabel("-Tokenize Result-");
 		lblTokenizeResult.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -428,11 +411,6 @@ public class Home extends JFrame {
 		lblTokenValue.setBounds(304, 310, 72, 14);
 		panel_Main.add(lblTokenValue);
 
-		textField_TokenResult = new JTextField();
-		textField_TokenResult.setEditable(false);
-		textField_TokenResult.setColumns(10);
-		textField_TokenResult.setBounds(378, 257, 145, 20);
-		panel_Main.add(textField_TokenResult);
 
 		textField_TokenId = new JTextField();
 		textField_TokenId.setEditable(false);
@@ -446,12 +424,21 @@ public class Home extends JFrame {
 		textField_TokenValue.setBounds(378, 307, 145, 20);
 		panel_Main.add(textField_TokenValue);
 
+		comboBox_DeliveryMethod = new JComboBox();
+		comboBox_DeliveryMethod.setModel(new DefaultComboBoxModel(new String[] {
+				"Send to PWS (SOAP)", "Send to Apigee (REST)" }));
+		comboBox_DeliveryMethod.setBounds(10, 149, 140, 20);
+		panel_Main.add(comboBox_DeliveryMethod);
+
+
+
 		btnSendSoap.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				sendSoap();
 			}
 		});
+
 
 		// ***************************************************************//
 
@@ -1196,14 +1183,12 @@ public class Home extends JFrame {
 		textField_tokenId.setText((String) null);
 		textField_tokenId.setColumns(10);
 		textField_tokenId.setBounds(528, 34, 109, 20);
-		textField_tokenId.setText(textField_TokenId.getText());
 		panel_CardData.add(textField_tokenId);
 
 		textField_tokenValue = new JTextField();
 		textField_tokenValue.setText((String) null);
 		textField_tokenValue.setColumns(10);
 		textField_tokenValue.setBounds(528, 59, 109, 20);
-		textField_tokenValue.setText(textField_TokenValue.getText());
 		panel_CardData.add(textField_tokenValue);
 
 
@@ -1211,6 +1196,7 @@ public class Home extends JFrame {
 	}
 
 	public void sendSoap() {
+
 
 		String pass = passTxt.getText();
 		String user = userNameTxt.getText();
@@ -1220,23 +1206,32 @@ public class Home extends JFrame {
 		// Create the client
 		client.setUser(user);
 		client.setPass(pass);
+		globals.setUsername(user);
+		globals.setPassword(pass);
 		client.setWsdlLocation(wsdlLoc);
 		client.setEndpoint(endpoint);
 		// Pass the client and the datastore to the Driver
-		driver = new Driver(client, globals);
-		if (rdbtnSendToApigee.isSelected())
-			driver.setSendToApigee(true);
+		soap_driver = new SoapDriver(client, globals);
+		rest_driver = new RestDriver(globals);
+
+
 
 		// Driver invokes the proper request
 		BatchResponseType batchResponse = null;
 		TransactionResponseType response = null;
 
-		if (requestType.equals("CloseBatch"))
-			batchResponse = driver.batchTransaction("closeBatch");
-		else if (requestType.equals("BatchBalance"))
-			batchResponse = driver.batchTransaction("batchBalance");
-		else
-			response = driver.startTransaction(requestType);
+		// Send to PWS
+		if (comboBox_DeliveryMethod.getSelectedIndex() == 0) {
+			if (requestType.equals("CloseBatch"))
+				batchResponse = soap_driver.batchTransaction("closeBatch");
+			else if (requestType.equals("BatchBalance"))
+				batchResponse = soap_driver.batchTransaction("batchBalance");
+			else
+				response = soap_driver.startTransaction(requestType);
+		}// Send to Apigee
+		else if (comboBox_DeliveryMethod.getSelectedIndex() == 1) {
+			response = rest_driver.startTransaction(requestType);
+		}
 
 		if (response != null) {
 
@@ -1308,7 +1303,7 @@ public class Home extends JFrame {
 			if (response.getTokenizationResult() != null) {
 				TokenizationResultType tokResult = response
 						.getTokenizationResult();
-				textField_TokenResult.setText("" + tokResult.isSuccessful());
+
 				textField_TokenId
 						.setText(tokResult.getTokenType().getTokenId());
 				textField_TokenValue.setText(tokResult.getTokenType()
