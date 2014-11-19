@@ -2,8 +2,8 @@ Vantiv-Developer-Portal and Vantiv-Payment-Web-Services
 =======================================================
 *** IMPORTANT You will need to create a project at https://apideveloper.vantiv.com/ in order to get access to the sandbox and test your code
 
-Integration Guidelines available here: Coming
-Online developers guide: Coming
+Integration Guidelines available here: https://apideveloper.vantiv.com/docs/payment-web-services/implementation-guidelines
+Online developers guide: https://apideveloper.vantiv.com/documentation
 
 Entry point is Home.java, this will start the GUI.
 
