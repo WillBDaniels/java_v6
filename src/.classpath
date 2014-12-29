@@ -15,6 +15,11 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="forms-1.3.0.jar" sourcepath="forms-1.3.0-src.zip"/>
 	<classpathentry kind="lib" path="miglayout15-swing.jar" sourcepath="miglayout-src.zip"/>
+	<classpathentry kind="lib" path="C:/Development/poi-3.10.1/poi-3.10.1-20140818.jar"/>
+	<classpathentry kind="lib" path="C:/Development/poi-3.10.1/poi-ooxml-3.10.1-20140818.jar"/>
+	<classpathentry kind="lib" path="C:/Development/poi-3.10.1/poi-ooxml-schemas-3.10.1-20140818.jar"/>
+	<classpathentry kind="lib" path="C:/Development/poi-3.10.1/poi-excelant-3.10.1-20140818.jar"/>
+	<classpathentry kind="lib" path="C:/Development/dom4j-2.0.0-ALPHA-2.jar"/>
 	<classpathentry kind="lib" path="C:/Development/google-gson-2.2.4/gson-2.2.4.jar"/>
 	<classpathentry kind="lib" path="C:/Development/google-gson-2.2.4/gson-2.2.4-javadoc.jar"/>
 	<classpathentry kind="lib" path="C:/Development/google-gson-2.2.4/gson-2.2.4-sources.jar"/>
