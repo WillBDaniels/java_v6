@@ -44,9 +44,7 @@ public class SendJsonRequest {
 				apiUrl += "credit/authorization?sp=1";
 			} else if (requestType.equals("authorizeGift")) {
 				apiUrl += "gift/authorization?sp=1";
-
 			} else if (requestType.equals("capture")) {
-
 				apiUrl += "credit/authorizationcompletion?sp=1";
 			} else if (requestType.equals("captureGift")) {
 				apiUrl += "gift/authorizationcompletion?sp=1";
@@ -68,7 +66,8 @@ public class SendJsonRequest {
 				apiUrl += "debit/return?sp=1";
 			} else if (requestType.equals("refundGift")) {
 				apiUrl += "gift/return?sp=1";
-
+			} else if (requestType.equals("adjust")) {
+				apiUrl += "credit/adjustment?sp=1";
 			} else if (requestType.equals("batchClose")) {
 				apiUrl += "credit/batchclose?sp=1";
 			} else if (requestType.equals("batchBalance")) {

@@ -522,11 +522,22 @@ public class RestDriver {
 					// If there is a fault, put it in the decline message/code
 					// field
 					if (responseType.equalsIgnoreCase("fault")) {
-						map.put("DeclineMessage",
-								responseData.getString("faultstring"));
-						map.put("DeclineCode",
-								responseData.getJSONObject("detail").getString(
-										"errorcode"));
+						if (responseData.has("faultstring"))
+							map.put("DeclineMessage",
+									responseData.getString("faultstring"));
+						if (responseData.has("errorcode"))
+							map.put("DeclineCode",
+									responseData.getJSONObject("detail")
+											.getString("errorcode"));
+						else if (responseData.has("detail")) {
+							map.put("DeclineCode",
+									responseData.getJSONObject("detail")
+											.getJSONObject("ApplicationFault")
+											.getString("message"));
+						} else {
+							map.put("DeclineCode",
+									"Unrecognizable ERROR, please review logs");
+						}
 
 					} else {
 						if (responseData.has("ReferenceNumber"))

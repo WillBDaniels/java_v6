@@ -117,7 +117,7 @@ public class DataStore {
 
 	// *************Amount data***************//
 	private String transactionAmount = "2.05";
-	private String cashBackAmount = "0.00";
+	private String cashBackAmount = null;
 	private String currency = "USD";
 	// ***************************************//
 
@@ -137,7 +137,7 @@ public class DataStore {
 	// ***************Capture Device Data**************//
 	private int terminalID = 001;
 	private String sequenceNumber = "123456";
-	private String entryMode = "track2";
+	private String entryMode = "manual";
 	// conditional
 	private String pinEntry = "none";
 	// optional
@@ -217,7 +217,9 @@ public class DataStore {
 	 */
 	public CreditInstrumentType getCreditInstument() {
 		CreditInstrumentType creditInstrument = new CreditInstrumentType();
-		creditInstrument.setCardholderAddress(getAddress());
+
+		if (addressline != null && postalCode != null)
+			creditInstrument.setCardholderAddress(getAddress());
 
 		if (isCardKeyed) {
 			creditInstrument.setCardKeyed(getCardKeyed());
@@ -225,6 +227,25 @@ public class DataStore {
 			creditInstrument.setCardSwiped(getCardSwiped());
 		}
 
+
+		creditInstrument.setCardType(CreditCardNetworkType.fromValue(cardType));
+		creditInstrument.setPartialApprovalCode(PartialIndicatorType
+				.fromValue(partialIndicator));
+
+		return creditInstrument;
+	}
+
+	/**
+	 * Constructs the CreditInstrumentType and returns it. Adds the CardKeyed,
+	 * or CardSwiped object to the Credit InstrumentType depending on the flags.
+	 */
+	public CreditInstrumentType getMaskedCreditInstument() {
+		CreditInstrumentType creditInstrument = new CreditInstrumentType();
+
+		if (addressline != null && postalCode != null)
+			creditInstrument.setCardholderAddress(getAddress());
+
+		creditInstrument.setCardKeyed(getMaskedCardKeyed());
 
 		creditInstrument.setCardType(CreditCardNetworkType.fromValue(cardType));
 		creditInstrument.setPartialApprovalCode(PartialIndicatorType
@@ -435,6 +456,40 @@ public class DataStore {
 			cardKeyed.setToken(token);
 		} else {
 			cardKeyed.setPrimaryAccountNumber(primaryAcountNumber);
+		}
+
+		return cardKeyed;
+	}
+
+	/**
+	 * Constructs a CardKeyedType object and returns it.
+	 */
+	public CreditOrDebitCardKeyedType getMaskedCardKeyed() {
+		CreditOrDebitCardKeyedType cardKeyed = new CreditOrDebitCardKeyedType();
+		cardKeyed.setCardholderName(cardHolderName);
+
+		if (isThreeDSecure) {
+			ThreeDSecureType threeD = new ThreeDSecureType();
+			threeD.setAuthenticationValue(authenticationValue);
+			threeD.setECommerceIndicator(eCommerceIndicator);
+			threeD.setTransactionID(transactionId);
+			cardKeyed.setThreeDSecure(threeD);
+		} else if (isTrackEncrypted) {
+			EncryptedData eData = new EncryptedData();
+			eData.setEncryptionType(EncryptionType.fromValue(cardEncryptedType));
+			eData.setKey(cardEncryptedValue);
+			eData.setValue(cardEncryptedKey);
+			cardKeyed.setEncryptedPrimaryAccountNumber(eData);
+		} else if (isCardToken) {
+			System.out.println("USING A TOKEN...Id:" + this.tokenId
+					+ " Value: " + this.tokenValue);
+			TokenType token = new TokenType();
+			token.setTokenId(tokenId);
+			token.setTokenValue(tokenValue);
+			cardKeyed.setToken(token);
+		} else {
+			cardKeyed.setPrimaryAccountNumber(util
+					.getMaskedPan(primaryAcountNumber));
 		}
 
 		return cardKeyed;

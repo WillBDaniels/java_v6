@@ -34,8 +34,8 @@ public class TestAdjust {
 		request.setTipAmount(globals.getTipAmountType());
 		request.setOriginalAmount(globals.getTransactionAmountType());
 
-		request.setOriginalReferenceNumber(globals.getReferenceNumber());
-
+		request.setOriginalReferenceNumber(globals.getOriginalRefNum());
+		request.setAuthorizationCode(globals.getAuthorizationCode());
 		request.setDraftLocatorId(globals.getDraftLocatorId());
 		request.setMerchantRefId(globals.getMerchantRefId());
 		request.setNetworkResponseCode(globals.getNetworkResponseCode());
@@ -43,8 +43,10 @@ public class TestAdjust {
 		request.setReportGroup(globals.getReportGroup());
 		request.setSystemTraceId(globals.getSystemTraceId());
 		request.setBillPaymentPayee(globals.getBillPaymentPayeeType());
-		request.setCredit(globals.getCreditInstument());
-		// request.setGift(value);
+		// set credit/debit/gift
+		request.setCredit(globals.getMaskedCreditInstument());
+		request.setTokenRequested(globals.isTokenRequested());
+
 		// request.setIncrementalAuthorization(value);
 		request.setMerchant(globals.getMerchant());
 		request.setPaymentType(PaymentType.fromValue(globals.getPaymentType()));

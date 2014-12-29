@@ -27,8 +27,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
@@ -133,7 +135,6 @@ public class Home extends JFrame {
 	final JComboBox comboBox_CreditDebitGift;
 
 
-
 	final JRadioButton radioButton_CardSwiped;
 	final JRadioButton radioButton_CardKeyed;
 	final JRadioButton rdbtnTokenRequested;
@@ -143,8 +144,8 @@ public class Home extends JFrame {
 	private JTextField textField_OriginalReferenceNum;
 
 	private JTextField textField_AdjustmentAmount;
-	private JTextField textField_DeclineCode;
-	private JTextField textField_DeclineMessage;
+	private JTextArea txtAreaDeclineCode;
+	private JTextArea txtAreaDeclineMsg;
 	private JTable table;
 	private JTextField textField_RefundAmt;
 	private JTextField textField_Endpoint;
@@ -374,24 +375,13 @@ public class Home extends JFrame {
 		panel_Main.add(textField_ReferenceNumber);
 
 		JLabel lblDeclineCode = new JLabel("Decline Code:");
-		lblDeclineCode.setBounds(10, 282, 72, 14);
+		lblDeclineCode.setBounds(10, 372, 72, 14);
 		panel_Main.add(lblDeclineCode);
 
 		JLabel lblDeclineMessage = new JLabel("Decline Message:");
-		lblDeclineMessage.setBounds(10, 307, 89, 14);
+		lblDeclineMessage.setBounds(10, 268, 89, 14);
 		panel_Main.add(lblDeclineMessage);
 
-		textField_DeclineCode = new JTextField();
-		textField_DeclineCode.setEditable(false);
-		textField_DeclineCode.setColumns(10);
-		textField_DeclineCode.setBounds(95, 279, 100, 20);
-		panel_Main.add(textField_DeclineCode);
-
-		textField_DeclineMessage = new JTextField();
-		textField_DeclineMessage.setEditable(false);
-		textField_DeclineMessage.setColumns(10);
-		textField_DeclineMessage.setBounds(95, 304, 169, 20);
-		panel_Main.add(textField_DeclineMessage);
 
 		JLabel lblEndPoint = new JLabel("End Point");
 		lblEndPoint.setBounds(10, 86, 86, 14);
@@ -439,6 +429,28 @@ public class Home extends JFrame {
 				"Send to PWS (SOAP)", "Send to Apigee (REST)" }));
 		comboBox_DeliveryMethod.setBounds(10, 149, 140, 20);
 		panel_Main.add(comboBox_DeliveryMethod);
+
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(115, 368, 172, 102);
+		panel_Main.add(scrollPane);
+
+		txtAreaDeclineCode = new JTextArea();
+		txtAreaDeclineCode.setFont(new Font("Monospaced", Font.PLAIN, 11));
+		scrollPane.setViewportView(txtAreaDeclineCode);
+		txtAreaDeclineCode.setEditable(false);
+		txtAreaDeclineCode.setWrapStyleWord(true);
+		txtAreaDeclineCode.setLineWrap(true);
+
+		JScrollPane scrollPane_3 = new JScrollPane();
+		scrollPane_3.setBounds(115, 243, 172, 102);
+		panel_Main.add(scrollPane_3);
+
+		txtAreaDeclineMsg = new JTextArea();
+		scrollPane_3.setViewportView(txtAreaDeclineMsg);
+		txtAreaDeclineMsg.setFont(new Font("Monospaced", Font.PLAIN, 11));
+		txtAreaDeclineMsg.setEditable(false);
+		txtAreaDeclineMsg.setWrapStyleWord(true);
+		txtAreaDeclineMsg.setLineWrap(true);
 
 
 
@@ -879,11 +891,12 @@ public class Home extends JFrame {
 
 		comboBox_EntryMode = new JComboBox();
 		comboBox_EntryMode.setBounds(178, 75, 133, 20);
-		comboBox_EntryMode.setSelectedItem(globals.getEntryMode());
+
 		comboBox_EntryMode.setModel(new DefaultComboBoxModel(
 				new String[] { "unknown", "manual", "track1", "track2",
 						"barcode", "ocr", "integrated_circuit",
 						"proximity_vsdc", "proximity_contactless" }));
+		comboBox_EntryMode.setSelectedIndex(1);
 		panel_Capture.add(comboBox_EntryMode);
 
 		comboBox_PinEntry = new JComboBox();
@@ -1282,6 +1295,7 @@ public class Home extends JFrame {
 		label_4.setBounds(10, 25, 96, 14);
 		panel_GiftCardInfo.add(label_4);
 
+		
 
 	}
 
@@ -1326,12 +1340,13 @@ public class Home extends JFrame {
 		if (response != null) {
 
 			if (response.getDeclineCode() != null) {
-				textField_DeclineCode.setText(response.getDeclineCode());
-				textField_DeclineMessage.setText(response.getDeclineMessage());
+				txtAreaDeclineCode.append(response.getDeclineCode());
+
+				txtAreaDeclineMsg.append(response.getDeclineMessage());
 
 			} else {
-				textField_DeclineCode.setText(null);
-				textField_DeclineMessage.setText(null);
+				txtAreaDeclineCode.append(null);
+				txtAreaDeclineMsg.append(null);
 			}
 			if (response.getTransactionStatus() != null) {
 				textField_RequestResult.setText(response.getTransactionStatus()

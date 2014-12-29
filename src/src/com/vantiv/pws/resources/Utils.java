@@ -131,7 +131,7 @@ public class Utils {
 		} else {
 			masked += panData.substring(panData.length() - 4);
 		}
-		System.out.println(masked);
+		// System.out.println(masked);
 		return masked;
 	}
 

@@ -52,6 +52,15 @@ public class Transaction {
 	private boolean TokenRequested;
 	private PartialApprovalType PartialApprovalCode;
 	private String SystemTraceID;
+	private String AdjustedTotalAmount;
+
+	public String getAdjustedTotalAmount() {
+		return AdjustedTotalAmount;
+	}
+
+	public void setAdjustedTotalAmount(String adjustedTotalAmount) {
+		AdjustedTotalAmount = adjustedTotalAmount;
+	}
 
 	public String getSystemTraceId() {
 		return SystemTraceID;

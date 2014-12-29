@@ -45,6 +45,8 @@ public class TestCancel {
 		request.setSystemTraceId(globals.getSystemTraceId());
 		request.setBillPaymentPayee(globals.getBillPaymentPayeeType());
 		globals.setCardKeyed(true);
+		globals.setEntryMode("manual");
+		globals.setCardReader("unknown");
 		globals.setCardSwiped(false);
 		// set credit/debit/gift
 		if (globals.isDebit())
@@ -52,7 +54,7 @@ public class TestCancel {
 		else if (globals.isGift())
 			request.setGift(globals.getGiftCard());
 		else {
-			request.setCredit(globals.getCreditInstument());
+			request.setCredit(globals.getMaskedCreditInstument());
 			request.setTokenRequested(globals.isTokenRequested());
 		}
 		request.setTokenRequested(globals.isTokenRequested());

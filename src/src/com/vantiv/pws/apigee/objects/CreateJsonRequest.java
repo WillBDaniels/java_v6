@@ -7,6 +7,7 @@ Information in this sample code is subject to change without notice and does not
  **/
 package com.vantiv.pws.apigee.objects;
 
+
 import org.joda.time.DateTime;
 
 import com.vantiv.pws.apigee.objects.Enums.AccountTypeEnum;
@@ -76,7 +77,6 @@ public class CreateJsonRequest {
 		String deviceType = globals.getCaptureDevice();
 		terminal.setDeviceType(DeviceTypeCode.fromValue(deviceType));
 
-
 		// Card input code
 		if (globals.getCardReader().equals("magstripe"))
 			terminal.setCardInputCode(CardInputCodeType.MagstripeRead);
@@ -141,7 +141,6 @@ public class CreateJsonRequest {
 				card.setKeySerialNumber(globals.getGiftCardPin());
 			}
 
-
 			if (globals.isCardToken()) {
 				card.setTokenId(globals.getTokenId());
 				card.setTokenValue(globals.getTokenValue());
@@ -199,7 +198,6 @@ public class CreateJsonRequest {
 
 		String deviceType = globals.getCaptureDevice();
 		terminal.setDeviceType(DeviceTypeCode.fromValue(deviceType));
-
 
 		// Card input code
 		if (globals.getCardReader().equals("magstripe"))
@@ -322,7 +320,6 @@ public class CreateJsonRequest {
 		String deviceType = globals.getCaptureDevice();
 		terminal.setDeviceType(DeviceTypeCode.fromValue(deviceType));
 
-
 		// Card input code
 		if (globals.getCardReader().equals("magstripe"))
 			terminal.setCardInputCode(CardInputCodeType.MagstripeRead);
@@ -369,7 +366,6 @@ public class CreateJsonRequest {
 			card.setKeySerialNumber(globals.getPinEncryptedKey());
 			card.setAccountType(AccountTypeEnum.fromValue(globals
 					.getAccountType()));
-
 
 		} else {
 			// Address
@@ -460,7 +456,6 @@ public class CreateJsonRequest {
 		String deviceType = globals.getCaptureDevice();
 		terminal.setDeviceType(DeviceTypeCode.fromValue(deviceType));
 
-
 		// Card input code
 
 		// if (globals.isCardKeyed())
@@ -468,7 +463,6 @@ public class CreateJsonRequest {
 		// else
 		// terminal.setCardInputCode(CardInputCodeType.MagstripeRead);
 		terminal.setCardInputCode(CardInputCodeType.ManualKeyed);
-
 
 		terminal.setCardInputCode(CardInputCodeType.ManualKeyed);
 
@@ -483,7 +477,6 @@ public class CreateJsonRequest {
 		transaction.setOriginalSequenceNumber(globals.getSequenceNumber());
 		transaction.setOriginalSystemTraceId(""
 				+ globals.getOriginalSystemTraceId());
-
 
 		// Gift reversals do not allow the field "replacementAmount", it must be
 		// "transactionAmount"
@@ -519,29 +512,38 @@ public class CreateJsonRequest {
 			address = null;
 
 		// card - credit
-
 		card.setCardType(CreditCardNetworkType.valueOf(globals.getCardType()));
+		card.setPartialApprovalCode(globals.getPartialIndicator());
 
-		// if (cancType.equalsIgnoreCase("authorize") && globals.isCardSwiped())
-		// {
-		// card.setTrack2Data(globals.getTrack2Data());
-		// } else {
-
-			card.setCardNumber(globals.getPrimaryAcountNumber());
+		if (globals.isCardKeyed()) {
+			String masked = utils
+					.getMaskedPan(globals.getPrimaryAcountNumber());
+			card.setCardNumber(masked);
 			String[] expirationDate = globals.getExpirationDate().split("-");
 			card.setExpirationMonth(expirationDate[1]);
 			card.setExpirationYear(expirationDate[0]);
-			if (!globals.getCardSecurityCode().isEmpty())
+
+			if (globals.isCredit())
 				card.setCVV(globals.getCardSecurityCode());
-			else
-				card.setCVV(null);
+			else {
+				card.setGiftCardSecurityCode(globals.getGiftCardSecurityCode());
+				card.setKeySerialNumber(globals.getGiftCardPin());
+			}
+
 			if (globals.isCardToken()) {
 				card.setTokenId(globals.getTokenId());
 				card.setTokenValue(globals.getTokenValue());
 			}
+		} else if (globals.isCardSwiped()) {
+			String masked = utils.getMaskedPan(globals.getTrack2Data());
+			if (globals.getEntryMode().equalsIgnoreCase("track1")) {
+				card.setTrack1Data(globals.getTrack1Data());
+			} else if (globals.getEntryMode().equalsIgnoreCase("track2")) {
+				card.setTrack2Data(globals.getTrack2Data());
+			}
+		}
 
 		// }
-
 
 		ApigeeObject ao = new ApigeeObject(cred, merchant, terminal,
 				transaction, address, card);
@@ -584,7 +586,6 @@ public class CreateJsonRequest {
 
 		String deviceType = globals.getCaptureDevice();
 		terminal.setDeviceType(DeviceTypeCode.fromValue(deviceType));
-
 
 		// Card input code
 		if (globals.getCardReader().equals("magstripe"))
@@ -682,7 +683,6 @@ public class CreateJsonRequest {
 		String deviceType = globals.getCaptureDevice();
 		terminal.setDeviceType(DeviceTypeCode.fromValue(deviceType));
 
-
 		// Card input code
 		if (globals.getCardReader().equals("magstripe"))
 			terminal.setCardInputCode(CardInputCodeType.MagstripeRead);
@@ -775,7 +775,6 @@ public class CreateJsonRequest {
 
 		String deviceType = globals.getCaptureDevice();
 		terminal.setDeviceType(DeviceTypeCode.fromValue(deviceType));
-
 
 		transaction.setTransactionID(globals.getSequenceNumber());
 		transaction.setPaymentType(PaymentTypeEnum.fromValue(globals
@@ -881,37 +880,22 @@ public class CreateJsonRequest {
 				.valueOf(globals.getClassification()));
 
 		terminal.setPinEntry(PinEntryType.valueOf(globals.getPinEntry()));
-		terminal.setBalanceInquiry(globals.isBalanceEnquiry());
+		// terminal.setBalanceInquiry(globals.isBalanceEnquiry());
 		terminal.setHostAdjustment(globals.isHostAdjustment());
 
 		// Set Device Type
-		String transactionType = globals.getTransactionType();
-		if (transactionType.equalsIgnoreCase("present"))
-			terminal.setDeviceType(DeviceTypeCode.Terminal);
-		else if (transactionType.equalsIgnoreCase("ecommerce"))
-			terminal.setDeviceType(DeviceTypeCode.Software);
-		else if (transactionType.equalsIgnoreCase("moto"))
-			terminal.setDeviceType(DeviceTypeCode.Mobile);
+
+		String deviceType = globals.getCaptureDevice();
+		terminal.setDeviceType(DeviceTypeCode.fromValue(deviceType));
 
 		// Card input code
-		if (globals.getCardReader().equals("magstripe"))
-			terminal.setCardInputCode(CardInputCodeType.MagstripeRead);
-		else
-			terminal.setCardInputCode(CardInputCodeType.ManualKeyed);
+
+		terminal.setCardInputCode(CardInputCodeType.ManualKeyed);
 
 		// Transaction values
-		transaction.setCancelType(CancelTypeEnum.fromValue(globals
-				.getCancelTransactionType()));
-		transaction.setOriginalAuthCode(globals.getAuthorizationCode());
+		transaction.setAuthorizationCode(globals.getAuthorizationCode());
 		transaction.setOriginalReferenceNumber(globals.getOriginalRefNum());
-		transaction.setOriginalAuthorizedAmount(globals.getTransactionAmount());
-		transaction.setOriginalSequenceNumber(globals.getSequenceNumber());
-		transaction.setOriginalSystemTraceId(""
-				+ globals.getOriginalSystemTraceId());
-		transaction.setReplacementAmount(globals.getReplacementAmount());
-		transaction.setReversalReason(ReversalReasonType.fromValue(globals
-				.getReversalReason()));
-		transaction.setOriginalTransactionTimestamp(timestamp);
+		transaction.setAdjustedTotalAmount(globals.getAdjustedAmount());
 
 		transaction.setTransactionID(globals.getSequenceNumber());
 		transaction.setPaymentType(PaymentTypeEnum.fromValue(globals
@@ -923,7 +907,9 @@ public class CreateJsonRequest {
 				.getTransactionType()));
 		transaction.setTransactionTimestamp(timestamp);
 		transaction.setSystemTraceId("" + globals.getSystemTraceId());
-		transaction.setTokenRequested(globals.isTokenRequested());
+
+		transaction.setOriginalAuthorizedAmount(globals.getTransactionAmount());
+		transaction.setTipAmount(globals.getTipAmount());
 
 		// Address
 		if (globals.getPostalCode() != null) {
@@ -937,25 +923,18 @@ public class CreateJsonRequest {
 
 		// card - credit
 		card.setCardType(CreditCardNetworkType.valueOf(globals.getCardType()));
-		if (globals.isCardKeyed()) {
-			card.setCardNumber(globals.getPrimaryAcountNumber());
-			String[] expirationDate = globals.getExpirationDate().split("-");
-			card.setExpirationMonth(expirationDate[1]);
-			card.setExpirationYear(expirationDate[0]);
-			if (!globals.getCardSecurityCode().isEmpty())
-				card.setCVV(globals.getCardSecurityCode());
-			else
-				card.setCVV(null);
-			if (globals.isCardToken()) {
-				card.setTokenId(globals.getTokenId());
-				card.setTokenValue(globals.getTokenValue());
-			}
-		} else if (globals.isCardSwiped()) {
-			if (globals.getEntryMode().equalsIgnoreCase("track1")) {
-				card.setTrack1Data(globals.getTrack1Data());
-			} else if (globals.getEntryMode().equalsIgnoreCase("track2")) {
-				card.setTrack2Data(globals.getTrack2Data());
-			}
+
+		card.setCardNumber(globals.getPrimaryAcountNumber());
+		String[] expirationDate = globals.getExpirationDate().split("-");
+		card.setExpirationMonth(expirationDate[1]);
+		card.setExpirationYear(expirationDate[0]);
+		if (!globals.getCardSecurityCode().isEmpty())
+			card.setCVV(globals.getCardSecurityCode());
+		else
+			card.setCVV(null);
+		if (globals.isCardToken()) {
+			card.setTokenId(globals.getTokenId());
+			card.setTokenValue(globals.getTokenValue());
 		}
 
 		ApigeeObject ao = new ApigeeObject(cred, merchant, terminal,
@@ -971,7 +950,6 @@ public class CreateJsonRequest {
 		Terminal terminal = new Terminal();
 		Transaction transaction = new Transaction();
 		String timestamp = DateTime.now().toString();
-
 
 		cred.setAccountID(globals.getUsername());
 		cred.setPassword(globals.getPassword());
@@ -1413,6 +1391,5 @@ public class CreateJsonRequest {
 				transaction, address, card);
 		return ao;
 	}
-
 
 }

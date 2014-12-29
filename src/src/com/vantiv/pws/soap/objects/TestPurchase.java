@@ -57,7 +57,10 @@ public class TestPurchase {
 		if (globals.isTaxable())
 			request.setTax(globals.getTax());
 
-		request.setCashBackAmount(globals.getCashBackAmountType());
+		if (globals.getCashBackAmount() != null)
+			request.setCashBackAmount(globals.getCashBackAmountType());
+		if (globals.getTipAmount() != null)
+			request.setTipAmount(globals.getTipAmountType());
 		request.setTransactionAmount(globals.getTransactionAmountType());
 		request.setTransactionTimestamp(util.stringToXMLGregorian(globals
 				.getTransactionTimestamp()));
