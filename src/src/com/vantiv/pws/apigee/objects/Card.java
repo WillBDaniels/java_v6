@@ -7,29 +7,48 @@ Information in this sample code is subject to change without notice and does not
  **/
 package com.vantiv.pws.apigee.objects;
 
+import com.vantiv.pws.apigee.objects.Enums.AccountTypeEnum;
+import com.vantiv.pws.apigee.objects.Enums.CreditCardNetworkType;
+import com.vantiv.pws.apigee.objects.Enums.EncryptionType;
+
+
 public class Card {
 
-	private String CardType;
+	private CreditCardNetworkType CardType;
 	private String CardNumber;
+	private String GiftCardSecurityCode;
 	private String ExpirationMonth;
 	private String ExpirationYear;
 	private String Track1Data;
-	private String Track2Data;
 	private String EncryptedTrack1Data;
+	private String Track2Data;
 	private String EncryptedTrack2Data;
-	private String EncryptedFormat;
 	private String CardDataKeySerialNumber;
+	private EncryptionType EncryptedFormat;
+	private String PINBlock;
+	private String PINBlockEncryptedFormat;
 	private String TokenId;
 	private String TokenValue;
 	private String CVV;
 	private String CardholderName;
+	private AccountTypeEnum AccountType;
+	private String KeySerialNumber;
+	private String PartialApprovalCode;
 
-	public String getCardType() {
-		return CardType;
+	
+
+	public String getTransType() {
+		if (this.GiftCardSecurityCode != null
+				&& this.CardDataKeySerialNumber != null)
+			return "gift";
+		else if (this.PINBlock != null && this.KeySerialNumber != null)
+			return "debit";
+		else
+			return "credit";
 	}
 
-	public void setCardType(String cardType) {
-		CardType = cardType;
+	public CreditCardNetworkType getCardType() {
+		return CardType;
 	}
 
 	public String getCardNumber() {
@@ -38,6 +57,14 @@ public class Card {
 
 	public void setCardNumber(String cardNumber) {
 		CardNumber = cardNumber;
+	}
+
+	public String getGiftCardSecurityCode() {
+		return GiftCardSecurityCode;
+	}
+
+	public void setGiftCardSecurityCode(String giftCardSecurityCode) {
+		GiftCardSecurityCode = giftCardSecurityCode;
 	}
 
 	public String getExpirationMonth() {
@@ -64,20 +91,20 @@ public class Card {
 		Track1Data = track1Data;
 	}
 
-	public String getTrack2Data() {
-		return Track2Data;
-	}
-
-	public void setTrack2Data(String track2Data) {
-		Track2Data = track2Data;
-	}
-
 	public String getEncryptedTrack1Data() {
 		return EncryptedTrack1Data;
 	}
 
 	public void setEncryptedTrack1Data(String encryptedTrack1Data) {
 		EncryptedTrack1Data = encryptedTrack1Data;
+	}
+
+	public String getTrack2Data() {
+		return Track2Data;
+	}
+
+	public void setTrack2Data(String track2Data) {
+		Track2Data = track2Data;
 	}
 
 	public String getEncryptedTrack2Data() {
@@ -88,14 +115,6 @@ public class Card {
 		EncryptedTrack2Data = encryptedTrack2Data;
 	}
 
-	public String getEncryptedFormat() {
-		return EncryptedFormat;
-	}
-
-	public void setEncryptedFormat(String encryptedFormat) {
-		EncryptedFormat = encryptedFormat;
-	}
-
 	public String getCardDataKeySerialNumber() {
 		return CardDataKeySerialNumber;
 	}
@@ -104,12 +123,36 @@ public class Card {
 		CardDataKeySerialNumber = cardDataKeySerialNumber;
 	}
 
-	public String getTokenID() {
+	public EncryptionType getEncryptedFormat() {
+		return EncryptedFormat;
+	}
+
+	public void setEncryptedFormat(EncryptionType encryptedFormat) {
+		EncryptedFormat = encryptedFormat;
+	}
+
+	public String getPINBlock() {
+		return PINBlock;
+	}
+
+	public void setPINBlock(String pINBlock) {
+		PINBlock = pINBlock;
+	}
+
+	public String getPINBlockEncryptedFormat() {
+		return PINBlockEncryptedFormat;
+	}
+
+	public void setPINBlockEncryptedFormat(String pINBlockEncryptedFormat) {
+		PINBlockEncryptedFormat = pINBlockEncryptedFormat;
+	}
+
+	public String getTokenId() {
 		return TokenId;
 	}
 
-	public void setTokenID(String tokenID) {
-		TokenId = tokenID;
+	public void setTokenId(String tokenId) {
+		TokenId = tokenId;
 	}
 
 	public String getTokenValue() {
@@ -134,6 +177,34 @@ public class Card {
 
 	public void setCardholderName(String cardholderName) {
 		CardholderName = cardholderName;
+	}
+
+	public AccountTypeEnum getAccountType() {
+		return AccountType;
+	}
+
+	public void setAccountType(AccountTypeEnum accountType) {
+		AccountType = accountType;
+	}
+
+	public void setCardType(CreditCardNetworkType cardType) {
+		CardType = cardType;
+	}
+
+	public String getKeySerialNumber() {
+		return KeySerialNumber;
+	}
+
+	public void setKeySerialNumber(String keySerialNumber) {
+		KeySerialNumber = keySerialNumber;
+	}
+
+	public String getPartialApprovalCode() {
+		return PartialApprovalCode;
+	}
+
+	public void setPartialApprovalCode(String partialApprovalCode) {
+		PartialApprovalCode = partialApprovalCode;
 	}
 
 }

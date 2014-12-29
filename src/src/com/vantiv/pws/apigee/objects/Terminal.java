@@ -7,48 +7,37 @@ Information in this sample code is subject to change without notice and does not
  **/
 package com.vantiv.pws.apigee.objects;
 
+import com.vantiv.pws.apigee.objects.Enums.CardInputCodeType;
+import com.vantiv.pws.apigee.objects.Enums.DeviceTypeCode;
+import com.vantiv.pws.apigee.objects.Enums.PinEntryType;
+import com.vantiv.pws.apigee.objects.Enums.TerminalEnvironmentType;
+
 public class Terminal {
+	/*
+	 * Documentation for Terminal:
+	 * http://dev-vantiv.devportal.apigee.com/docs/payment
+	 * -web-services/api-element-dictionary/rest-terminal-definition
+	 */
 
 	// Required
 	private String TerminalID;
-	private String EntryMode;
+
+	private TerminalEnvironmentType TerminalEnvironmentCode;
+	private CardInputCodeType CardInputCode;
+	private PinEntryType PinEntry;
+
+
 	// Optional
 	private String IPv4Address;
 	private String IPv6Address;
-	private String TerminalEnvironmentalCode;
-	private String CardInputCode;
-	private String CardReader;
-	private String PinEntry;
-	private String BalanceInquiry;
-	private String HostAdjustment;
+	private boolean BalanceInquiry;
 	// ENUM for DeviceType: 'Terminal' 'Software' 'Mobile'
-	private String DeviceType;
+	private DeviceTypeCode DeviceType;
+	private boolean HostAdjustment;
+	private String Latitude;
+	private String Longitude;
 
-
-	public String getCardInputCode() {
-		return CardInputCode;
-	}
-
-	public void setCardInputCode(String cardInputCode) {
-		CardInputCode = cardInputCode;
-	}
-
-	public String getTerminalEnvironmentalCode() {
-		return TerminalEnvironmentalCode;
-	}
-
-	public void setTerminalEnvironmentalCode(String terminalEnvironmentalCode) {
-		TerminalEnvironmentalCode = terminalEnvironmentalCode;
-	}
-
-	public String getDeviceType() {
-		return DeviceType;
-	}
-
-	public void setDeviceType(String deviceType) {
-		DeviceType = deviceType;
-	}
-
+	// Getters and setters
 	public String getTerminalID() {
 		return TerminalID;
 	}
@@ -57,12 +46,33 @@ public class Terminal {
 		TerminalID = terminalID;
 	}
 
-	public String getEntryMode() {
-		return EntryMode;
+
+	public TerminalEnvironmentType getTerminalEnvironmentalCode() {
+		return TerminalEnvironmentCode;
+
 	}
 
-	public void setEntryMode(String entryMode) {
-		EntryMode = entryMode;
+
+	public void setTerminalEnvironmentalCode(
+			TerminalEnvironmentType terminalEnvironmentalCode) {
+		TerminalEnvironmentCode = terminalEnvironmentalCode;
+
+	}
+
+	public CardInputCodeType getCardInputCode() {
+		return CardInputCode;
+	}
+
+	public void setCardInputCode(CardInputCodeType cardInputCode) {
+		CardInputCode = cardInputCode;
+	}
+
+	public PinEntryType getPinEntry() {
+		return PinEntry;
+	}
+
+	public void setPinEntry(PinEntryType pinEntry) {
+		PinEntry = pinEntry;
 	}
 
 	public String getIPv4Address() {
@@ -81,52 +91,47 @@ public class Terminal {
 		IPv6Address = iPv6Address;
 	}
 
-	public String getTerminalCapabilityCode() {
-		return TerminalEnvironmentalCode;
-	}
-
-	public void setTerminalCapabilityCode(String terminalCapabilityCode) {
-		TerminalEnvironmentalCode = terminalCapabilityCode;
-	}
-
-	public String getCardInput() {
-		return CardInputCode;
-	}
-
-	public void setCardInput(String cardInputCode) {
-		CardInputCode = cardInputCode;
-	}
-
-	public String getCardReader() {
-		return CardReader;
-	}
-
-	public void setCardReader(String cardReader) {
-		CardReader = cardReader;
-	}
-
-	public String getPinEntry() {
-		return PinEntry;
-	}
-
-	public void setPinEntry(String pinEntry) {
-		PinEntry = pinEntry;
-	}
-
-	public String getBalanceInquiry() {
+	public boolean isBalanceInquiry() {
 		return BalanceInquiry;
 	}
 
-	public void setBalanceInquiry(String balanceInquiry) {
+	public void setBalanceInquiry(boolean balanceInquiry) {
 		BalanceInquiry = balanceInquiry;
 	}
 
-	public String getHostAdjustment() {
+	public DeviceTypeCode getDeviceType() {
+		return DeviceType;
+	}
+
+	public void setDeviceType(DeviceTypeCode deviceType) {
+		DeviceType = deviceType;
+	}
+
+	public boolean isHostAdjustment() {
 		return HostAdjustment;
 	}
 
-	public void setHostAdjustment(String hostAdjustment) {
+	public void setHostAdjustment(boolean hostAdjustment) {
 		HostAdjustment = hostAdjustment;
 	}
+
+	public String getLatitude() {
+		return Latitude;
+	}
+
+	public void setLatitude(String latitude) {
+		Latitude = latitude;
+	}
+
+	public String getLongitude() {
+		return Longitude;
+	}
+
+	public void setLongitude(String longitude) {
+		Longitude = longitude;
+	}
+
+
+
 
 }

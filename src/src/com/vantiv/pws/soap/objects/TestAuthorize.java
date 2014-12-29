@@ -41,9 +41,11 @@ public class TestAuthorize {
 		request.setBillPaymentPayee(globals.getBillPaymentPayeeType());
 
 
-		request.setCredit(globals.getCreditInstument());
-
-		// auth.setGift(value);
+		// set credit/debit/gift
+		if (globals.isCredit())
+			request.setCredit(globals.getCreditInstument());
+		else
+			request.setGift(globals.getGiftCard());
 		// auth.setIncrementalAuthorization(value);
 		request.setMerchant(globals.getMerchant());
 		request.setPaymentType(PaymentType.fromValue(globals.getPaymentType()));
@@ -59,11 +61,12 @@ public class TestAuthorize {
 		return request;
 	}
 
+	// This is for testing in the main method..
 	public void invokeAuthorize(PaymentPortType client) {
 
 		AuthorizeResponse resp = new AuthorizeResponse();
-		// com.sun.xml.internal.ws.transport.http.client.HttpTransportPipe.dump
-		// = true;
+		request = createAuthorizeRequest();
+
 		try {
 			resp = client.authorize(request);
 		} catch (ServerFault e) {
@@ -77,11 +80,14 @@ public class TestAuthorize {
 
 	}
 
+	// For preliminary testing of the authorize request
 	public static void main(String[] args) {
-		TestAuthorize auth = new TestAuthorize(new DataStore());
+		DataStore ds = new DataStore();
+		TestAuthorize auth = new TestAuthorize(ds);
 		InitializeClient client = new InitializeClient();
-
-		auth.invokeAuthorize(client.getTestClient());
+		client.setup();
+		PaymentPortType soapClient = client.getTestClient();
+		auth.invokeAuthorize(soapClient);
 
 	}
 

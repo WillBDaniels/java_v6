@@ -29,7 +29,7 @@ public class TestCapture {
 		request.setAuthorizationCode(globals.getAuthorizationCode());
 		request.setCaptureAmount(globals.getSettlementAmountType());
 		request.setConvenienceFee(globals.getConvenienceFeeType());
-		request.setCredit(globals.getCreditInstument());
+
 		request.setOriginalAmount(globals.getTransactionAmountType());
 		request.setOriginalReferenceNumber(globals.getReferenceNumber());
 		request.setTokenRequested(globals.isTokenRequested());
@@ -43,8 +43,13 @@ public class TestCapture {
 		request.setReportGroup(globals.getReportGroup());
 		request.setSystemTraceId(globals.getSystemTraceId());
 		request.setBillPaymentPayee(globals.getBillPaymentPayeeType());
-		request.setCredit(globals.getCreditInstument());
-		// request.setGift(value);
+
+		// set credit/debit/gift
+		 if (globals.isCredit())
+		 request.setCredit(globals.getCreditInstument());
+		 else
+		 request.setGift(globals.getGiftCard());
+
 		// request.setIncrementalAuthorization(value);
 		request.setMerchant(globals.getMerchant());
 		request.setPaymentType(PaymentType.fromValue(globals.getPaymentType()));

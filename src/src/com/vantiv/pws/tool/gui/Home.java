@@ -29,7 +29,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
@@ -88,11 +87,10 @@ public class Home extends JFrame {
 	private JTextField textField_CardHolderName;
 	private JTextField textField_GiftCardPin;
 	private JTextField textField_GiftCardSecCode;
-	private JTextField textField_AcctType;
+
 	private JTextField textField_Track1;
 	private JTextField textField_Track2;
 	private JTextField textField_PAN;
-	private JTextField textField_EncryptedPAN;
 	private JTextField textField_ExpirationDate;
 	private JTextField textField_RequestResult;
 
@@ -129,14 +127,17 @@ public class Home extends JFrame {
 	final JComboBox comboBox_CardType;
 	final JComboBox comboBox_CancelType;
 	final JComboBox comboBox_ReversalReason;
+
 	final JComboBox comboBox_DeliveryMethod;
-	public static JTextArea textArea_TestScriptLog;
+	final JComboBox comboBox_AccountType;
+	final JComboBox comboBox_CreditDebitGift;
+
+
 
 	final JRadioButton radioButton_CardSwiped;
 	final JRadioButton radioButton_CardKeyed;
 	final JRadioButton rdbtnTokenRequested;
-
-
+	final JRadioButton rdbtnCardEncryptedFlag;
 
 	private JTextField textField_ReferenceNumber;
 	private JTextField textField_OriginalReferenceNum;
@@ -156,6 +157,15 @@ public class Home extends JFrame {
 
 	final JPanel panel_CardSwiped;
 	final JPanel panel_CardKeyed;
+	final JPanel panel_GiftCardInfo;
+	final JPanel panel_DebitCardInfo;
+
+	private JComboBox comboBox_CardEncryptionType;
+	private JComboBox comboBox_PinEncryptionType;
+	private JTextField textField_CardEncryptionKey;
+	private JTextField textField_CardEncryptionValue;
+	private JTextField textField_PinEncryptionKey;
+	private JTextField textField_PinEncryptionValue;
 
 	/**
 	 * Launch the application.
@@ -200,7 +210,7 @@ public class Home extends JFrame {
 		globals = new DataStore();
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 710, 616);
+		setBounds(100, 100, 706, 620);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -713,7 +723,7 @@ public class Home extends JFrame {
 		panel_Merchant.add(label_20);
 
 		textField_CashierNum = new JTextField();
-		textField_CashierNum.setText("0");
+		textField_CashierNum.setText("" + globals.getCashierNumber());
 		textField_CashierNum.setColumns(10);
 		textField_CashierNum.setBounds(184, 35, 127, 20);
 		panel_Merchant.add(textField_CashierNum);
@@ -769,7 +779,7 @@ public class Home extends JFrame {
 		comboBox_CaptureDevice = new JComboBox();
 		comboBox_CaptureDevice.setBounds(184, 258, 127, 20);
 		comboBox_CaptureDevice.setModel(new DefaultComboBoxModel(new String[] {
-				"software", "terminal", "mobile" }));
+				"Software", "Terminal", "Mobile" }));
 		panel_Merchant.add(comboBox_CaptureDevice);
 
 		JLabel label_21 = new JLabel("Capture Device");
@@ -927,9 +937,7 @@ public class Home extends JFrame {
 		button_3.setBounds(178, 380, 133, 23);
 		panel_Capture.add(button_3);
 
-		/**
-		 * Set values for card data
-		 */
+
 
 		// ***************************************************************//
 
@@ -955,17 +963,15 @@ public class Home extends JFrame {
 		label_3.setBounds(54, 340, 135, 14);
 		panel_CardData.add(label_3);
 
-		JLabel label_4 = new JLabel("Gift Card Pin");
-		label_4.setBounds(54, 393, 135, 14);
-		panel_CardData.add(label_4);
+		panel_DebitCardInfo = new JPanel();
+		panel_DebitCardInfo.setBounds(340, 391, 329, 125);
+		panel_DebitCardInfo.setVisible(false);
+		panel_CardData.add(panel_DebitCardInfo);
 
-		JLabel label_5 = new JLabel("Gift Card Security Code");
-		label_5.setBounds(54, 418, 135, 14);
-		panel_CardData.add(label_5);
-
-		JLabel label_6 = new JLabel("Account Type");
-		label_6.setBounds(54, 443, 135, 14);
-		panel_CardData.add(label_6);
+		panel_GiftCardInfo = new JPanel();
+		panel_GiftCardInfo.setBounds(340, 315, 277, 75);
+		panel_GiftCardInfo.setVisible(false);
+		panel_CardData.add(panel_GiftCardInfo);
 
 		textField_CardSecCode = new JTextField();
 		textField_CardSecCode.setText(globals.getCardSecurityCode());
@@ -978,24 +984,20 @@ public class Home extends JFrame {
 		textField_CardHolderName.setColumns(10);
 		textField_CardHolderName.setBounds(199, 337, 109, 20);
 		panel_CardData.add(textField_CardHolderName);
+		panel_GiftCardInfo.setLayout(null);
 
 		textField_GiftCardPin = new JTextField();
 		textField_GiftCardPin.setText(globals.getGiftCardPin());
 		textField_GiftCardPin.setColumns(10);
-		textField_GiftCardPin.setBounds(199, 390, 109, 20);
-		panel_CardData.add(textField_GiftCardPin);
+		textField_GiftCardPin.setBounds(141, 22, 86, 20);
+		panel_GiftCardInfo.add(textField_GiftCardPin);
 
 		textField_GiftCardSecCode = new JTextField();
 		textField_GiftCardSecCode.setText(globals.getGiftCardSecurityCode());
 		textField_GiftCardSecCode.setColumns(10);
-		textField_GiftCardSecCode.setBounds(199, 415, 109, 20);
-		panel_CardData.add(textField_GiftCardSecCode);
+		textField_GiftCardSecCode.setBounds(141, 50, 86, 20);
+		panel_GiftCardInfo.add(textField_GiftCardSecCode);
 
-		textField_AcctType = new JTextField();
-		textField_AcctType.setText(globals.getAccountType());
-		textField_AcctType.setColumns(10);
-		textField_AcctType.setBounds(199, 440, 109, 20);
-		panel_CardData.add(textField_AcctType);
 
 		comboBox_PartialIndicator = new JComboBox();
 		comboBox_PartialIndicator.setModel(new DefaultComboBoxModel(
@@ -1011,6 +1013,7 @@ public class Home extends JFrame {
 		panel_CardData.add(comboBox_CardType);
 
 		panel_CardSwiped = new JPanel();
+		panel_CardSwiped.setVisible(false);
 		panel_CardKeyed = new JPanel();
 
 		radioButton_CardSwiped = new JRadioButton("Card Swiped");
@@ -1047,7 +1050,7 @@ public class Home extends JFrame {
 		// card swiped data//
 
 		panel_CardSwiped.setLayout(null);
-		panel_CardSwiped.setBounds(54, 151, 315, 71);
+		panel_CardSwiped.setBounds(43, 113, 326, 141);
 		panel_CardData.add(panel_CardSwiped);
 
 		JLabel label_22 = new JLabel("Track 1 Data");
@@ -1070,22 +1073,48 @@ public class Home extends JFrame {
 		label_23.setBounds(3, 36, 61, 14);
 		panel_CardSwiped.add(label_23);
 
+		comboBox_CardEncryptionType = new JComboBox();
+		comboBox_CardEncryptionType.setModel(new DefaultComboBoxModel(
+				new String[] { "VOLTAGE", "DUKPT" }));
+		comboBox_CardEncryptionType.setBounds(143, 58, 77, 20);
+		panel_CardSwiped.add(comboBox_CardEncryptionType);
+
+		JLabel lblKey = new JLabel("Key");
+		lblKey.setBounds(13, 86, 74, 14);
+		panel_CardSwiped.add(lblKey);
+
+		JLabel lblValue = new JLabel("Value");
+		lblValue.setBounds(13, 111, 74, 14);
+		panel_CardSwiped.add(lblValue);
+
+		textField_CardEncryptionKey = new JTextField();
+		textField_CardEncryptionKey.setText(globals.getCardEncryptedKey());
+		textField_CardEncryptionKey.setColumns(10);
+		textField_CardEncryptionKey.setBounds(86, 83, 219, 20);
+		panel_CardSwiped.add(textField_CardEncryptionKey);
+
+		textField_CardEncryptionValue = new JTextField();
+		textField_CardEncryptionValue.setText(globals.getCardEncryptedValue());
+		textField_CardEncryptionValue.setColumns(10);
+		textField_CardEncryptionValue.setBounds(86, 108, 219, 20);
+		panel_CardSwiped.add(textField_CardEncryptionValue);
+
+		rdbtnCardEncryptedFlag = new JRadioButton("Encrypted?");
+		rdbtnCardEncryptedFlag.setBounds(39, 57, 87, 23);
+		panel_CardSwiped.add(rdbtnCardEncryptedFlag);
+
 		// card keyed data//
 
 		panel_CardKeyed.setLayout(null);
-		panel_CardKeyed.setBounds(54, 37, 370, 92);
+		panel_CardKeyed.setBounds(43, 37, 381, 65);
 		panel_CardData.add(panel_CardKeyed);
 
 		JLabel label_24 = new JLabel("Primary Account Number");
 		label_24.setBounds(10, 14, 125, 14);
 		panel_CardKeyed.add(label_24);
 
-		JLabel label_25 = new JLabel("Encrypted PAN");
-		label_25.setBounds(10, 39, 125, 14);
-		panel_CardKeyed.add(label_25);
-
 		JLabel label_26 = new JLabel("Expiration Date (yyyy-mm)");
-		label_26.setBounds(10, 64, 136, 14);
+		label_26.setBounds(10, 39, 136, 14);
 		panel_CardKeyed.add(label_26);
 
 		textField_PAN = new JTextField();
@@ -1094,82 +1123,62 @@ public class Home extends JFrame {
 		textField_PAN.setBounds(145, 11, 215, 20);
 		panel_CardKeyed.add(textField_PAN);
 
-		textField_EncryptedPAN = new JTextField();
-		textField_EncryptedPAN.setText(globals.getEncryptedPAN());
-		textField_EncryptedPAN.setColumns(10);
-		textField_EncryptedPAN.setBounds(145, 36, 215, 20);
-		panel_CardKeyed.add(textField_EncryptedPAN);
-
 		textField_ExpirationDate = new JTextField();
 		textField_ExpirationDate.setText(globals.getExpirationDate());
 		textField_ExpirationDate.setColumns(10);
-		textField_ExpirationDate.setBounds(145, 61, 184, 20);
+		textField_ExpirationDate.setBounds(145, 36, 184, 20);
 		panel_CardKeyed.add(textField_ExpirationDate);
 
 		JLabel lblNewLabel = new JLabel("Address Line");
-		lblNewLabel.setBounds(370, 265, 71, 14);
+		lblNewLabel.setBounds(437, 139, 71, 14);
 		panel_CardData.add(lblNewLabel);
 
 		textField_AddressLine = new JTextField();
 		textField_AddressLine.setText(globals.getAddressline());
 		textField_AddressLine.setColumns(10);
-		textField_AddressLine.setBounds(461, 262, 109, 20);
+		textField_AddressLine.setBounds(528, 136, 109, 20);
 		panel_CardData.add(textField_AddressLine);
 
 		JLabel lblCity = new JLabel("City");
-		lblCity.setBounds(370, 290, 71, 14);
+		lblCity.setBounds(437, 164, 71, 14);
 		panel_CardData.add(lblCity);
 
 		JLabel lblState = new JLabel("State");
-		lblState.setBounds(370, 315, 71, 14);
+		lblState.setBounds(437, 189, 71, 14);
 		panel_CardData.add(lblState);
 
 		JLabel lblZip = new JLabel("Zip");
-		lblZip.setBounds(370, 340, 71, 14);
+		lblZip.setBounds(437, 214, 71, 14);
 		panel_CardData.add(lblZip);
 
 		textField_City = new JTextField();
 		textField_City.setText(globals.getCity());
 		textField_City.setColumns(10);
-		textField_City.setBounds(461, 287, 109, 20);
+		textField_City.setBounds(528, 161, 109, 20);
 		panel_CardData.add(textField_City);
 
 		textField__State = new JTextField();
 		textField__State.setText(globals.getState());
 		textField__State.setColumns(10);
-		textField__State.setBounds(461, 312, 109, 20);
+		textField__State.setBounds(528, 186, 109, 20);
 		panel_CardData.add(textField__State);
 
 		textField_PostalCode = new JTextField();
 		textField_PostalCode.setText(globals.getPostalCode());
 		textField_PostalCode.setColumns(10);
-		textField_PostalCode.setBounds(461, 337, 109, 20);
+		textField_PostalCode.setBounds(528, 211, 109, 20);
 		panel_CardData.add(textField_PostalCode);
-
-		if (!radioButton_CardSwiped.isSelected())
-			panel_CardSwiped.setVisible(false);
-		if (!radioButton_CardKeyed.isSelected())
-			panel_CardKeyed.setVisible(false);
-
-		JButton btnApplyValues = new JButton("Apply Values");
-		btnApplyValues.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				applyCardDataValues();
-			}
-		});
-		btnApplyValues.setBounds(199, 477, 184, 23);
-		panel_CardData.add(btnApplyValues);
+		panel_DebitCardInfo.setLayout(null);
 
 		JLabel lblPinData = new JLabel("Pin Data");
-		lblPinData.setBounds(54, 365, 135, 14);
-		panel_CardData.add(lblPinData);
+		lblPinData.setBounds(20, 8, 40, 14);
+		panel_DebitCardInfo.add(lblPinData);
 
 		textField_PinData = new JTextField();
 		textField_PinData.setText((String) null);
 		textField_PinData.setColumns(10);
-		textField_PinData.setBounds(199, 362, 109, 20);
-		panel_CardData.add(textField_PinData);
+		textField_PinData.setBounds(117, 5, 86, 20);
+		panel_DebitCardInfo.add(textField_PinData);
 
 		JLabel lblTokenId_1 = new JLabel("Token Id :");
 		lblTokenId_1.setBounds(447, 37, 71, 14);
@@ -1191,6 +1200,87 @@ public class Home extends JFrame {
 		textField_tokenValue.setBounds(528, 59, 109, 20);
 		panel_CardData.add(textField_tokenValue);
 
+		JLabel lblEncryptedKey = new JLabel("Encrypted Key");
+		lblEncryptedKey.setBounds(20, 33, 70, 14);
+		panel_DebitCardInfo.add(lblEncryptedKey);
+
+		JLabel lblEncryptedValue = new JLabel("Encrypted Value");
+		lblEncryptedValue.setBounds(20, 58, 78, 14);
+		panel_DebitCardInfo.add(lblEncryptedValue);
+
+		textField_PinEncryptionKey = new JTextField();
+		textField_PinEncryptionKey.setText(globals.getPinEncryptedKey());
+		textField_PinEncryptionKey.setColumns(10);
+		textField_PinEncryptionKey.setBounds(117, 30, 144, 20);
+		panel_DebitCardInfo.add(textField_PinEncryptionKey);
+
+		textField_PinEncryptionValue = new JTextField();
+		textField_PinEncryptionValue.setText(globals.getPinEncryptedValue());
+		textField_PinEncryptionValue.setColumns(10);
+		textField_PinEncryptionValue.setBounds(117, 55, 144, 20);
+		panel_DebitCardInfo.add(textField_PinEncryptionValue);
+
+		comboBox_PinEncryptionType = new JComboBox();
+		comboBox_PinEncryptionType.setModel(new DefaultComboBoxModel(
+				new String[] { "VOLTAGE", "DUKPT" }));
+		comboBox_PinEncryptionType.setBounds(238, 94, 70, 20);
+		panel_DebitCardInfo.add(comboBox_PinEncryptionType);
+
+		JButton btnApplyValues = new JButton("Apply Values");
+		btnApplyValues.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				applyCardDataValues();
+			}
+		});
+		btnApplyValues.setBounds(199, 516, 184, 23);
+		panel_CardData.add(btnApplyValues);
+
+		comboBox_CreditDebitGift = new JComboBox();
+		comboBox_CreditDebitGift.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if (comboBox_CreditDebitGift.getSelectedIndex() == 0) {
+					panel_DebitCardInfo.setVisible(false);
+					panel_GiftCardInfo.setVisible(false);
+				} else if (comboBox_CreditDebitGift.getSelectedIndex() == 1) {
+					panel_DebitCardInfo.setVisible(true);
+					panel_GiftCardInfo.setVisible(false);
+				} else if (comboBox_CreditDebitGift.getSelectedIndex() == 2) {
+					panel_DebitCardInfo.setVisible(false);
+					panel_GiftCardInfo.setVisible(true);
+				}
+			}
+		});
+		comboBox_CreditDebitGift.setModel(new DefaultComboBoxModel(new String[] {
+				"Credit", "Debit", "Gift Card" }));
+		comboBox_CreditDebitGift.setBounds(477, 287, 91, 20);
+		panel_CardData.add(comboBox_CreditDebitGift);
+
+		JLabel lblCardType = new JLabel("Card Type:");
+		lblCardType.setBounds(414, 290, 71, 14);
+		panel_CardData.add(lblCardType);
+
+		JLabel lblGiftCardInfo = new JLabel("Gift Card Info");
+		lblGiftCardInfo.setBounds(164, 391, 66, 14);
+		panel_GiftCardInfo.add(lblGiftCardInfo);
+
+		JLabel label_6 = new JLabel("Account Type");
+		label_6.setBounds(20, 83, 91, 14);
+		panel_DebitCardInfo.add(label_6);
+
+		comboBox_AccountType = new JComboBox();
+		comboBox_AccountType.setModel(new DefaultComboBoxModel(new String[] {
+				"CHECKING", "SAVINGS" }));
+		comboBox_AccountType.setBounds(117, 80, 111, 20);
+		panel_DebitCardInfo.add(comboBox_AccountType);
+
+		JLabel label_5 = new JLabel("Gift Card Security Code");
+		label_5.setBounds(11, 53, 120, 14);
+		panel_GiftCardInfo.add(label_5);
+
+		JLabel label_4 = new JLabel("Gift Card Pin");
+		label_4.setBounds(10, 25, 96, 14);
+		panel_GiftCardInfo.add(label_4);
 
 
 	}
@@ -1458,6 +1548,7 @@ public class Home extends JFrame {
 		if (latitude.matches("\\d*"))
 			globals.setLatitude(latitude);
 		globals.setEntryMode(entryMode);
+
 		globals.setPinEntry(pinEntry);
 		globals.setClassification(classification);
 		globals.setCardReader(cardReader);
@@ -1470,28 +1561,56 @@ public class Home extends JFrame {
 		String cardHolderName = textField_CardHolderName.getText();
 		String giftCardPin = textField_GiftCardPin.getText();
 		String giftCardSecCode = textField_GiftCardSecCode.getText();
-		String accountType = textField_AcctType.getText();
+		String accountType = (String) comboBox_AccountType.getSelectedItem();
 		String partialIndicator = (String) comboBox_PartialIndicator
 				.getSelectedItem();
-		String cardType = (String) comboBox_CardType.getSelectedItem();
-		Boolean cardKeyed = radioButton_CardKeyed.isSelected();
-		Boolean cardSwiped = radioButton_CardSwiped.isSelected();
-		String primaryAcctNum = textField_PAN.getText().trim();
 
-		String encryptedPAN = textField_EncryptedPAN.getText();
+		boolean cardKeyed = radioButton_CardKeyed.isSelected();
+		boolean cardSwiped = radioButton_CardSwiped.isSelected();
+		String primaryAcctNum = textField_PAN.getText().trim();
+		boolean isCardEncrypted = rdbtnCardEncryptedFlag.isSelected();
+		int credit_debit_gift = comboBox_CreditDebitGift.getSelectedIndex();
 		String expirationDate = textField_ExpirationDate.getText();
 		String track1 = textField_Track1.getText();
 		String track2 = textField_Track2.getText();
+
+		String cardEncryptionType = (String) comboBox_CardEncryptionType
+				.getSelectedItem();
+		String cardEncryptionKey = textField_CardEncryptionKey.getText();
+		String cardEncryptionValue = textField_CardEncryptionValue.getText();
+
 		// Address
 		String addressLine = textField_AddressLine.getText();
 		String city = textField_City.getText();
 		String state = textField__State.getText();
 		String postalCode = textField_PostalCode.getText();
 		String pinData = textField_PinData.getText();
+		String pinEncryptionKey = textField_PinEncryptionKey.getText();
+		String pinEncryptionValue = textField_PinEncryptionValue.getText();
+		String pinEncryptionType = (String) comboBox_PinEncryptionType
+				.getSelectedItem();
 
 		String tokenId = textField_tokenId.getText();
 		String tokenValue = textField_tokenValue.getText();
+		if (credit_debit_gift == 0) {
+			globals.setCredit(true);
+			globals.setDebit(false);
+			globals.setGift(false);
+		} else if (credit_debit_gift == 1) {
+			globals.setCredit(false);
+			globals.setDebit(true);
+			globals.setGift(false);
+			globals.setPinData(pinData);
+			globals.setPinEncryptedKey(pinEncryptionKey);
 
+			globals.setPinEncryptedValue(pinEncryptionValue);
+
+			globals.setPinEncryptedType(pinEncryptionType);
+		} else if (credit_debit_gift == 2) {
+			globals.setCredit(false);
+			globals.setDebit(false);
+			globals.setGift(true);
+		}
 		if (cardKeyed) {
 			globals.setCardKeyed(true);
 			globals.setCardSwiped(false);
@@ -1514,10 +1633,38 @@ public class Home extends JFrame {
 		} else {
 			globals.setCardSwiped(true);
 			globals.setCardKeyed(false);
-			globals.setTrack1Data(track1);
-			globals.setTrack2Data(track2);
-		}
 
+			String cardNum = "";
+			if (!track2.isEmpty())
+				cardNum = track2.split("=")[0];
+			else if (!track1.isEmpty())
+				cardNum = track1.split("^")[0].substring(1);
+			String verifyCardNum = util.verifyCardNumberFormat(cardNum);
+			if (verifyCardNum == null) {
+				errorMessageDialog("Invalid Primary Account Number format");
+			} else {
+				if (!verifyCardNum.isEmpty())
+					comboBox_CardType.setSelectedItem(verifyCardNum);
+			}
+			if (!tokenId.isEmpty() && !tokenValue.isEmpty()) {
+				globals.setTokenId(tokenId);
+				globals.setTokenValue(tokenValue);
+				globals.setCardToken(true);
+			} else
+				globals.setCardToken(false);
+			if (isCardEncrypted) {
+				globals.setTrackEncrypted(true);
+				globals.setCardEncryptedKey(cardEncryptionKey);
+				globals.setCardEncryptedValue(cardEncryptionValue);
+				globals.setCardEncryptedType(cardEncryptionType);
+			} else {
+				globals.setTrackEncrypted(false);
+				globals.setTrack1Data(track1);
+				globals.setTrack2Data(track2);
+			}
+
+		}
+		String cardType = (String) comboBox_CardType.getSelectedItem();
 		globals.setCardSecurityCode(cardSecCode);
 		globals.setCardHolderName(cardHolderName);
 		globals.setGiftCardPin(giftCardPin);
@@ -1529,7 +1676,9 @@ public class Home extends JFrame {
 		globals.setCity(city);
 		globals.setState(state);
 		globals.setPostalCode(postalCode);
-		globals.setPinData(pinData);
+
+
+
 
 	}
 

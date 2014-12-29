@@ -8,6 +8,11 @@ Information in this sample code is subject to change without notice and does not
 package com.vantiv.pws.apigee.objects;
 
 public class Credentials {
+	/*
+	 * Documentation can be found at:
+	 * http://dev-vantiv.devportal.apigee.com/docs
+	 * /payment-web-services/api-element-dictionary/rest-credentials-definition
+	 */
 	// Required
 	private String AccountID;
 	private String Password;

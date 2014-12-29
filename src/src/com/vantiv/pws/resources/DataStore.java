@@ -20,11 +20,15 @@ import com.vantiv.types.common.v6.ISO3166CountryCodeType;
 import com.vantiv.types.common.v6.ISO4217CurrencyCodeType;
 import com.vantiv.types.common.v6.ReplacementAmountType;
 import com.vantiv.types.common.v6.StateCodeType;
+import com.vantiv.types.payment.instruments.v6.AccountType;
 import com.vantiv.types.payment.instruments.v6.CardSwipedType;
 import com.vantiv.types.payment.instruments.v6.CreditCardNetworkType;
 import com.vantiv.types.payment.instruments.v6.CreditInstrumentType;
 import com.vantiv.types.payment.instruments.v6.CreditOrDebitCardKeyedType;
 import com.vantiv.types.payment.instruments.v6.DebitInstrumentType;
+import com.vantiv.types.payment.instruments.v6.GiftCardKeyedType;
+import com.vantiv.types.payment.instruments.v6.GiftCardSwipedType;
+import com.vantiv.types.payment.instruments.v6.GiftInstrumentType;
 import com.vantiv.types.payment.instruments.v6.PartialIndicatorType;
 import com.vantiv.types.payment.instruments.v6.ThreeDSecureType;
 import com.vantiv.types.payment.instruments.v6.TokenType;
@@ -51,12 +55,15 @@ public class DataStore {
 	// ************FLAGS*****************//
 	private boolean isCardKeyed = true;
 	private boolean isCardSwiped = false;
-	private boolean isCardEncrypted = false;
+	private boolean isDebit = false;
+	private boolean isGift = false;
+	private boolean isCredit = true;
+
 	private boolean isTaxPresent = false;
 	private boolean isCardToken = false;
 	private boolean isTrackEncrypted = false;
 	private boolean isThreeDSecure = false;
-	private String captureDevice = "terminal";
+	private String captureDevice = "Terminal";
 	// *************************************//
 
 	// *****************************************//
@@ -68,27 +75,29 @@ public class DataStore {
 	private String username = "s.MID5.PAY.WS.NP";
 	private String password = "Tu2u2AHU";
 	private long systemTraceId = 100000;
-	private long originalSystemTraceId;
+	private long originalSystemTraceId = 100000;
 	private String merchantRefId = "654321";
-	private String referenceNumber = "111111111";
+	private String referenceNumber = "100001";
+	// present, moto, or ecommerce
 	private String transactionType = "present";
 	private String transactionTimestamp = "";
 	private String transmissionTimestamp = "";
 	// optional
 	private String paymentType = "single";
-	private String draftLocatorId = "12345678901";
+	private String draftLocatorId = "100000001";
 	private boolean tokenRequested = true;
 	private String payeeAccountNumber = null;
 	private String payeeName = null;
 	private String payeePhoneNumber = null;
-	private String networkResponseCode = "";
+	private String networkResponseCode = "00";
 	private String reportGroup = null;
 	private String purchaseOrder = null;
 	private boolean isTaxable = false;
 	private boolean isTaxExempt = false;
-	private boolean isPurchaseLevel = true;
-	private String taxAmount = "0.00";
+	private boolean isPurchaseLevel = false;
+	private String taxAmount = null;
 	private String taxCurrency = "USD";
+	private String forceApprovalCode = null;
 	// captures
 	private String authorizationCode = null;
 	private String convenienceFee = "1.00";
@@ -98,8 +107,8 @@ public class DataStore {
 	private String cancelTransactionType = "authorize";
 	private String reversalReason = null;
 	private String replacementAmount = null;
-	private String originalTimestamp = "";
-	private String originalRefNum = "";
+	private String originalTimestamp = null;
+	private String originalRefNum = null;
 	// adjust
 	private String adjustedAmount = null;
 	// refund
@@ -108,6 +117,7 @@ public class DataStore {
 
 	// *************Amount data***************//
 	private String transactionAmount = "2.05";
+	private String cashBackAmount = "0.00";
 	private String currency = "USD";
 	// ***************************************//
 
@@ -127,12 +137,12 @@ public class DataStore {
 	// ***************Capture Device Data**************//
 	private int terminalID = 001;
 	private String sequenceNumber = "123456";
-	private String entryMode = "manual";
+	private String entryMode = "track2";
 	// conditional
 	private String pinEntry = "none";
 	// optional
 	private String iPv4Address = "192.0.2.235";
-	private String classification = "unspecified";
+	private String classification = "electronic_cash_register";// "unspecified";
 	private String cardReader = "none";
 	private boolean balanceEnquiry = true;
 	private boolean hostAdjustment = false;
@@ -155,13 +165,13 @@ public class DataStore {
 	private String cardType = "visa";
 	private String partialIndicator = "not_supported";
 	private String track1Data = null;
-	private String track2Data = "4445222299990007=17121010000023700000";
+	private String track2Data = null;
 	private String cardSecurityCode = "382";
 	private String cardHolderName = null;
-	private String giftCardPin = null;
-	private String giftCardSecurityCode = null;
+	private String giftCardPin = "";
+	private String giftCardSecurityCode = "";
 	private String accountType = null;
-	private String pinData = null;
+	private String pinData = "";
 	// threeDSecure
 
 	private String authenticationValue = null;
@@ -171,9 +181,13 @@ public class DataStore {
 	private String tokenId = null;
 	private String tokenValue = null;
 	// encrypted data
-	private String eKey = "//+YdlQyEOAASg==";
-	private String eValue = "h+Sj3KWVpJHaKAs1o2wneS+cmzkDXKJdgPh5mrll4MTPzZD/gWXx0A==";
-	private String encryptionType = "voltage";
+	private String cardEncryptedValue = "";
+	private String cardEncryptedKey = "";
+	private String cardEncryptedType = "";
+
+	private String pinEncryptedValue = "";
+	private String pinEncryptedKey = "";
+	private String pinEncryptedType = "";
 
 	// testing variables
 	private String testName = null;
@@ -208,9 +222,10 @@ public class DataStore {
 		if (isCardKeyed) {
 			creditInstrument.setCardKeyed(getCardKeyed());
 		} else if (isCardSwiped) {
-
 			creditInstrument.setCardSwiped(getCardSwiped());
 		}
+
+
 		creditInstrument.setCardType(CreditCardNetworkType.fromValue(cardType));
 		creditInstrument.setPartialApprovalCode(PartialIndicatorType
 				.fromValue(partialIndicator));
@@ -219,13 +234,13 @@ public class DataStore {
 	}
 
 	/**
-	 * Constructs the CreditInstrumentType and returns it. Adds the CardKeyed,
-	 * or CardSwiped object to the Credit InstrumentType depending on the flags.
+	 * Constructs the DebitInstrumentType and returns it. Adds the CardKeyed, or
+	 * CardSwiped object to the Credit InstrumentType depending on the flags.
 	 */
 	public DebitInstrumentType getDebitInstument() {
-
+		System.out.println("Getting debit...");
 		DebitInstrumentType debitInstrument = new DebitInstrumentType();
-		debitInstrument.setCardholderAddress(getAddress());
+
 
 		if (isCardKeyed) {
 			debitInstrument.setCardKeyed(getCardKeyed());
@@ -233,12 +248,33 @@ public class DataStore {
 			debitInstrument.setCardSwiped(getCardSwiped());
 		}
 		EncryptedData eData = new EncryptedData();
+		eData.setEncryptionType(EncryptionType.fromValue(pinEncryptedType));
+		eData.setKey(pinEncryptedKey);
+		eData.setValue(pinEncryptedValue);
 
-		// debitInstrument.setPinData();
+		debitInstrument.setPinData(eData);
 		debitInstrument.setPartialApprovalCode(PartialIndicatorType
 				.fromValue(partialIndicator));
+		debitInstrument.setAccountType(AccountType.CHECKING);
 
 		return debitInstrument;
+	}
+
+	/**
+	 * Constructs the CreditInstrumentType and returns it. Adds the CardKeyed,
+	 * or CardSwiped object to the Credit InstrumentType depending on the flags.
+	 */
+	public GiftInstrumentType getGiftCard() {
+
+		GiftInstrumentType gift = new GiftInstrumentType();
+
+		if (isCardKeyed) {
+			gift.setCardKeyed(getGiftCardKeyed());
+		} else if (isCardSwiped) {
+			gift.setCardSwiped(getGiftCardSwiped());
+		}
+
+		return gift;
 	}
 
 	/**
@@ -334,29 +370,37 @@ public class DataStore {
 
 		TrackDataType track1 = new TrackDataType();
 		TrackDataType track2 = new TrackDataType();
-		if (isTrackEncrypted) {
-			EncryptedData eData = new EncryptedData();
-			eData.setEncryptionType(EncryptionType.fromValue(encryptionType));
-			eData.setKey(eKey);
-			eData.setValue(eValue);
-			track1.setEncryptedTrackData(eData);
-		} else {
-			track1.setTrackData(track1Data);
-		}
+		EncryptedData eData = new EncryptedData();
 
-		if (isTrackEncrypted) {
-			EncryptedData eData = new EncryptedData();
-			eData.setEncryptionType(EncryptionType.fromValue(encryptionType));
-			eData.setKey(eKey);
-			eData.setValue(eValue);
-			track2.setEncryptedTrackData(eData);
-		} else {
-			track2.setTrackData(track2Data);
+		if (entryMode.equals("track1")) {
+
+			if (isTrackEncrypted) {
+				eData.setEncryptionType(EncryptionType
+						.fromValue(cardEncryptedType));
+				eData.setKey(cardEncryptedKey);
+				eData.setValue(cardEncryptedValue);
+				track1.setEncryptedTrackData(eData);
+				cardSwiped.setTrack1(track1);
+			} else {
+				track1.setTrackData(track1Data);
+				cardSwiped.setTrack1(track1);
+			}
+		} else if (entryMode.equals("track2")) {
+
+			if (isTrackEncrypted) {
+				eData.setEncryptionType(EncryptionType
+						.fromValue(cardEncryptedType));
+				eData.setKey(cardEncryptedKey);
+				System.out.println("Setting card encryption: "
+						+ cardEncryptedValue);
+				eData.setValue(cardEncryptedValue);
+				track2.setEncryptedTrackData(eData);
+				cardSwiped.setTrack2(track2);
+			} else {
+				track2.setTrackData(track2Data);
+				cardSwiped.setTrack2(track2);
+			}
 		}
-		if (entryMode.equals("track1"))
-			cardSwiped.setTrack1(track1);
-		if (entryMode.equals("track2"))
-			cardSwiped.setTrack2(track2);
 		return cardSwiped;
 	}
 
@@ -369,17 +413,18 @@ public class DataStore {
 		cardKeyed.setCardSecurityCode(cardSecurityCode);
 		cardKeyed.setExpirationDate(util.stringToXMLGregorian(expirationDate));
 
+
 		if (isThreeDSecure) {
 			ThreeDSecureType threeD = new ThreeDSecureType();
 			threeD.setAuthenticationValue(authenticationValue);
 			threeD.setECommerceIndicator(eCommerceIndicator);
 			threeD.setTransactionID(transactionId);
 			cardKeyed.setThreeDSecure(threeD);
-		} else if (isCardEncrypted) {
+		} else if (isTrackEncrypted) {
 			EncryptedData eData = new EncryptedData();
-			eData.setEncryptionType(EncryptionType.fromValue(encryptionType));
-			eData.setKey(eKey);
-			eData.setValue(eValue);
+			eData.setEncryptionType(EncryptionType.fromValue(cardEncryptedType));
+			eData.setKey(cardEncryptedValue);
+			eData.setValue(cardEncryptedKey);
 			cardKeyed.setEncryptedPrimaryAccountNumber(eData);
 		} else if (isCardToken) {
 			System.out.println("USING A TOKEN...Id:" + this.tokenId
@@ -395,8 +440,38 @@ public class DataStore {
 		return cardKeyed;
 	}
 
+	// GiftCard keyed information
+	public GiftCardKeyedType getGiftCardKeyed() {
+		GiftCardKeyedType giftCard = new GiftCardKeyedType();
+		giftCard.setCardSecurityCode(this.giftCardSecurityCode);
+		giftCard.setPrimaryAccountNumber(this.primaryAcountNumber);
+		giftCard.setGiftCardPin(this.giftCardPin);
+		giftCard.setExpirationDate(util
+				.stringToXMLGregorian(this.expirationDate));
+
+		return giftCard;
+	}
+
 	public XMLGregorianCalendar getOriginalTimestampXML() {
 		return util.stringToXMLGregorian(originalTimestamp);
+	}
+
+	public GiftCardSwipedType getGiftCardSwiped() {
+		GiftCardSwipedType giftCard = new GiftCardSwipedType();
+		giftCard.setCardSecurityCode(this.giftCardSecurityCode);
+		giftCard.setGiftCardPin(this.giftCardPin);
+		TrackDataType track1 = new TrackDataType();
+		TrackDataType track2 = new TrackDataType();
+		if (entryMode.equals("track1")) {
+			track1.setTrackData(track1Data);
+			giftCard.setTrack1(track1);
+		}
+		if (entryMode.equals("track2")) {
+			track2.setTrackData(track2Data);
+			giftCard.setTrack2(track2);
+		}
+
+		return giftCard;
 	}
 
 	/**
@@ -404,7 +479,18 @@ public class DataStore {
 	 */
 	public AmountType getTransactionAmountType() {
 		AmountType amt = new AmountType();
+
 		amt.setValue(new BigDecimal(transactionAmount));
+		amt.setCurrency(ISO4217CurrencyCodeType.fromValue(currency));
+		return amt;
+	}
+
+	/**
+	 * Constructs an AmountType and returns it.
+	 */
+	public AmountType getCashBackAmountType() {
+		AmountType amt = new AmountType();
+		amt.setValue(new BigDecimal(cashBackAmount));
 		amt.setCurrency(ISO4217CurrencyCodeType.fromValue(currency));
 		return amt;
 	}
@@ -889,29 +975,6 @@ public class DataStore {
 		this.tokenValue = tokenValue;
 	}
 
-	public String geteKey() {
-		return eKey;
-	}
-
-	public void seteKey(String eKey) {
-		this.eKey = eKey;
-	}
-
-	public String geteValue() {
-		return eValue;
-	}
-
-	public void seteValue(String eValue) {
-		this.eValue = eValue;
-	}
-
-	public String getEncryptionType() {
-		return encryptionType;
-	}
-
-	public void setEncryptionType(String encryptionType) {
-		this.encryptionType = encryptionType;
-	}
 
 	public String getAppDevice() {
 		return captureDevice;
@@ -1049,13 +1112,6 @@ public class DataStore {
 		this.latitude = latitude;
 	}
 
-	public boolean isCardEncrypted() {
-		return isCardEncrypted;
-	}
-
-	public void setCardEncrypted(boolean isCardEncrypted) {
-		this.isCardEncrypted = isCardEncrypted;
-	}
 
 	public boolean isTaxPresent() {
 		return isTaxPresent;
@@ -1231,6 +1287,94 @@ public class DataStore {
 
 	public void setOriginalSystemTraceId(long originalSystemTraceId) {
 		this.originalSystemTraceId = originalSystemTraceId;
+	}
+
+	public String getForceApprovalCode() {
+		return forceApprovalCode;
+	}
+
+	public void setForceApprovalCode(String forceApprovalCode) {
+		this.forceApprovalCode = forceApprovalCode;
+	}
+
+	public String getCashBackAmount() {
+		return cashBackAmount;
+	}
+
+	public void setCashBackAmount(String cashBackAmount) {
+		this.cashBackAmount = cashBackAmount;
+	}
+
+	public String getCardEncryptedValue() {
+		return cardEncryptedValue;
+	}
+
+	public void setCardEncryptedValue(String cardEncryptedValue) {
+		this.cardEncryptedValue = cardEncryptedValue;
+	}
+
+	public String getCardEncryptedKey() {
+		return cardEncryptedKey;
+	}
+
+	public void setCardEncryptedKey(String cardEncryptedKey) {
+		this.cardEncryptedKey = cardEncryptedKey;
+	}
+
+	public String getCardEncryptedType() {
+		return cardEncryptedType;
+	}
+
+	public void setCardEncryptedType(String cardEncryptedType) {
+		this.cardEncryptedType = cardEncryptedType;
+	}
+
+	public String getPinEncryptedValue() {
+		return pinEncryptedValue;
+	}
+
+	public void setPinEncryptedValue(String pinEncryptedValue) {
+		this.pinEncryptedValue = pinEncryptedValue;
+	}
+
+	public String getPinEncryptedKey() {
+		return pinEncryptedKey;
+	}
+
+	public void setPinEncryptedKey(String pinEncryptedKey) {
+		this.pinEncryptedKey = pinEncryptedKey;
+	}
+
+	public String getPinEncryptedType() {
+		return pinEncryptedType;
+	}
+
+	public void setPinEncryptedType(String pinEncryptedType) {
+		this.pinEncryptedType = pinEncryptedType;
+	}
+
+	public boolean isDebit() {
+		return isDebit;
+	}
+
+	public void setDebit(boolean isDebit) {
+		this.isDebit = isDebit;
+	}
+
+	public boolean isGift() {
+		return isGift;
+	}
+
+	public void setGift(boolean isGift) {
+		this.isGift = isGift;
+	}
+
+	public boolean isCredit() {
+		return isCredit;
+	}
+
+	public void setCredit(boolean isCredit) {
+		this.isCredit = isCredit;
 	}
 
 }

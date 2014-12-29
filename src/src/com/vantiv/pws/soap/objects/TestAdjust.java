@@ -13,6 +13,9 @@ import com.vantiv.types.payment.transactions.v6.AdjustRequest;
 import com.vantiv.types.payment.transactions.v6.PaymentType;
 import com.vantiv.types.payment.transactions.v6.TransactionTypeType;
 
+/**
+ * Creates an AdjustRequest object. Values pulled from DataStore.java.
+ */
 public class TestAdjust {
 
 	private Utils util;
@@ -28,7 +31,7 @@ public class TestAdjust {
 		request = new AdjustRequest();
 
 		request.setAdjustedTotalAmount(globals.getAdjustedAmountType());
-
+		request.setTipAmount(globals.getTipAmountType());
 		request.setOriginalAmount(globals.getTransactionAmountType());
 
 		request.setOriginalReferenceNumber(globals.getReferenceNumber());

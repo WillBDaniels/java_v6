@@ -18,34 +18,35 @@ import org.codehaus.jettison.json.JSONObject;
 
 import com.vantiv.pws.resources.DataStore;
 import com.vantiv.types.payment.instruments.v6.TokenType;
+import com.vantiv.types.payment.transactions.v6.ActivateResponse;
 import com.vantiv.types.payment.transactions.v6.AdjustResponse;
 import com.vantiv.types.payment.transactions.v6.AuthorizeResponse;
-import com.vantiv.types.payment.transactions.v6.BatchBalanceResponse;
+import com.vantiv.types.payment.transactions.v6.BalanceInquiryResponse;
 import com.vantiv.types.payment.transactions.v6.CancelResponse;
 import com.vantiv.types.payment.transactions.v6.CaptureResponse;
-import com.vantiv.types.payment.transactions.v6.CloseBatchResponse;
+import com.vantiv.types.payment.transactions.v6.CloseResponse;
 import com.vantiv.types.payment.transactions.v6.PurchaseResponse;
 import com.vantiv.types.payment.transactions.v6.RefundResponse;
+import com.vantiv.types.payment.transactions.v6.ReloadResponse;
 import com.vantiv.types.payment.transactions.v6.TokenizationResultType;
 import com.vantiv.types.payment.transactions.v6.TokenizeResponse;
 import com.vantiv.types.payment.transactions.v6.TransactionResponseType;
 import com.vantiv.types.payment.transactions.v6.TransactionStatusType;
+import com.vantiv.types.payment.transactions.v6.UnloadResponse;
 
 /**
  * This class is used to send/receive JSON requests to Apigee through RESTFUL
  * services. To send an authorize, call this.startTransaction("Authorize"). It
  * will send a JSON request over HTTP to Apigee, the values for the Authorize
  * request will be pulled from the DataStore class. The response comes back as a
- * JSON object from which you can pull the data from. In an effort to normalize
- * responses from Apigee and PWS Direct(SOAP), this class converts the JSON
- * response into a Response object, which is what is returned from SOAP
- * responses. The request and responses are logged by log4j. The log4j
- * properties file can be found in the Resources folder.
+ * JSON object from which you can pull the data from. This class converts the
+ * JSON response into a Response object. The request and responses are logged by
+ * log4j. The log4j properties file can be found in the Resources folder.
  */
 public class RestDriver {
 
-	private SendJsonRequest sendJsonReq;
-	private CreateJsonRequest createJsonReq;
+	private SendJsonRequest sjr;
+	private CreateJsonRequest cjr;
 	private DataStore globals;
 	private static Logger logger = org.apache.log4j.Logger
 			.getLogger(RestDriver.class);
@@ -53,8 +54,8 @@ public class RestDriver {
 
 	public RestDriver(DataStore ds) {
 		this.globals = ds;
-		sendJsonReq = new SendJsonRequest();
-		createJsonReq = new CreateJsonRequest(globals);
+		sjr = new SendJsonRequest();
+		cjr = new CreateJsonRequest(globals);
 	}
 
 	/**
@@ -82,7 +83,23 @@ public class RestDriver {
 			response = refund();
 		} else if (requestType.equals("Tokenize")) {
 			response = tokenize();
+		} else if (requestType.equals("CloseBatch")) {
+			response = closeBatch();
+		} else if (requestType.equals("BatchBalance")) {
+			response = batchBalance();
+
+		} else if (requestType.equals("Activate")) {
+			response = activate();
+		} else if (requestType.equals("Reload")) {
+			response = reload();
+		} else if (requestType.equals("Unload")) {
+			response = unload();
+		} else if (requestType.equals("Close")) {
+			response = close();
+		} else if (requestType.equals("BalanceInquiry")) {
+			response = balanceInquiry();
 		}
+
 
 		return response;
 
@@ -92,8 +109,14 @@ public class RestDriver {
 		HttpResponse httpResp = null;
 		String json_string = null;
 
-		ApigeeObject ao = createJsonReq.createPurchase();
-		httpResp = sendJsonReq.sendJson(ao, "purchase");
+		ApigeeObject ao = cjr.createPurchase();
+		if (globals.isCredit())
+			httpResp = sjr.sendJson(ao, "purchase");
+		else if (globals.isDebit())
+			httpResp = sjr.sendJson(ao, "purchaseDebit");
+		else if (globals.isGift())
+			httpResp = sjr.sendJson(ao, "purchaseGift");
+
 		json_string = null;
 		try {
 			json_string = EntityUtils.toString(httpResp.getEntity());
@@ -119,15 +142,20 @@ public class RestDriver {
 		HttpResponse httpResp = null;
 		String json_string = null;
 
-		ApigeeObject ao = createJsonReq.createCapture();
-		httpResp = sendJsonReq.sendJson(ao, "capture");
+		ApigeeObject ao = cjr.createCapture();
+		if (globals.isCredit())
+			httpResp = sjr.sendJson(ao, "capture");
+		else if (globals.isDebit())
+			httpResp = sjr.sendJson(ao, "captureDebit");
+		else if (globals.isGift())
+			httpResp = sjr.sendJson(ao, "captureGift");
 
 		json_string = null;
 		try {
 			json_string = EntityUtils.toString(httpResp.getEntity());
 			logHttpResponse(json_string);
 		} catch (Exception e) {
-
+			System.out.println("ERROR creating json string: " + e.getMessage());
 		}
 
 		response = new CaptureResponse();
@@ -147,9 +175,12 @@ public class RestDriver {
 		HttpResponse httpResp = null;
 		String json_string = null;
 
-		ApigeeObject ao = createJsonReq.createAuthorize();
+		ApigeeObject ao = cjr.createAuthorize();
 
-		httpResp = sendJsonReq.sendJson(ao, "authorize");
+		if (globals.isCredit())
+			httpResp = sjr.sendJson(ao, "authorize");
+		else if (globals.isGift())
+			httpResp = sjr.sendJson(ao, "authorizeGift");
 		json_string = null;
 		try {
 			json_string = EntityUtils.toString(httpResp.getEntity());
@@ -174,8 +205,13 @@ public class RestDriver {
 
 		String json_string = null;
 
-		ApigeeObject ao = createJsonReq.createCancel();
-		httpResp = sendJsonReq.sendJson(ao, "cancel");
+		ApigeeObject ao = cjr.createCancel();
+		if (globals.isCredit())
+			httpResp = sjr.sendJson(ao, "cancel");
+		else if (globals.isDebit())
+			httpResp = sjr.sendJson(ao, "cancelDebit");
+		else if (globals.isGift())
+			httpResp = sjr.sendJson(ao, "cancelGift");
 		json_string = null;
 		try {
 			json_string = EntityUtils.toString(httpResp.getEntity());
@@ -201,8 +237,13 @@ public class RestDriver {
 
 		String json_string = null;
 
-		ApigeeObject ao = createJsonReq.createRefund();
-		httpResp = sendJsonReq.sendJson(ao, "refund");
+		ApigeeObject ao = cjr.createRefund();
+		if (globals.isCredit())
+			httpResp = sjr.sendJson(ao, "refund");
+		else if (globals.isDebit())
+			httpResp = sjr.sendJson(ao, "refundDebit");
+		else if (globals.isGift())
+			httpResp = sjr.sendJson(ao, "refundGift");
 		json_string = null;
 		try {
 			json_string = EntityUtils.toString(httpResp.getEntity());
@@ -228,9 +269,9 @@ public class RestDriver {
 
 		String json_string = null;
 
-		ApigeeObject ao = createJsonReq.createAdjust();
+		ApigeeObject ao = cjr.createAdjust();
 
-		httpResp = sendJsonReq.sendJson(ao, "adjust");
+		httpResp = sjr.sendJson(ao, "adjust");
 		json_string = null;
 		try {
 			json_string = EntityUtils.toString(httpResp.getEntity());
@@ -256,8 +297,8 @@ public class RestDriver {
 
 		String json_string = null;
 
-		ApigeeObject ao = createJsonReq.createTokenize();
-		httpResp = sendJsonReq.sendJson(ao, "tokenize");
+		ApigeeObject ao = cjr.createTokenize();
+		httpResp = sjr.sendJson(ao, "tokenize");
 		json_string = null;
 		try {
 			json_string = EntityUtils.toString(httpResp.getEntity());
@@ -273,15 +314,36 @@ public class RestDriver {
 		return response;
 	}
 
-	public CloseBatchResponse closeBatch() {
-
-		CloseBatchResponse response = null;
+	public TransactionResponseType closeBatch() {
+		System.out.println("CLOSEBATCH");
+		TransactionResponseType response = null;
 		HttpResponse httpResp = null;
 
 		String json_string = null;
 
-		ApigeeObject ao = createJsonReq.createBatchClose();
-		httpResp = sendJsonReq.sendJson(ao, "batchClose");
+		ApigeeObject ao = cjr.createBatchClose();
+		httpResp = sjr.sendJson(ao, "batchClose");
+		json_string = null;
+		try {
+			json_string = EntityUtils.toString(httpResp.getEntity());
+			logHttpResponse(json_string);
+		} catch (Exception e) {
+			System.out.println("error logging close batch");
+		}
+
+		return response;
+
+	}
+
+	public TransactionResponseType batchBalance() {
+
+		TransactionResponseType response = null;
+		HttpResponse httpResp = null;
+
+		String json_string = null;
+
+		ApigeeObject ao = cjr.createBatchBalance();
+		httpResp = sjr.sendJson(ao, "batchBalance");
 		json_string = null;
 		try {
 			json_string = EntityUtils.toString(httpResp.getEntity());
@@ -294,15 +356,15 @@ public class RestDriver {
 
 	}
 
-	public BatchBalanceResponse batchBalance() {
 
-		BatchBalanceResponse response = null;
+	public ActivateResponse activate() {
+		ActivateResponse response = null;
 		HttpResponse httpResp = null;
 
 		String json_string = null;
 
-		ApigeeObject ao = createJsonReq.createBatchBalance();
-		httpResp = sendJsonReq.sendJson(ao, "batchBalance");
+		ApigeeObject ao = cjr.createActivate();
+		httpResp = sjr.sendJson(ao, "activate");
 		json_string = null;
 		try {
 			json_string = EntityUtils.toString(httpResp.getEntity());
@@ -311,9 +373,105 @@ public class RestDriver {
 
 		}
 
-		return response;
+		response = new ActivateResponse();
+		response = (ActivateResponse) createResponseFromApigee(response,
+				json_string);
 
+		return response;
 	}
+
+	public ReloadResponse reload() {
+		ReloadResponse response = null;
+		HttpResponse httpResp = null;
+
+		String json_string = null;
+
+		ApigeeObject ao = cjr.createReload();
+		httpResp = sjr.sendJson(ao, "reload");
+		json_string = null;
+		try {
+			json_string = EntityUtils.toString(httpResp.getEntity());
+			logHttpResponse(json_string);
+		} catch (Exception e) {
+
+		}
+
+		response = new ReloadResponse();
+		response = (ReloadResponse) createResponseFromApigee(response,
+				json_string);
+
+		return response;
+	}
+
+	public UnloadResponse unload() {
+		UnloadResponse response = null;
+		HttpResponse httpResp = null;
+
+		String json_string = null;
+
+		ApigeeObject ao = cjr.createUnload();
+		httpResp = sjr.sendJson(ao, "unload");
+		json_string = null;
+		try {
+			json_string = EntityUtils.toString(httpResp.getEntity());
+			logHttpResponse(json_string);
+		} catch (Exception e) {
+
+		}
+
+		response = new UnloadResponse();
+		response = (UnloadResponse) createResponseFromApigee(response,
+				json_string);
+
+		return response;
+	}
+
+	public CloseResponse close() {
+		CloseResponse response = null;
+		HttpResponse httpResp = null;
+
+		String json_string = null;
+
+		ApigeeObject ao = cjr.createClose();
+		httpResp = sjr.sendJson(ao, "close");
+		json_string = null;
+		try {
+			json_string = EntityUtils.toString(httpResp.getEntity());
+			logHttpResponse(json_string);
+		} catch (Exception e) {
+
+		}
+
+		response = new CloseResponse();
+		response = (CloseResponse) createResponseFromApigee(response,
+				json_string);
+
+		return response;
+	}
+
+	public BalanceInquiryResponse balanceInquiry() {
+		BalanceInquiryResponse response = null;
+		HttpResponse httpResp = null;
+
+		String json_string = null;
+
+		ApigeeObject ao = cjr.createBalanceInquiry();
+		httpResp = sjr.sendJson(ao, "balanceInquiry");
+		json_string = null;
+		try {
+			json_string = EntityUtils.toString(httpResp.getEntity());
+			logHttpResponse(json_string);
+		} catch (Exception e) {
+
+		}
+
+		response = new BalanceInquiryResponse();
+		response = (BalanceInquiryResponse) createResponseFromApigee(response,
+				json_string);
+
+		return response;
+	}
+
 
 	/**
 	 * Convert a HttpResponse Object to a JSONObject
@@ -334,10 +492,10 @@ public class RestDriver {
 	}
 
 	/**
-	 * Create a HashMap of all values that are contained in the http response
-	 * from apigee. The HttpResponse must already be converted to a JSON object.
-	 * This is used when we send a transaction request to Apigee instead of PWS
-	 * direct.
+	 * Create a HashMap of all(most) values that are contained in the http
+	 * response from apigee. The HttpResponse must already be converted to a
+	 * JSON object. This is used when we send a transaction request to Apigee
+	 * instead of PWS direct.
 	 */
 	public HashMap<String, String> parseJsonResponse(JSONObject json_object) {
 		HashMap<String, String> map = new HashMap<String, String>();
@@ -350,72 +508,90 @@ public class RestDriver {
 			i = json_object.keys();
 		try {
 			if (i.hasNext()) {
-				// System.out.println("Root: " + jsonRoot);
 				responseType = (String) i.next();
-				JSONObject responseData = (JSONObject) json_object
-						.get(responseType);
-				map.put("ResponseType", responseType);
-				// If there is a fault, put it in the decline message/code field
-				if (responseType.equalsIgnoreCase("fault")) {
-					map.put("DeclineMessage",
-							responseData.getString("faultstring"));
-					map.put("DeclineCode", responseData.getJSONObject("detail")
-							.getString("errorcode"));
 
-				} else if (!responseType.equalsIgnoreCase("error")) {
-					if (responseData.has("ReferenceNumber"))
-						map.put("ReferenceNumber",
-								responseData.getString("ReferenceNumber"));
-					if (responseData.has("AuthorizationCode"))
-						map.put("AuthorizationCode",
-								responseData.getString("AuthorizationCode"));
-					if (responseData.has("TokenizationResult")) {
-						JSONObject tokenResult = responseData
-								.getJSONObject("TokenizationResult");
-						if (tokenResult.has("tokenType")) {
-							map.put("TokenId",
-									tokenResult.getJSONObject("tokenType")
-											.getString("tokenId"));
-							map.put("TokenValue",
-									tokenResult.getJSONObject("tokenType")
-											.getString("tokenValue"));
-						}
-					}
-					if (responseData.has("TransactionStatus"))
-						map.put("TransactionStatus",
-								responseData.getString("TransactionStatus"));
-					if (responseData.has("AddressVerificationResult")) {
-						JSONObject addressResult = responseData
-								.getJSONObject("AddressVerificationResult");
-						map.put("AddressVerificationCode",
-								addressResult.getString("Code"));
-						map.put("AddressVerificationType",
-								addressResult.getString("Type"));
-					}
-					if (responseData.has("PaymentServiceResults")) {
-						JSONObject paymentResults = responseData
-								.getJSONObject("PaymentServiceResults");
-						Iterator ii = paymentResults.keys();
-						if (ii.hasNext()) {
-							String cardType = (String) ii.next();
-							if (cardType.equals("VisaResults")) {
-								JSONObject cardResult = paymentResults
-										.getJSONObject(cardType);
-								map.put("TransactionId",
-										cardResult.getString("TransactionId"));
-								map.put("ValidationCode",
-										cardResult.getString("ValidationCode"));
+				if (responseType.equals("error")) {
+					System.out.println("ERROR: " + json_object);
+					logger.error("Error: " + json_object);
+					map.put("Error", "" + json_object);
+				} else {
+					JSONObject responseData = (JSONObject) json_object
+							.get(responseType);
+
+					map.put("ResponseType", responseType);
+					// If there is a fault, put it in the decline message/code
+					// field
+					if (responseType.equalsIgnoreCase("fault")) {
+						map.put("DeclineMessage",
+								responseData.getString("faultstring"));
+						map.put("DeclineCode",
+								responseData.getJSONObject("detail").getString(
+										"errorcode"));
+
+					} else {
+						if (responseData.has("ReferenceNumber"))
+							map.put("ReferenceNumber",
+									responseData.getString("ReferenceNumber"));
+						if (responseData.has("AuthorizationCode"))
+							map.put("AuthorizationCode",
+									responseData.getString("AuthorizationCode"));
+						if (responseData.has("TokenizationResult")) {
+							JSONObject tokenResult = responseData
+									.getJSONObject("TokenizationResult");
+							if (tokenResult.has("tokenType")) {
+								map.put("TokenId",
+										tokenResult.getJSONObject("tokenType")
+												.getString("tokenId"));
+								map.put("TokenValue",
+										tokenResult.getJSONObject("tokenType")
+												.getString("tokenValue"));
 							}
 						}
+						if (responseData.has("_system-trace-id")) {
+							map.put("SystemTraceId",
+									responseData.getString("_system-trace-id"));
+
+						} else if (responseData.has("@system-trace-id")) {
+							map.put("SystemTraceId",
+									responseData.getString("@system-trace-id"));
+							// System.out.println("HERE2");
+						}
+						if (responseData.has("TransactionStatus"))
+							map.put("TransactionStatus",
+									responseData.getString("TransactionStatus"));
+						if (responseData.has("AddressVerificationResult")) {
+							JSONObject addressResult = responseData
+									.getJSONObject("AddressVerificationResult");
+							map.put("AddressVerificationCode",
+									addressResult.getString("Code"));
+							map.put("AddressVerificationType",
+									addressResult.getString("Type"));
+						}
+						if (responseData.has("PaymentServiceResults")) {
+							JSONObject paymentResults = responseData
+									.getJSONObject("PaymentServiceResults");
+							Iterator ii = paymentResults.keys();
+							if (ii.hasNext()) {
+								String cardType = (String) ii.next();
+								if (cardType.equals("VisaResults")) {
+									JSONObject cardResult = paymentResults
+											.getJSONObject(cardType);
+									map.put("TransactionId", cardResult
+											.getString("TransactionId"));
+									map.put("ValidationCode", cardResult
+											.getString("ValidationCode"));
+								}
+							}
+
+						}
+						if (responseData.has("DeclineCode"))
+							map.put("DeclineCode",
+									responseData.getString("DeclineCode"));
+						if (responseData.has("DeclineMessage"))
+							map.put("DeclineMessage",
+									responseData.getString("DeclineMessage"));
 
 					}
-					if (responseData.has("DeclineCode"))
-						map.put("DeclineCode",
-								responseData.getString("DeclineCode"));
-					if (responseData.has("DeclineMessage"))
-						map.put("DeclineMessage",
-								responseData.getString("DeclineMessage"));
-
 				}
 			}
 		} catch (Exception e) {
@@ -428,46 +604,60 @@ public class RestDriver {
 
 	/**
 	 * Create a transaction response object from a Json string that was returned
-	 * via apigee.
+	 * via apigee. This is used when we send a request through apigee instead of
+	 * PWS direct.
 	 */
 	public TransactionResponseType createResponseFromApigee(
 			TransactionResponseType response, String json_string) {
 		HashMap<String, String> map = parseJsonResponse(stringToJsonObject(json_string));
-		if (map.containsKey("AuthorizationCode"))
-			response.setAuthorizationCode(map.get("AuthorizationCode"));
-		if (map.containsKey("ReferenceNumber"))
-			response.setReferenceNumber(map.get("ReferenceNumber"));
-		if (map.containsKey("TokenId") && map.containsKey("TokenValue")) {
-			TokenType tokenType = new TokenType();
+		if (map.containsKey("Error")) {
+			System.out.println("ERROR: " + map.get("Error"));
+			// System.out.println("Terminating program...");
+			logger.error("ERROR: " + map.get("Error"));
+			// logger.error("Terminating program...");
+			// System.exit(1);
+		} else {
+			if (map.containsKey("AuthorizationCode"))
+				response.setAuthorizationCode(map.get("AuthorizationCode"));
+			if (map.containsKey("ReferenceNumber"))
+				response.setReferenceNumber(map.get("ReferenceNumber"));
+			if (map.containsKey("SystemTraceId"))
+				response.setSystemTraceId(Long.parseLong(map
+						.get("SystemTraceId")));
+			if (map.containsKey("TokenId") && map.containsKey("TokenValue")) {
+				TokenType tokenType = new TokenType();
 
-			tokenType.setTokenId(map.get("TokenId"));
-			tokenType.setTokenValue(map.get("TokenValue"));
-			TokenizationResultType trt = new TokenizationResultType();
+				tokenType.setTokenId(map.get("TokenId"));
+				tokenType.setTokenValue(map.get("TokenValue"));
+				TokenizationResultType trt = new TokenizationResultType();
 
-			trt.setTokenType(tokenType);
-			response.setTokenizationResult(trt);
+				trt.setTokenType(tokenType);
+				response.setTokenizationResult(trt);
+			}
+
+			if (map.containsKey("TransactionStatus")) {
+				String t = map.get("TransactionStatus");
+
+				// apigee refunds are called "returns", so have to convert it to
+				// "refunded"
+				if (t.equalsIgnoreCase("returned"))
+					t = "refunded";
+				else if (t.equalsIgnoreCase("partially_reversed"))
+					t = "partially_canceled";
+				else if (t.equalsIgnoreCase("reversed"))
+					t = "canceled";
+
+				response.setTransactionStatus(TransactionStatusType
+						.fromValue(t));
+
+			}
+			if (map.containsKey("DeclineCode"))
+				response.setDeclineCode(map.get("DeclineCode"));
+			if (map.containsKey("DeclineMessage"))
+				response.setDeclineMessage(map.get("DeclineMessage"));
+
+
 		}
-
-		if (map.containsKey("TransactionStatus")) {
-			String t = map.get("TransactionStatus");
-
-			// apigee refunds are called "returns", so have to convert it to
-			// "refunded"
-			if (t.equalsIgnoreCase("returned"))
-				t = "refunded";
-			else if (t.equalsIgnoreCase("partially_reversed"))
-				t = "partially_canceled";
-			else if (t.equalsIgnoreCase("reversed"))
-				t = "canceled";
-
-			response.setTransactionStatus(TransactionStatusType.fromValue(t));
-
-		}
-		if (map.containsKey("DeclineCode"))
-			response.setDeclineCode(map.get("DeclineCode"));
-		if (map.containsKey("DeclineMessage"))
-			response.setDeclineMessage(map.get("DeclineMessage"));
-
 		return response;
 	}
 
@@ -482,6 +672,9 @@ public class RestDriver {
 
 		String responseType = null;
 		String requestId = null;
+		String referenceNumber = null;
+		String julianDay = null;
+		String batchNumber = null;
 
 		JSONObject jsonRoot = null;
 		try {
@@ -500,19 +693,40 @@ public class RestDriver {
 
 				JSONObject jsonResponse = (JSONObject) jsonRoot
 						.get(responseType);
+				// System.out.println(jsonResponse);
+				if (jsonResponse.has("RequestId"))
+					requestId = jsonResponse.getString("RequestId");
 
-				requestId = jsonResponse.getString("RequestId");
+				if (jsonResponse.has("ReferenceNumber"))
+					referenceNumber = jsonResponse.getString("ReferenceNumber");
+				if (jsonResponse.has("JulianDay")) {
+					int jday = Integer.parseInt(jsonResponse
+							.getString("JulianDay"));
+					julianDay = String.format("%03d", jday);
+				}
+				if (jsonResponse.has("BatchNumber")) {
+					int batchNum = Integer.parseInt(jsonResponse
+							.getString("BatchNumber"));
+					batchNumber = String.format("%03d", batchNum);
+				}
 
-				logger.info("TestName: " + globals.getTestName()
-						+ " RequestId: " + requestId);
-				scriptString += globals.getTestName() + " , " + requestId
-						+ "\n";
+				logger.info("TestName: " + globals.getTestName());
+
+				scriptString += globals.getTestName() + " , " + julianDay
+						+ batchNumber + ", " + referenceNumber + "\n";
+				
+				// scriptString += globals.getTestName() + ", " + requestId
+				// + "\n";
+
+				// scriptString += globals.getTestName() + ", " + requestId
+				// + "\n";
 
 			}
 		} catch (Exception e) {
 			logger.error("JSON ERROR: " + e.getMessage());
 		}
-
+		// System.out.println(jsonRoot);
+		// System.out.println(requestId);
 
 	}
 

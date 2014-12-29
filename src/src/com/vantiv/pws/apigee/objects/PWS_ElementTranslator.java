@@ -7,6 +7,15 @@ Information in this sample code is subject to change without notice and does not
  **/
 package com.vantiv.pws.apigee.objects;
 
+import com.vantiv.pws.apigee.objects.Enums.CancelTypeEnum;
+import com.vantiv.pws.apigee.objects.Enums.CardInputCodeType;
+import com.vantiv.pws.apigee.objects.Enums.CreditCardNetworkType;
+import com.vantiv.pws.apigee.objects.Enums.DeviceTypeCode;
+import com.vantiv.pws.apigee.objects.Enums.MarketCodeType;
+import com.vantiv.pws.apigee.objects.Enums.PaymentTypeEnum;
+import com.vantiv.pws.apigee.objects.Enums.PinEntryType;
+import com.vantiv.pws.apigee.objects.Enums.ReversalReasonType;
+import com.vantiv.pws.apigee.objects.Enums.TerminalEnvironmentType;
 import com.vantiv.types.common.v6.AddressType;
 import com.vantiv.types.payment.instruments.v6.CreditInstrumentType;
 import com.vantiv.types.payment.systems.v6.PaymentDeviceType;
@@ -31,7 +40,7 @@ import com.vantiv.types.payment.transactions.v6.TransactionRequestType;
 public class PWS_ElementTranslator {
 
 	private Credentials credentials;
-	private Application application;
+
 	private Merchant merchant;
 	private Terminal terminal;
 	private Transaction transaction;
@@ -40,7 +49,6 @@ public class PWS_ElementTranslator {
 
 	public PWS_ElementTranslator() {
 		credentials = new Credentials();
-		application = new Application();
 		merchant = new Merchant();
 		terminal = new Terminal();
 		transaction = new Transaction();
@@ -120,40 +128,39 @@ public class PWS_ElementTranslator {
 			else
 				requestTerminal = request.getMerchant().getMobile();
 
-			terminal.setTerminalID(Integer.toString(requestTerminal
-					.getTerminalID()));
-			terminal.setEntryMode(requestTerminal.getEntryMode().value());
+			terminal.setTerminalID("" + requestTerminal.getTerminalID());
+
 			terminal.setIPv4Address(requestTerminal.getIPv4Address());
 			terminal.setIPv6Address(requestTerminal.getIPv6Address());
-			terminal.setTerminalCapabilityCode(requestTerminal.getEntryMode()
-					.value());
+			terminal.setTerminalEnvironmentalCode(TerminalEnvironmentType
+					.valueOf(requestTerminal.getEntryMode().value()));
 
-			terminal.setPinEntry(requestTerminal.getPinEntry().value());
-			terminal.setBalanceInquiry(requestTerminal.isBalanceInquiry()
-					.toString());
-			terminal.setHostAdjustment(requestTerminal.isHostAdjustment()
-					.toString());
-			terminal.setDeviceType("Software");
+			terminal.setPinEntry(PinEntryType.valueOf(requestTerminal
+					.getPinEntry().value()));
+			terminal.setBalanceInquiry(requestTerminal.isBalanceInquiry());
+			terminal.setHostAdjustment(requestTerminal.isHostAdjustment());
+			terminal.setDeviceType(DeviceTypeCode.Software);
 			if (requestTerminal.getCardReader().value().equals("magstripe"))
-				terminal.setCardInputCode("MagstripeRead");
+				terminal.setCardInputCode(CardInputCodeType.MagstripeRead);
 			else
-				terminal.setCardInputCode("ManualKeyed");
+				terminal.setCardInputCode(CardInputCodeType.ManualKeyed);
 			// Transaction values
 			transaction.setTransactionID(requestTerminal.getSequenceNumber());
-			transaction.setPaymentType(request.getPaymentType().value());
+			transaction.setPaymentType(PaymentTypeEnum.fromValue(request
+					.getPaymentType().value()));
 			transaction.setReferenceNumber(request.getReferenceNumber());
 			transaction.setDraftLocatorId(request.getDraftLocatorId());
 			transaction.setClerkNumber(request.getMerchant().getClerkNumber()
 					.toString());
-			transaction.setMarketCode(request.getTransactionType().value());
+			transaction.setMarketCode(MarketCodeType.fromValue(request
+					.getTransactionType().value()));
 			transaction.setTransactionTimestamp(request
 					.getTransactionTimestamp().toString());
 			transaction.setSystemTraceId("" + request.getSystemTraceId());
-			transaction.setTokenRequested("" + request.isTokenRequested());
+			transaction.setTokenRequested(request.isTokenRequested());
 
 			if (request.isTokenRequested() != null)
-				transaction.setTokenRequested(request.isTokenRequested()
-						.toString());
+				transaction.setTokenRequested(request.isTokenRequested());
 
 			// *********************AUTHORIZE
 			// REQUEST***************************//
@@ -171,7 +178,8 @@ public class PWS_ElementTranslator {
 
 				// card - credit
 				CreditInstrumentType credit = authRequest.getCredit();
-				card.setCardType(credit.getCardType().value());
+				card.setCardType(CreditCardNetworkType.valueOf(credit
+						.getCardType().value()));
 				if (credit.getCardKeyed() != null) {
 					card.setCardNumber(credit.getCardKeyed()
 							.getPrimaryAccountNumber());
@@ -182,7 +190,7 @@ public class PWS_ElementTranslator {
 					card.setCVV(credit.getCardKeyed().getCardSecurityCode());
 					if (credit.getCardKeyed().getToken() != null) {
 						System.out.println("HEREERE");
-						card.setTokenID(credit.getCardKeyed().getToken()
+						card.setTokenId(credit.getCardKeyed().getToken()
 								.getTokenId());
 						card.setTokenValue(credit.getCardKeyed().getToken()
 								.getTokenValue());
@@ -216,8 +224,8 @@ public class PWS_ElementTranslator {
 				// ******************CANCEL REQUEST*************************//
 			} else if (cancelRequest != null) {
 				// Transaction values
-				transaction
-						.setCancelType(cancelRequest.getCancelType().value());
+				transaction.setCancelType(CancelTypeEnum
+						.fromValue(cancelRequest.getCancelType().value()));
 				transaction.setAuthorizationCode(cancelRequest
 						.getOriginalAuthCode());
 				transaction.setOriginalAuthCode(cancelRequest
@@ -232,8 +240,8 @@ public class PWS_ElementTranslator {
 						.getOriginalSequenceNumber());
 				transaction.setNetworkResponseCode(cancelRequest
 						.getNetworkResponseCode());
-				transaction.setReversalReason(cancelRequest.getReversalReason()
-						.value());
+				transaction.setReversalReason(ReversalReasonType
+						.fromValue(cancelRequest.getReversalReason().value()));
 				transaction.setReplacementAmount(cancelRequest
 						.getReplacementAmount().getValue().toString());
 				transaction.setOriginalReferenceNumber(cancelRequest
@@ -248,7 +256,8 @@ public class PWS_ElementTranslator {
 
 				// card - credit
 				CreditInstrumentType credit = cancelRequest.getCredit();
-				card.setCardType(credit.getCardType().value());
+				card.setCardType(CreditCardNetworkType.valueOf(credit
+						.getCardType().value()));
 
 				if (credit.getCardKeyed() != null) {
 					card.setCardNumber(credit.getCardKeyed()
@@ -260,7 +269,7 @@ public class PWS_ElementTranslator {
 					card.setCVV(credit.getCardKeyed().getCardSecurityCode());
 					if (credit.getCardKeyed().getToken() != null) {
 						System.out.println("HEREERE");
-						card.setTokenID(credit.getCardKeyed().getToken()
+						card.setTokenId(credit.getCardKeyed().getToken()
 								.getTokenId());
 						card.setTokenValue(credit.getCardKeyed().getToken()
 								.getTokenValue());
@@ -310,7 +319,8 @@ public class PWS_ElementTranslator {
 
 				// card - credit
 				CreditInstrumentType credit = captRequest.getCredit();
-				card.setCardType(credit.getCardType().value());
+				card.setCardType(CreditCardNetworkType.valueOf(credit
+						.getCardType().value()));
 
 				if (credit.getCardKeyed() != null) {
 					card.setCardNumber(credit.getCardKeyed()
@@ -322,7 +332,7 @@ public class PWS_ElementTranslator {
 					card.setCVV(credit.getCardKeyed().getCardSecurityCode());
 					if (credit.getCardKeyed().getToken() != null) {
 						System.out.println("HEREERE");
-						card.setTokenID(credit.getCardKeyed().getToken()
+						card.setTokenId(credit.getCardKeyed().getToken()
 								.getTokenId());
 						card.setTokenValue(credit.getCardKeyed().getToken()
 								.getTokenValue());
@@ -382,7 +392,8 @@ public class PWS_ElementTranslator {
 
 				// card - credit
 				CreditInstrumentType credit = purchRequest.getCredit();
-				card.setCardType(credit.getCardType().value());
+				card.setCardType(CreditCardNetworkType.valueOf(credit
+						.getCardType().value()));
 
 				if (credit.getCardKeyed() != null) {
 					card.setCardNumber(credit.getCardKeyed()
@@ -394,7 +405,7 @@ public class PWS_ElementTranslator {
 					card.setCVV(credit.getCardKeyed().getCardSecurityCode());
 					if (credit.getCardKeyed().getToken() != null) {
 						System.out.println("HEREERE");
-						card.setTokenID(credit.getCardKeyed().getToken()
+						card.setTokenId(credit.getCardKeyed().getToken()
 								.getTokenId());
 						card.setTokenValue(credit.getCardKeyed().getToken()
 								.getTokenValue());
@@ -438,7 +449,8 @@ public class PWS_ElementTranslator {
 
 				// card - credit
 				CreditInstrumentType credit = refundRequest.getCredit();
-				card.setCardType(credit.getCardType().value());
+				card.setCardType(CreditCardNetworkType.valueOf(credit
+						.getCardType().value()));
 
 				if (credit.getCardKeyed() != null) {
 					card.setCardNumber(credit.getCardKeyed()
@@ -450,7 +462,7 @@ public class PWS_ElementTranslator {
 					card.setCVV(credit.getCardKeyed().getCardSecurityCode());
 					if (credit.getCardKeyed().getToken() != null) {
 						System.out.println("HEREERE");
-						card.setTokenID(credit.getCardKeyed().getToken()
+						card.setTokenId(credit.getCardKeyed().getToken()
 								.getTokenId());
 						card.setTokenValue(credit.getCardKeyed().getToken()
 								.getTokenValue());
@@ -481,7 +493,7 @@ public class PWS_ElementTranslator {
 				// ******************TOKENIZE REQUEST***********************//
 			} else if (tokenRequest != null) {
 				// Transaction values
-				transaction.setTokenRequested("true");
+				transaction.setTokenRequested(true);
 				transaction.setTransactionAmount("0.00");
 				// Address
 				addr = tokenRequest.getCredit().getCardholderAddress();
@@ -493,7 +505,8 @@ public class PWS_ElementTranslator {
 
 				// card - credit
 				CreditInstrumentType credit = tokenRequest.getCredit();
-				card.setCardType(credit.getCardType().value());
+				card.setCardType(CreditCardNetworkType.valueOf(credit
+						.getCardType().value()));
 
 				if (credit.getCardKeyed() != null) {
 					card.setCardNumber(credit.getCardKeyed()
@@ -505,7 +518,7 @@ public class PWS_ElementTranslator {
 					card.setCVV(credit.getCardKeyed().getCardSecurityCode());
 					if (credit.getCardKeyed().getToken() != null) {
 						System.out.println("HEREERE");
-						card.setTokenID(credit.getCardKeyed().getToken()
+						card.setTokenId(credit.getCardKeyed().getToken()
 								.getTokenId());
 						card.setTokenValue(credit.getCardKeyed().getToken()
 								.getTokenValue());
@@ -547,9 +560,8 @@ public class PWS_ElementTranslator {
 			transaction.setTransactionTimestamp(batchRequest
 					.getTransactionTimestamp().toString());
 			transaction.setTransactionID(requestTerminal.getSequenceNumber());
-			terminal.setDeviceType("Software");
-			terminal.setTerminalID(Integer.toString(requestTerminal
-					.getTerminalID()));
+			terminal.setDeviceType(DeviceTypeCode.Software);
+			terminal.setTerminalID("" + requestTerminal.getTerminalID());
 			transaction.setClerkNumber(batchRequest.getMerchant()
 					.getClerkNumber().toString());
 		}

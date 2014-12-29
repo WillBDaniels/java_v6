@@ -34,8 +34,14 @@ public class TestRefund {
 		request.setReportGroup(globals.getReportGroup());
 		request.setSystemTraceId(globals.getSystemTraceId());
 		request.setBillPaymentPayee(globals.getBillPaymentPayeeType());
-		request.setCredit(globals.getCreditInstument());
-		// request.setGift(value);
+		// set credit/debit/gift
+		if (globals.isDebit())
+			request.setDebit(globals.getDebitInstument());
+		else if (globals.isGift())
+			request.setGift(globals.getGiftCard());
+		else
+			request.setCredit(globals.getCreditInstument());
+
 		// request.setIncrementalAuthorization(value);
 
 		request.setMerchant(globals.getMerchant());

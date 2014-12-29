@@ -52,12 +52,6 @@ public class InitializeClient {
 	public void setup() {
 		System.out.println("Setting up client...");
 
-		// Workaround for sslSocketFactory error
-		// Security.setProperty("ssl.SocketFactory.provider",
-		// "com.ibm.jsse2.SSLSocketFactoryImpl");
-		// Security.setProperty("ssl.ServerSocketFactory.provider",
-		// "com.ibm.jsse2.SSLServerSocketFactoryImpl");
-
 		// Create a URL from the file path of the wsdl
 		URL url = null;
 		try {
@@ -68,7 +62,6 @@ public class InitializeClient {
 
 		// create service
 		PaymentPortTypeService service = new PaymentPortTypeService(url);
-
 
 		// Handlers are used to set the security headers on the SOAP envelope.
 		PaymentsHandlerResolver handlerResolver = new PaymentsHandlerResolver(
@@ -84,6 +77,10 @@ public class InitializeClient {
 		provider.getRequestContext().put(
 				BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpoint);
 
+		/********************************************************
+		 * Comment out the following to disable logging of soap
+		 * requests/response
+		 *******************************************************/
 
 		File file = new File("logs/SoapLogs.txt");
 		PrintWriter pw = null;
@@ -99,13 +96,11 @@ public class InitializeClient {
 				pw);
 		loggingOutInterceptor.setPrettyLogging(true);
 
-
 		Client c = ClientProxy.getClient(client);
 		c.getInInterceptors().add(loggingInInterceptor);
 		c.getOutInterceptors().add(loggingOutInterceptor);
 
-
-	
+		/********************************************************/
 		System.out.println("Done");
 	}
 

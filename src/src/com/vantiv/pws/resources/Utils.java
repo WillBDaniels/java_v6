@@ -35,7 +35,7 @@ public class Utils {
 
 	public XMLGregorianCalendar stringToXMLGregorian(String s) {
 		XMLGregorianCalendar xmlGreg = null;
-		if (s.isEmpty()) {
+		if (s == null || s.isEmpty()) {
 			Date d = new Date();
 			GregorianCalendar c = new GregorianCalendar();
 			c.setTime(d);
@@ -54,7 +54,12 @@ public class Utils {
 			} catch (DatatypeConfigurationException e) {
 				e.printStackTrace();
 			}
-			xmlGreg = f.newXMLGregorianCalendar(s);
+			String year = s.split("-")[0];
+			String month = s.split("-")[1];
+			xmlGreg = f.newXMLGregorianCalendar();
+			xmlGreg.setYear(Integer.parseInt(year));
+			xmlGreg.setMonth(Integer.parseInt(month));
+
 		}
 		return xmlGreg;
 	}
@@ -113,12 +118,21 @@ public class Utils {
 		else if (pan.matches(discPat))
 			return "discover";
 		else if (pan.matches(dinersClubPat))
-			return "dinersClub";
-		else if (pan.isEmpty())
-			return "";
+			return "discover";
 		else
-			return null;
+			return "visa";
 
+	}
+
+	public String getMaskedPan(String panData) {
+		String masked = "XX";
+		if (panData.contains("=")) {
+			masked += panData.substring(panData.indexOf('=') - 4);
+		} else {
+			masked += panData.substring(panData.length() - 4);
+		}
+		System.out.println(masked);
+		return masked;
 	}
 
 	public boolean verifyCurrencyFormat(String amount) {

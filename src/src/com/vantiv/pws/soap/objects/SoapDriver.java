@@ -8,15 +8,19 @@ package com.vantiv.pws.soap.objects;
  Information in this sample code is subject to change without notice and does not represent a commitment on the part of Vantiv, Inc.  In addition to the foregoing, the Sample Code is subject to the terms and conditions set forth in the Vantiv Terms and Conditions of Use (http://www.apideveloper.vantiv.com) and the Vantiv Privacy Notice (http://www.vantiv.com/Privacy-Notice).  
  **/
 
-
+import com.google.gson.Gson;
 import com.vantiv.pws.resources.DataStore;
 import com.vantiv.services.merchant.payments.v6.PaymentPortType;
 import com.vantiv.services.merchant.payments.v6.RequestValidationFault;
 import com.vantiv.services.merchant.payments.v6.ServerFault;
+import com.vantiv.types.payment.transactions.v6.ActivateRequest;
+import com.vantiv.types.payment.transactions.v6.ActivateResponse;
 import com.vantiv.types.payment.transactions.v6.AdjustRequest;
 import com.vantiv.types.payment.transactions.v6.AdjustResponse;
 import com.vantiv.types.payment.transactions.v6.AuthorizeRequest;
 import com.vantiv.types.payment.transactions.v6.AuthorizeResponse;
+import com.vantiv.types.payment.transactions.v6.BalanceInquiryRequest;
+import com.vantiv.types.payment.transactions.v6.BalanceInquiryResponse;
 import com.vantiv.types.payment.transactions.v6.BatchBalanceRequest;
 import com.vantiv.types.payment.transactions.v6.BatchBalanceResponse;
 import com.vantiv.types.payment.transactions.v6.BatchResponseType;
@@ -26,19 +30,27 @@ import com.vantiv.types.payment.transactions.v6.CaptureRequest;
 import com.vantiv.types.payment.transactions.v6.CaptureResponse;
 import com.vantiv.types.payment.transactions.v6.CloseBatchRequest;
 import com.vantiv.types.payment.transactions.v6.CloseBatchResponse;
+import com.vantiv.types.payment.transactions.v6.CloseRequest;
+import com.vantiv.types.payment.transactions.v6.CloseResponse;
 import com.vantiv.types.payment.transactions.v6.PurchaseRequest;
 import com.vantiv.types.payment.transactions.v6.PurchaseResponse;
 import com.vantiv.types.payment.transactions.v6.RefundRequest;
 import com.vantiv.types.payment.transactions.v6.RefundResponse;
+import com.vantiv.types.payment.transactions.v6.ReloadRequest;
+import com.vantiv.types.payment.transactions.v6.ReloadResponse;
 import com.vantiv.types.payment.transactions.v6.TokenizeRequest;
 import com.vantiv.types.payment.transactions.v6.TokenizeResponse;
 import com.vantiv.types.payment.transactions.v6.TransactionResponseType;
+import com.vantiv.types.payment.transactions.v6.UnloadRequest;
+import com.vantiv.types.payment.transactions.v6.UnloadResponse;
 
 /**
- * This class is used to send/recieve SOAP requests/responses. It sends request
- * objects that were automatically built when Eclipse consumed the WSDL. The
- * values in the requests are retrieved from the DataStore class, which holds
- * all the values of all possible fields that are sent to PWS.
+ * This class is used to send/receive SOAP requests to PWS direct. To send an
+ * authorize, call this.startTransaction("Authorize"). It will send a SOAP
+ * request to PWS, the values for the Authorize request will be pulled from the
+ * DataStore class. The response comes back as a Response Object object from
+ * which you can pull the data from. The SOAP request and responses are logged
+ * by CXF interceptors which is setup in InitializeClient.java.
  */
 public class SoapDriver {
 
@@ -47,13 +59,14 @@ public class SoapDriver {
 	private TestPurchase testPurchase;
 	private PaymentPortType client;
 	private DataStore globals;
-
+	private Gson gson;
+	private String scriptString = "";
 
 	/**
 	 * Default constructor.
 	 */
 	public SoapDriver() {
-
+		gson = new Gson();
 		globals = new DataStore();
 		initClient = new InitializeClient();
 		initClient.setup();
@@ -68,6 +81,7 @@ public class SoapDriver {
 		globals = ds;
 		ic.setup();
 		client = ic.getTestClient();
+		gson = new Gson();
 
 	}
 
@@ -96,6 +110,16 @@ public class SoapDriver {
 			response = refund();
 		} else if (requestType.equals("Tokenize")) {
 			response = tokenize();
+		} else if (requestType.equals("Activate")) {
+			response = activate();
+		} else if (requestType.equals("BalanceInquiry")) {
+			response = balanceInquiry();
+		} else if (requestType.equals("Reload")) {
+			response = reload();
+		} else if (requestType.equals("Unload")) {
+			response = unload();
+		} else if (requestType.equals("Close")) {
+			response = close();
 		}
 
 		return response;
@@ -119,6 +143,8 @@ public class SoapDriver {
 		PurchaseResponse response = null;
 		testPurchase = new TestPurchase(globals);
 		purchase_soap = testPurchase.createPurchaseRequest();
+
+		String json_string = null;
 
 		try {
 			response = client.purchase(purchase_soap);
@@ -248,8 +274,7 @@ public class SoapDriver {
 		AdjustResponse response = null;
 
 		try {
-			// com.sun.xml.internal.ws.transport.http.client.HttpTransportPipe.dump
-			// = true;
+
 			response = client.adjust(adjust);
 		} catch (ServerFault e) {
 			System.out.println("ServerFault: " + e.getFaultInfo().getMessage());
@@ -260,6 +285,23 @@ public class SoapDriver {
 			System.out.println("Transaction error: " + e.getMessage());
 		}
 
+		return response;
+	}
+
+	public ActivateResponse activate() {
+		TestActivate testActivate = new TestActivate(globals);
+		ActivateRequest activate = testActivate.createActivateRequest();
+		ActivateResponse response = null;
+		try {
+			response = client.activate(activate);
+		} catch (ServerFault e) {
+			System.out.println("ServerFault: " + e.getFaultInfo().getMessage());
+		} catch (RequestValidationFault e) {
+			System.out.println("ValidationFault: "
+					+ e.getFaultInfo().getMessage());
+		} catch (Exception e) {
+			System.out.println("Transaction error: " + e.getMessage());
+		}
 		return response;
 	}
 
@@ -335,6 +377,94 @@ public class SoapDriver {
 
 	}
 
+	public BalanceInquiryResponse balanceInquiry() {
+		TestBalanceInquiry tbi = new TestBalanceInquiry(globals);
+		BalanceInquiryRequest request = tbi.createBalanceInquiry();
+		BalanceInquiryResponse response = null;
+
+		try {
+			// com.sun.xml.internal.ws.transport.http.client.HttpTransportPipe.dump
+			// = true;
+			response = client.balanceInquiry(request);
+		} catch (ServerFault e) {
+			System.out.println("ServerFault: " + e.getFaultInfo().getMessage());
+		} catch (RequestValidationFault e) {
+			System.out.println("ValidationFault: "
+					+ e.getFaultInfo().getMessage());
+		} catch (Exception e) {
+			System.out.println("Transaction error: " + e.getMessage());
+		}
+		return response;
+	}
+
+	public ReloadResponse reload() {
+		TestReload tl = new TestReload(globals);
+		ReloadRequest request = tl.createReloadRequest();
+		ReloadResponse response = null;
+
+		try {
+			// com.sun.xml.internal.ws.transport.http.client.HttpTransportPipe.dump
+			// = true;
+			response = client.reload(request);
+		} catch (ServerFault e) {
+			System.out.println("ServerFault: " + e.getFaultInfo().getMessage());
+		} catch (RequestValidationFault e) {
+			System.out.println("ValidationFault: "
+					+ e.getFaultInfo().getMessage());
+		} catch (Exception e) {
+			System.out.println("Transaction error: " + e.getMessage());
+		}
+		return response;
+	}
+
+	public UnloadResponse unload() {
+		TestUnload tu = new TestUnload(globals);
+		UnloadRequest request = tu.createReloadRequest();
+		UnloadResponse response = null;
+
+		try {
+			// com.sun.xml.internal.ws.transport.http.client.HttpTransportPipe.dump
+			// = true;
+			response = client.unload(request);
+		} catch (ServerFault e) {
+			System.out.println("ServerFault: " + e.getFaultInfo().getMessage());
+		} catch (RequestValidationFault e) {
+			System.out.println("ValidationFault: "
+					+ e.getFaultInfo().getMessage());
+		} catch (Exception e) {
+			System.out.println("Transaction error: " + e.getMessage());
+		}
+		return response;
+	}
+
+	public CloseResponse close() {
+		TestClose tc = new TestClose(globals);
+		CloseRequest request = tc.createCloseRequest();
+		CloseResponse response = null;
+
+		try {
+			// com.sun.xml.internal.ws.transport.http.client.HttpTransportPipe.dump
+			// = true;
+			response = client.close(request);
+		} catch (ServerFault e) {
+			System.out.println("ServerFault: " + e.getFaultInfo().getMessage());
+		} catch (RequestValidationFault e) {
+			System.out.println("ValidationFault: "
+					+ e.getFaultInfo().getMessage());
+		} catch (Exception e) {
+			System.out.println("Transaction error: " + e.getMessage());
+		}
+		return response;
+	}
+
+	// getters and setters
+	public String getScriptString() {
+		return scriptString;
+	}
+
+	public void setScriptString(String scriptString) {
+		this.scriptString = scriptString;
+	}
 
 	/**
 	 * For testing...

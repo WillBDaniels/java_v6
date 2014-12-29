@@ -7,17 +7,28 @@ Information in this sample code is subject to change without notice and does not
  **/
 package com.vantiv.pws.apigee.objects;
 
+import com.vantiv.pws.apigee.objects.Enums.CancelTypeEnum;
+import com.vantiv.pws.apigee.objects.Enums.MarketCodeType;
+import com.vantiv.pws.apigee.objects.Enums.PartialApprovalType;
+import com.vantiv.pws.apigee.objects.Enums.PaymentTypeEnum;
+import com.vantiv.pws.apigee.objects.Enums.ReversalReasonType;
 
 public class Transaction {
+	/**
+	 * Documentation for Transaction:
+	 * http://dev-vantiv.devportal.apigee.com/docs
+	 * /payment-web-services/api-element-dictionary/rest-transaction-definition
+	 */
 	// Required
 	private String TransactionID;
 	private String TransactionAmount;
-	private String MarketCode;
+	private MarketCodeType MarketCode;
 	private String TransactionTimestamp;
 	private String ClerkNumber;
+	private PaymentTypeEnum PaymentType;
+
 	// Optional-Conditional
-	private String CancelType;
-	private String PaymentType;
+	private CancelTypeEnum CancelType;
 	private String ReferenceNumber;
 	private String DraftLocatorId;
 	private String AuthorizationCode;
@@ -29,16 +40,17 @@ public class Transaction {
 	private String OriginalSequenceNumber;
 	private String OriginalAuthCode;
 	private String NetworkResponseCode;
-	private String ReversalReason;
+	private ReversalReasonType ReversalReason;
 	private String ReplacementAmount;
 	private String OriginalReferenceNumber;
 	private String TipAmount;
 	private String ConvenienceFee;
-	private String TaxExempt;
-	private String Taxable;
+	private boolean TaxExempt;
+	private boolean Taxable;
 	private String TaxAmount;
 	private String PurchaseOrder;
-	private String TokenRequested;
+	private boolean TokenRequested;
+	private PartialApprovalType PartialApprovalCode;
 	private String SystemTraceID;
 
 	public String getSystemTraceId() {
@@ -69,11 +81,11 @@ public class Transaction {
 		TransactionAmount = transactionAmount;
 	}
 
-	public String getMarketCode() {
+	public MarketCodeType getMarketCode() {
 		return MarketCode;
 	}
 
-	public void setMarketCode(String marketCode) {
+	public void setMarketCode(MarketCodeType marketCode) {
 		MarketCode = marketCode;
 	}
 
@@ -93,19 +105,19 @@ public class Transaction {
 		ClerkNumber = clerkNumber;
 	}
 
-	public String getCancelType() {
+	public CancelTypeEnum getCancelType() {
 		return CancelType;
 	}
 
-	public void setCancelType(String cancelType) {
+	public void setCancelType(CancelTypeEnum cancelType) {
 		CancelType = cancelType;
 	}
 
-	public String getPaymentType() {
+	public PaymentTypeEnum getPaymentType() {
 		return PaymentType;
 	}
 
-	public void setPaymentType(String paymentType) {
+	public void setPaymentType(PaymentTypeEnum paymentType) {
 		PaymentType = paymentType;
 	}
 
@@ -198,11 +210,11 @@ public class Transaction {
 		NetworkResponseCode = networkResponseCode;
 	}
 
-	public String getReversalReason() {
+	public ReversalReasonType getReversalReason() {
 		return ReversalReason;
 	}
 
-	public void setReversalReason(String reversalReason) {
+	public void setReversalReason(ReversalReasonType reversalReason) {
 		ReversalReason = reversalReason;
 	}
 
@@ -238,19 +250,19 @@ public class Transaction {
 		ConvenienceFee = convenienceFee;
 	}
 
-	public String getTaxExempt() {
+	public boolean getTaxExempt() {
 		return TaxExempt;
 	}
 
-	public void setTaxExempt(String taxExempt) {
+	public void setTaxExempt(boolean taxExempt) {
 		TaxExempt = taxExempt;
 	}
 
-	public String getTaxable() {
+	public boolean getTaxable() {
 		return Taxable;
 	}
 
-	public void setTaxable(String taxable) {
+	public void setTaxable(boolean taxable) {
 		Taxable = taxable;
 	}
 
@@ -270,12 +282,28 @@ public class Transaction {
 		PurchaseOrder = purchaseOrder;
 	}
 
-	public String getTokenRequested() {
+	public boolean getTokenRequested() {
 		return TokenRequested;
 	}
 
-	public void setTokenRequested(String tokenRequested) {
+	public void setTokenRequested(boolean tokenRequested) {
 		TokenRequested = tokenRequested;
+	}
+
+	public PartialApprovalType getPartialApprovalCode() {
+		return PartialApprovalCode;
+	}
+
+	public void setPartialApprovalCode(PartialApprovalType partialApprovalCode) {
+		PartialApprovalCode = partialApprovalCode;
+	}
+
+	public String getSystemTraceID() {
+		return SystemTraceID;
+	}
+
+	public void setSystemTraceID(String systemTraceID) {
+		SystemTraceID = systemTraceID;
 	}
 
 }

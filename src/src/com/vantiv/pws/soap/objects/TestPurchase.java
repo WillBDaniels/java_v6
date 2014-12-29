@@ -34,20 +34,30 @@ public class TestPurchase {
 		request.setReferenceNumber(globals.getReferenceNumber());
 		request.setReportGroup(globals.getReportGroup());
 		request.setSystemTraceId(globals.getSystemTraceId());
-		request.setTokenRequested(globals.isTokenRequested());
+
 		request.setBillPaymentPayee(globals.getBillPaymentPayeeType());
+		// for force approvals
+		if (globals.getForceApprovalCode() != null)
+			request.setAuthorizationCode(globals.getForceApprovalCode());
+		
+		//set credit/debit/gift
+		if (globals.isDebit())
+			request.setDebit(globals.getDebitInstument());
+		else if (globals.isGift())
+			request.setGift(globals.getGiftCard());
+		else {
+			request.setCredit(globals.getCreditInstument());
+			request.setTokenRequested(globals.isTokenRequested());
+		}
 
-		request.setCredit(globals.getCreditInstument());
 
-
-		// auth.setGift(value);
 		// auth.setIncrementalAuthorization(value);
 		request.setMerchant(globals.getMerchant());
 		request.setPaymentType(PaymentType.fromValue(globals.getPaymentType()));
-		if (globals.isPurchaseLevel())
+		if (globals.isTaxable())
 			request.setTax(globals.getTax());
 
-
+		request.setCashBackAmount(globals.getCashBackAmountType());
 		request.setTransactionAmount(globals.getTransactionAmountType());
 		request.setTransactionTimestamp(util.stringToXMLGregorian(globals
 				.getTransactionTimestamp()));

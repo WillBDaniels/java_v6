@@ -44,14 +44,24 @@ public class TestCancel {
 		request.setReportGroup(globals.getReportGroup());
 		request.setSystemTraceId(globals.getSystemTraceId());
 		request.setBillPaymentPayee(globals.getBillPaymentPayeeType());
-		request.setCredit(globals.getCreditInstument());
+		globals.setCardKeyed(true);
+		globals.setCardSwiped(false);
+		// set credit/debit/gift
+		if (globals.isDebit())
+			request.setDebit(globals.getDebitInstument());
+		else if (globals.isGift())
+			request.setGift(globals.getGiftCard());
+		else {
+			request.setCredit(globals.getCreditInstument());
+			request.setTokenRequested(globals.isTokenRequested());
+		}
 		request.setTokenRequested(globals.isTokenRequested());
-		// request.setGift(value);
+
 		// request.setIncrementalAuthorization(value);
 
 		request.setMerchant(globals.getMerchant());
 		request.setPaymentType(PaymentType.fromValue(globals.getPaymentType()));
-		// request.setTokenRequested(value);
+
 		request.setTransactionTimestamp(util.stringToXMLGregorian(globals
 				.getTransactionTimestamp()));
 		request.setTransactionType(TransactionTypeType.fromValue(globals

@@ -12,7 +12,7 @@ import com.vantiv.types.payment.transactions.v6.TransactionResponseType;
 
 /*
  * This class takes a transaction response object from a SOAP response
- * and parses out any useful information from it to display to the user.
+ * and parses out any useful information from it to display to the user in a string.
  */
 public class TransactionResponseParse {
 

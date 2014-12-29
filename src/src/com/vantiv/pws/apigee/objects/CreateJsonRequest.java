@@ -9,6 +9,17 @@ package com.vantiv.pws.apigee.objects;
 
 import org.joda.time.DateTime;
 
+import com.vantiv.pws.apigee.objects.Enums.AccountTypeEnum;
+import com.vantiv.pws.apigee.objects.Enums.CancelTypeEnum;
+import com.vantiv.pws.apigee.objects.Enums.CardInputCodeType;
+import com.vantiv.pws.apigee.objects.Enums.CreditCardNetworkType;
+import com.vantiv.pws.apigee.objects.Enums.DeviceTypeCode;
+import com.vantiv.pws.apigee.objects.Enums.EncryptionType;
+import com.vantiv.pws.apigee.objects.Enums.MarketCodeType;
+import com.vantiv.pws.apigee.objects.Enums.PaymentTypeEnum;
+import com.vantiv.pws.apigee.objects.Enums.PinEntryType;
+import com.vantiv.pws.apigee.objects.Enums.ReversalReasonType;
+import com.vantiv.pws.apigee.objects.Enums.TerminalEnvironmentType;
 import com.vantiv.pws.resources.DataStore;
 import com.vantiv.pws.resources.Utils;
 import com.vantiv.types.common.v6.ISO3166CountryCodeType;
@@ -23,7 +34,6 @@ import com.vantiv.types.common.v6.ISO3166CountryCodeType;
 public class CreateJsonRequest {
 	private DataStore globals;
 	private Utils utils = new Utils();
-
 
 	public CreateJsonRequest(DataStore ds) {
 		globals = ds;
@@ -51,68 +61,100 @@ public class CreateJsonRequest {
 		merchant.setMerchantId(globals.getMerchantId());
 
 		// Terminal
-		terminal.setTerminalID("" + globals.getTerminalID());
-		terminal.setEntryMode(globals.getEntryMode());
-		terminal.setIPv4Address(globals.getiPv4Address());
-		terminal.setTerminalCapabilityCode(globals.getEntryMode());
+		terminal.setTerminalID("" + "" + globals.getTerminalID());
 
-		terminal.setPinEntry(globals.getPinEntry());
-		terminal.setBalanceInquiry("" + globals.isBalanceEnquiry());
-		terminal.setHostAdjustment("" + globals.isHostAdjustment());
+		terminal.setIPv4Address(globals.getiPv4Address());
+		terminal.setTerminalEnvironmentalCode(TerminalEnvironmentType
+				.valueOf(globals.getClassification()));
+
+		terminal.setPinEntry(PinEntryType.valueOf(globals.getPinEntry()));
+		terminal.setBalanceInquiry(globals.isBalanceEnquiry());
+		terminal.setHostAdjustment(globals.isHostAdjustment());
 
 		// Set Device Type
-		String transactionType = globals.getTransactionType();
-		if (transactionType.equalsIgnoreCase("present"))
-			terminal.setDeviceType("Terminal");
-		else if (transactionType.equalsIgnoreCase("ecommerce"))
-			terminal.setDeviceType("Software");
-		else if (transactionType.equalsIgnoreCase("moto"))
-			terminal.setDeviceType("Mobile");
+
+		String deviceType = globals.getCaptureDevice();
+		terminal.setDeviceType(DeviceTypeCode.fromValue(deviceType));
+
 
 		// Card input code
 		if (globals.getCardReader().equals("magstripe"))
-			terminal.setCardInputCode("MagstripeRead");
+			terminal.setCardInputCode(CardInputCodeType.MagstripeRead);
 		else
-			terminal.setCardInputCode("ManualKeyed");
+			terminal.setCardInputCode(CardInputCodeType.ManualKeyed);
 
 		// Transaction values
 		transaction.setTransactionID(globals.getSequenceNumber());
-		transaction.setPaymentType(globals.getPaymentType());
+		transaction.setPaymentType(PaymentTypeEnum.fromValue(globals
+				.getPaymentType()));
 		transaction.setReferenceNumber(globals.getReferenceNumber());
 		transaction.setDraftLocatorId(globals.getDraftLocatorId());
 		transaction.setClerkNumber("" + globals.getMerchant().getClerkNumber());
-		transaction.setMarketCode(globals.getTransactionType());
+		transaction.setMarketCode(MarketCodeType.fromValue(globals
+				.getTransactionType()));
 		transaction.setTransactionTimestamp(timestamp);
 		transaction.setSystemTraceId("" + globals.getSystemTraceId());
-		transaction.setTokenRequested("" + globals.isTokenRequested());
+		transaction.setTokenRequested(globals.isTokenRequested());
 
 		transaction.setTransactionAmount(globals.getTransactionAmount());
+		// tax values
+		if (globals.isPurchaseLevel()) {
+			if (globals.getTaxAmount() != null) {
+				transaction.setTaxAmount(globals.getTaxAmount());
+			} else if (!globals.isTaxable()) {
+				transaction.setTaxable(false);
+			} else if (globals.isTaxExempt()) {
+				transaction.setTaxExempt(true);
+			}
+		}
 
 		// Address
-		address.setBillingAddress1(globals.getAddressline());
-		address.setCity(globals.getCity());
-		address.setState(globals.getState());
-		address.setBillingZipcode(globals.getPostalCode());
-		address.setCountryCode(ISO3166CountryCodeType.fromValue(globals
-				.getCountryCode()));
+		if (globals.getPostalCode() != null) {
+			address.setBillingZipcode(globals.getPostalCode());
+			address.setCity(globals.getCity());
+			address.setState(globals.getState());
+			address.setCountryCode(ISO3166CountryCodeType.fromValue(globals
+					.getCountryCode()));
+		} else
+			address = null;
 
 		// card - credit
-		card.setCardType(globals.getCardType());
+		card.setCardType(CreditCardNetworkType.valueOf(globals.getCardType()));
+		card.setPartialApprovalCode(globals.getPartialIndicator());
 		if (globals.isCardKeyed()) {
 			card.setCardNumber(globals.getPrimaryAcountNumber());
-			String[] expirationDate = globals.getExpirationDate().split("-");
-			card.setExpirationMonth(expirationDate[1]);
-			card.setExpirationYear(expirationDate[0]);
-			card.setCVV(globals.getCardSecurityCode());
+
+			if (globals.getExpirationDate().contains("-")) {
+				String[] expirationDate = globals.getExpirationDate()
+						.split("-");
+				card.setExpirationMonth(expirationDate[1]);
+				card.setExpirationYear(expirationDate[0]);
+			} else {
+				card.setExpirationMonth("");
+				card.setExpirationYear("");
+			}
+
+			if (globals.isCredit())
+				card.setCVV(globals.getCardSecurityCode());
+			else {
+				card.setGiftCardSecurityCode(globals.getGiftCardSecurityCode());
+				card.setKeySerialNumber(globals.getGiftCardPin());
+			}
+
+
 			if (globals.isCardToken()) {
-				card.setTokenID(globals.getTokenId());
+				card.setTokenId(globals.getTokenId());
 				card.setTokenValue(globals.getTokenValue());
 			}
 		} else if (globals.isCardSwiped()) {
-			if (globals.getTrack1Data() != null) {
+			if (globals.getEntryMode().equalsIgnoreCase("track1")) {
 				card.setTrack1Data(globals.getTrack1Data());
-			} else if (globals.getTrack2Data() != null) {
+			} else if (globals.getEntryMode().equalsIgnoreCase("track2")) {
 				card.setTrack2Data(globals.getTrack2Data());
+			}
+			if (globals.isCardToken()) {
+				card.setTokenId(globals.getTokenId());
+				card.setTokenValue(globals.getTokenValue());
 			}
 		}
 
@@ -144,28 +186,26 @@ public class CreateJsonRequest {
 
 		// Terminal
 		terminal.setTerminalID("" + globals.getTerminalID());
-		terminal.setEntryMode(globals.getEntryMode());
-		terminal.setIPv4Address(globals.getiPv4Address());
-		terminal.setTerminalCapabilityCode(globals.getEntryMode());
 
-		terminal.setPinEntry(globals.getPinEntry());
-		terminal.setBalanceInquiry("" + globals.isBalanceEnquiry());
-		terminal.setHostAdjustment("" + globals.isHostAdjustment());
+		terminal.setIPv4Address(globals.getiPv4Address());
+		terminal.setTerminalEnvironmentalCode(TerminalEnvironmentType
+				.valueOf(globals.getClassification()));
+
+		terminal.setPinEntry(PinEntryType.valueOf(globals.getPinEntry()));
+		terminal.setBalanceInquiry(globals.isBalanceEnquiry());
+		terminal.setHostAdjustment(globals.isHostAdjustment());
 
 		// Set Device Type
-		String transactionType = globals.getTransactionType();
-		if (transactionType.equalsIgnoreCase("present"))
-			terminal.setDeviceType("Terminal");
-		else if (transactionType.equalsIgnoreCase("ecommerce"))
-			terminal.setDeviceType("Software");
-		else if (transactionType.equalsIgnoreCase("moto"))
-			terminal.setDeviceType("Mobile");
+
+		String deviceType = globals.getCaptureDevice();
+		terminal.setDeviceType(DeviceTypeCode.fromValue(deviceType));
+
 
 		// Card input code
 		if (globals.getCardReader().equals("magstripe"))
-			terminal.setCardInputCode("MagstripeRead");
+			terminal.setCardInputCode(CardInputCodeType.MagstripeRead);
 		else
-			terminal.setCardInputCode("ManualKeyed");
+			terminal.setCardInputCode(CardInputCodeType.ManualKeyed);
 
 		// Transaction values
 		transaction.setAuthorizationCode(globals.getAuthorizationCode());
@@ -173,43 +213,68 @@ public class CreateJsonRequest {
 		transaction.setCaptureAmount(globals.getSettlementAmount());
 		transaction.setOriginalReferenceNumber(globals.getOriginalRefNum());
 		transaction.setTransactionID(globals.getSequenceNumber());
-		transaction.setPaymentType(globals.getPaymentType());
+		transaction.setPaymentType(PaymentTypeEnum.fromValue(globals
+				.getPaymentType()));
 		transaction.setReferenceNumber(globals.getReferenceNumber());
 		transaction.setDraftLocatorId(globals.getDraftLocatorId());
 		transaction.setClerkNumber("" + globals.getMerchant().getClerkNumber());
-		transaction.setMarketCode(globals.getTransactionType());
+		transaction.setMarketCode(MarketCodeType.fromValue(globals
+				.getTransactionType()));
 		transaction.setTransactionTimestamp(timestamp);
 		transaction.setSystemTraceId("" + globals.getSystemTraceId());
-		transaction.setTokenRequested("" + globals.isTokenRequested());
+		transaction.setTokenRequested(globals.isTokenRequested());
 		if (globals.getTipAmount() != null)
 			transaction.setTipAmount(globals.getTipAmount());
-
-
+		// tax values
+		if (globals.isPurchaseLevel()) {
+			if (globals.getTaxAmount() != null) {
+				transaction.setTaxAmount(globals.getTaxAmount());
+			} else if (!globals.isTaxable()) {
+				transaction.setTaxable(false);
+			} else if (globals.isTaxExempt()) {
+				transaction.setTaxExempt(true);
+			}
+		}
 
 		// Address
-		address.setBillingAddress1(globals.getAddressline());
-		address.setCity(globals.getCity());
-		address.setState(globals.getState());
-		address.setBillingZipcode(globals.getPostalCode());
-		address.setCountryCode(ISO3166CountryCodeType.fromValue(globals
-				.getCountryCode()));
+		if (globals.getPostalCode() != null) {
+			address.setBillingZipcode(globals.getPostalCode());
+			address.setCity(globals.getCity());
+			address.setState(globals.getState());
+			address.setCountryCode(ISO3166CountryCodeType.fromValue(globals
+					.getCountryCode()));
+		} else
+			address = null;
 
 		// card - credit
-		card.setCardType(globals.getCardType());
+		card.setCardType(CreditCardNetworkType.valueOf(globals.getCardType()));
+		card.setPartialApprovalCode(globals.getPartialIndicator());
 		if (globals.isCardKeyed()) {
-			card.setCardNumber(globals.getPrimaryAcountNumber());
+			String masked = utils
+					.getMaskedPan(globals.getPrimaryAcountNumber());
+			card.setCardNumber(masked);
 			String[] expirationDate = globals.getExpirationDate().split("-");
 			card.setExpirationMonth(expirationDate[1]);
 			card.setExpirationYear(expirationDate[0]);
-			card.setCVV(globals.getCardSecurityCode());
+
+			if (globals.isCredit())
+				card.setCVV(globals.getCardSecurityCode());
+			else {
+				card.setGiftCardSecurityCode(globals.getGiftCardSecurityCode());
+				card.setKeySerialNumber(globals.getGiftCardPin());
+			}
+
 			if (globals.isCardToken()) {
-				card.setTokenID(globals.getTokenId());
+				card.setTokenId(globals.getTokenId());
 				card.setTokenValue(globals.getTokenValue());
 			}
 		} else if (globals.isCardSwiped()) {
-			if (globals.getTrack1Data() != null) {
+
+			String masked = utils.getMaskedPan(globals.getTrack2Data());
+			if (globals.getEntryMode().equalsIgnoreCase("track1")) {
+
 				card.setTrack1Data(globals.getTrack1Data());
-			} else if (globals.getTrack2Data() != null) {
+			} else if (globals.getEntryMode().equalsIgnoreCase("track2")) {
 				card.setTrack2Data(globals.getTrack2Data());
 			}
 		}
@@ -243,71 +308,113 @@ public class CreateJsonRequest {
 
 		// Terminal
 		terminal.setTerminalID("" + globals.getTerminalID());
-		terminal.setEntryMode(globals.getEntryMode());
-		terminal.setIPv4Address(globals.getiPv4Address());
-		terminal.setTerminalCapabilityCode(globals.getEntryMode());
 
-		terminal.setPinEntry(globals.getPinEntry());
-		terminal.setBalanceInquiry("" + globals.isBalanceEnquiry());
-		terminal.setHostAdjustment("" + globals.isHostAdjustment());
+		terminal.setIPv4Address(globals.getiPv4Address());
+		terminal.setTerminalEnvironmentalCode(TerminalEnvironmentType
+				.valueOf(globals.getClassification()));
+
+		terminal.setPinEntry(PinEntryType.valueOf(globals.getPinEntry()));
+		terminal.setBalanceInquiry(globals.isBalanceEnquiry());
+		terminal.setHostAdjustment(globals.isHostAdjustment());
 
 		// Set Device Type
-		String transactionType = globals.getTransactionType();
-		if (transactionType.equalsIgnoreCase("present"))
-			terminal.setDeviceType("Terminal");
-		else if (transactionType.equalsIgnoreCase("ecommerce"))
-			terminal.setDeviceType("Software");
-		else if (transactionType.equalsIgnoreCase("moto"))
-			terminal.setDeviceType("Mobile");
+
+		String deviceType = globals.getCaptureDevice();
+		terminal.setDeviceType(DeviceTypeCode.fromValue(deviceType));
+
 
 		// Card input code
 		if (globals.getCardReader().equals("magstripe"))
-			terminal.setCardInputCode("MagstripeRead");
+			terminal.setCardInputCode(CardInputCodeType.MagstripeRead);
 		else
-			terminal.setCardInputCode("ManualKeyed");
+			terminal.setCardInputCode(CardInputCodeType.ManualKeyed);
 
 		// Transaction values
-		transaction.setCaptureAmount(globals.getTransactionAmount());
+		transaction.setTransactionAmount(globals.getTransactionAmount());
 
 		transaction.setTransactionID(globals.getSequenceNumber());
-		transaction.setPaymentType(globals.getPaymentType());
+		transaction.setPaymentType(PaymentTypeEnum.fromValue(globals
+				.getPaymentType()));
 		transaction.setReferenceNumber(globals.getReferenceNumber());
 		transaction.setDraftLocatorId(globals.getDraftLocatorId());
 		transaction.setClerkNumber("" + globals.getMerchant().getClerkNumber());
-		transaction.setMarketCode(globals.getTransactionType());
+		transaction.setMarketCode(MarketCodeType.fromValue(globals
+				.getTransactionType()));
 		transaction.setTransactionTimestamp(timestamp);
 		transaction.setSystemTraceId("" + globals.getSystemTraceId());
-		transaction.setTokenRequested("" + globals.isTokenRequested());
+		transaction.setTokenRequested(globals.isTokenRequested());
 		if (globals.getTipAmount() != null)
 			transaction.setTipAmount(globals.getTipAmount());
 
+		// tax values
+		if (globals.isPurchaseLevel()) {
+			if (globals.getTaxAmount() != null) {
+				transaction.setTaxAmount(globals.getTaxAmount());
+			} else if (!globals.isTaxable()) {
+				transaction.setTaxable(false);
+			} else if (globals.isTaxExempt()) {
+				transaction.setTaxExempt(true);
+			}
+		}
+
+		// card
+		card.setCardType(CreditCardNetworkType.valueOf(globals.getCardType()));
+		card.setPartialApprovalCode(globals.getPartialIndicator());
+		if (globals.isGift()) {
+			card.setCardDataKeySerialNumber(globals.getGiftCardPin());
+			card.setGiftCardSecurityCode(globals.getGiftCardSecurityCode());
+		} else if (globals.isDebit()) {
+			card.setPINBlock(globals.getPinEncryptedValue());
+			card.setPINBlockEncryptedFormat(globals.getPinEncryptedType());
+			card.setKeySerialNumber(globals.getPinEncryptedKey());
+			card.setAccountType(AccountTypeEnum.fromValue(globals
+					.getAccountType()));
 
 
-		// Address
-		address.setBillingAddress1(globals.getAddressline());
-		address.setCity(globals.getCity());
-		address.setState(globals.getState());
-		address.setBillingZipcode(globals.getPostalCode());
-		address.setCountryCode(ISO3166CountryCodeType.fromValue(globals
-				.getCountryCode()));
+		} else {
+			// Address
+			if (globals.getPostalCode() != null) {
+				address.setBillingZipcode(globals.getPostalCode());
+				address.setCity(globals.getCity());
+				address.setState(globals.getState());
+				address.setCountryCode(ISO3166CountryCodeType.fromValue(globals
+						.getCountryCode()));
+			} else
+				address = null;
+		}
 
-		// card - credit
-		card.setCardType(globals.getCardType());
 		if (globals.isCardKeyed()) {
 			card.setCardNumber(globals.getPrimaryAcountNumber());
 			String[] expirationDate = globals.getExpirationDate().split("-");
 			card.setExpirationMonth(expirationDate[1]);
 			card.setExpirationYear(expirationDate[0]);
-			card.setCVV(globals.getCardSecurityCode());
+			if (!globals.getCardSecurityCode().isEmpty())
+				card.setCVV(globals.getCardSecurityCode());
+			else
+				card.setCVV(null);
 			if (globals.isCardToken()) {
-				card.setTokenID(globals.getTokenId());
+				card.setTokenId(globals.getTokenId());
 				card.setTokenValue(globals.getTokenValue());
 			}
+
 		} else if (globals.isCardSwiped()) {
-			if (globals.getTrack1Data() != null) {
-				card.setTrack1Data(globals.getTrack1Data());
-			} else if (globals.getTrack2Data() != null) {
-				card.setTrack2Data(globals.getTrack2Data());
+			if (globals.getEntryMode().equals("track1")) {
+				if (globals.isTrackEncrypted()) {
+					card.setEncryptedFormat(EncryptionType.fromValue(globals
+							.getCardEncryptedType()));
+					card.setEncryptedTrack1Data(globals.getCardEncryptedValue());
+					// what about card encrypted key?
+				} else
+					card.setTrack1Data(globals.getTrack1Data());
+			} else if (globals.getEntryMode().equals("track2")) {
+				if (globals.isTrackEncrypted()) {
+					card.setEncryptedFormat(EncryptionType.fromValue(globals
+							.getCardEncryptedType()));
+					card.setEncryptedTrack2Data(globals.getCardEncryptedValue());
+					// what about card encrypted key?
+				} else {
+					card.setTrack2Data(globals.getTrack2Data());
+				}
 			}
 		}
 
@@ -339,81 +446,102 @@ public class CreateJsonRequest {
 
 		// Terminal
 		terminal.setTerminalID("" + globals.getTerminalID());
-		terminal.setEntryMode(globals.getEntryMode());
-		terminal.setIPv4Address(globals.getiPv4Address());
-		terminal.setTerminalCapabilityCode(globals.getEntryMode());
 
-		terminal.setPinEntry(globals.getPinEntry());
-		terminal.setBalanceInquiry("" + globals.isBalanceEnquiry());
-		terminal.setHostAdjustment("" + globals.isHostAdjustment());
+		terminal.setIPv4Address(globals.getiPv4Address());
+		terminal.setTerminalEnvironmentalCode(TerminalEnvironmentType
+				.valueOf(globals.getClassification()));
+
+		terminal.setPinEntry(PinEntryType.valueOf(globals.getPinEntry()));
+		// terminal.setBalanceInquiry(globals.isBalanceEnquiry());
+		// terminal.setHostAdjustment(globals.isHostAdjustment());
 
 		// Set Device Type
-		String transactionType = globals.getTransactionType();
-		if (transactionType.equalsIgnoreCase("present"))
-			terminal.setDeviceType("Terminal");
-		else if (transactionType.equalsIgnoreCase("ecommerce"))
-			terminal.setDeviceType("Software");
-		else if (transactionType.equalsIgnoreCase("moto"))
-			terminal.setDeviceType("Mobile");
+
+		String deviceType = globals.getCaptureDevice();
+		terminal.setDeviceType(DeviceTypeCode.fromValue(deviceType));
+
 
 		// Card input code
-		if (globals.getCardReader().equals("magstripe"))
-			terminal.setCardInputCode("MagstripeRead");
-		else
-			terminal.setCardInputCode("ManualKeyed");
+
+		// if (globals.isCardKeyed())
+		// terminal.setCardInputCode(CardInputCodeType.ManualKeyed);
+		// else
+		// terminal.setCardInputCode(CardInputCodeType.MagstripeRead);
+		terminal.setCardInputCode(CardInputCodeType.ManualKeyed);
+
+
+		terminal.setCardInputCode(CardInputCodeType.ManualKeyed);
 
 		// Transaction values
-		transaction.setCancelType(globals.getCancelTransactionType());
+
+		String cancType = globals.getCancelTransactionType();
+		transaction.setCancelType(CancelTypeEnum.fromValue(cancType));
+
 		transaction.setOriginalAuthCode(globals.getAuthorizationCode());
 		transaction.setOriginalReferenceNumber(globals.getOriginalRefNum());
 		transaction.setOriginalAuthorizedAmount(globals.getTransactionAmount());
 		transaction.setOriginalSequenceNumber(globals.getSequenceNumber());
 		transaction.setOriginalSystemTraceId(""
 				+ globals.getOriginalSystemTraceId());
-		transaction.setReplacementAmount(globals.getReplacementAmount());
-		transaction.setReversalReason(globals.getReversalReason());
+
+
+		// Gift reversals do not allow the field "replacementAmount", it must be
+		// "transactionAmount"
+		if (globals.isGift())
+			transaction.setTransactionAmount(globals.getReplacementAmount());
+		else
+			transaction.setReplacementAmount(globals.getReplacementAmount());
+		transaction.setReversalReason(ReversalReasonType.fromValue(globals
+				.getReversalReason()));
+
 		transaction.setOriginalTransactionTimestamp(timestamp);
 
 		transaction.setTransactionID(globals.getSequenceNumber());
-		transaction.setPaymentType(globals.getPaymentType());
+		transaction.setPaymentType(PaymentTypeEnum.fromValue(globals
+				.getPaymentType()));
 		transaction.setReferenceNumber(globals.getReferenceNumber());
 		transaction.setDraftLocatorId(globals.getDraftLocatorId());
 		transaction.setClerkNumber("" + globals.getMerchant().getClerkNumber());
-		transaction.setMarketCode(globals.getTransactionType());
+		transaction.setMarketCode(MarketCodeType.fromValue(globals
+				.getTransactionType()));
 		transaction.setTransactionTimestamp(timestamp);
 		transaction.setSystemTraceId("" + globals.getSystemTraceId());
-		transaction.setTokenRequested("" + globals.isTokenRequested());
-
-
-
+		transaction.setTokenRequested(globals.isTokenRequested());
 
 		// Address
-		address.setBillingAddress1(globals.getAddressline());
-		address.setCity(globals.getCity());
-		address.setState(globals.getState());
-		address.setBillingZipcode(globals.getPostalCode());
-		address.setCountryCode(ISO3166CountryCodeType.fromValue(globals
-				.getCountryCode()));
+		if (globals.getPostalCode() != null) {
+			address.setBillingZipcode(globals.getPostalCode());
+			address.setCity(globals.getCity());
+			address.setState(globals.getState());
+			address.setCountryCode(ISO3166CountryCodeType.fromValue(globals
+					.getCountryCode()));
+		} else
+			address = null;
 
 		// card - credit
-		card.setCardType(globals.getCardType());
-		if (globals.isCardKeyed()) {
+
+		card.setCardType(CreditCardNetworkType.valueOf(globals.getCardType()));
+
+		// if (cancType.equalsIgnoreCase("authorize") && globals.isCardSwiped())
+		// {
+		// card.setTrack2Data(globals.getTrack2Data());
+		// } else {
+
 			card.setCardNumber(globals.getPrimaryAcountNumber());
 			String[] expirationDate = globals.getExpirationDate().split("-");
 			card.setExpirationMonth(expirationDate[1]);
 			card.setExpirationYear(expirationDate[0]);
-			card.setCVV(globals.getCardSecurityCode());
+			if (!globals.getCardSecurityCode().isEmpty())
+				card.setCVV(globals.getCardSecurityCode());
+			else
+				card.setCVV(null);
 			if (globals.isCardToken()) {
-				card.setTokenID(globals.getTokenId());
+				card.setTokenId(globals.getTokenId());
 				card.setTokenValue(globals.getTokenValue());
 			}
-		} else if (globals.isCardSwiped()) {
-			if (globals.getTrack1Data() != null) {
-				card.setTrack1Data(globals.getTrack1Data());
-			} else if (globals.getTrack2Data() != null) {
-				card.setTrack2Data(globals.getTrack2Data());
-			}
-		}
+
+		// }
+
 
 		ApigeeObject ao = new ApigeeObject(cred, merchant, terminal,
 				transaction, address, card);
@@ -443,69 +571,71 @@ public class CreateJsonRequest {
 
 		// Terminal
 		terminal.setTerminalID("" + globals.getTerminalID());
-		terminal.setEntryMode(globals.getEntryMode());
-		terminal.setIPv4Address(globals.getiPv4Address());
-		terminal.setTerminalCapabilityCode(globals.getEntryMode());
 
-		terminal.setPinEntry(globals.getPinEntry());
-		terminal.setBalanceInquiry("" + globals.isBalanceEnquiry());
-		terminal.setHostAdjustment("" + globals.isHostAdjustment());
+		terminal.setIPv4Address(globals.getiPv4Address());
+		terminal.setTerminalEnvironmentalCode(TerminalEnvironmentType
+				.valueOf(globals.getClassification()));
+
+		terminal.setPinEntry(PinEntryType.valueOf(globals.getPinEntry()));
+		terminal.setBalanceInquiry(globals.isBalanceEnquiry());
+		terminal.setHostAdjustment(globals.isHostAdjustment());
 
 		// Set Device Type
-		String transactionType = globals.getTransactionType();
-		if (transactionType.equalsIgnoreCase("present"))
-			terminal.setDeviceType("Terminal");
-		else if (transactionType.equalsIgnoreCase("ecommerce"))
-			terminal.setDeviceType("Software");
-		else if (transactionType.equalsIgnoreCase("moto"))
-			terminal.setDeviceType("Mobile");
+
+		String deviceType = globals.getCaptureDevice();
+		terminal.setDeviceType(DeviceTypeCode.fromValue(deviceType));
+
 
 		// Card input code
 		if (globals.getCardReader().equals("magstripe"))
-			terminal.setCardInputCode("MagstripeRead");
+			terminal.setCardInputCode(CardInputCodeType.MagstripeRead);
 		else
-			terminal.setCardInputCode("ManualKeyed");
+			terminal.setCardInputCode(CardInputCodeType.ManualKeyed);
 
 		// Transaction values
-		transaction.setTransactionAmount(globals.getTransactionAmount());
+		transaction.setTransactionAmount(globals.getRefundAmount());
 
 		transaction.setTransactionID(globals.getSequenceNumber());
-		transaction.setPaymentType(globals.getPaymentType());
+		transaction.setPaymentType(PaymentTypeEnum.fromValue(globals
+				.getPaymentType()));
 		transaction.setReferenceNumber(globals.getReferenceNumber());
 		transaction.setDraftLocatorId(globals.getDraftLocatorId());
 		transaction.setClerkNumber("" + globals.getMerchant().getClerkNumber());
-		transaction.setMarketCode(globals.getTransactionType());
+		transaction.setMarketCode(MarketCodeType.fromValue(globals
+				.getTransactionType()));
 		transaction.setTransactionTimestamp(timestamp);
 		transaction.setSystemTraceId("" + globals.getSystemTraceId());
-		transaction.setTokenRequested("" + globals.isTokenRequested());
-
-
-
+		transaction.setTokenRequested(globals.isTokenRequested());
 
 		// Address
-		address.setBillingAddress1(globals.getAddressline());
-		address.setCity(globals.getCity());
-		address.setState(globals.getState());
-		address.setBillingZipcode(globals.getPostalCode());
-		address.setCountryCode(ISO3166CountryCodeType.fromValue(globals
-				.getCountryCode()));
+		if (globals.getPostalCode() != null) {
+			address.setBillingZipcode(globals.getPostalCode());
+			address.setCity(globals.getCity());
+			address.setState(globals.getState());
+			address.setCountryCode(ISO3166CountryCodeType.fromValue(globals
+					.getCountryCode()));
+		} else
+			address = null;
 
 		// card - credit
-		card.setCardType(globals.getCardType());
+		card.setCardType(CreditCardNetworkType.valueOf(globals.getCardType()));
 		if (globals.isCardKeyed()) {
 			card.setCardNumber(globals.getPrimaryAcountNumber());
 			String[] expirationDate = globals.getExpirationDate().split("-");
 			card.setExpirationMonth(expirationDate[1]);
 			card.setExpirationYear(expirationDate[0]);
-			card.setCVV(globals.getCardSecurityCode());
+			if (!globals.getCardSecurityCode().isEmpty())
+				card.setCVV(globals.getCardSecurityCode());
+			else
+				card.setCVV(null);
 			if (globals.isCardToken()) {
-				card.setTokenID(globals.getTokenId());
+				card.setTokenId(globals.getTokenId());
 				card.setTokenValue(globals.getTokenValue());
 			}
 		} else if (globals.isCardSwiped()) {
-			if (globals.getTrack1Data() != null) {
+			if (globals.getEntryMode().equalsIgnoreCase("track1")) {
 				card.setTrack1Data(globals.getTrack1Data());
-			} else if (globals.getTrack2Data() != null) {
+			} else if (globals.getEntryMode().equalsIgnoreCase("track2")) {
 				card.setTrack2Data(globals.getTrack2Data());
 			}
 		}
@@ -538,64 +668,68 @@ public class CreateJsonRequest {
 
 		// Terminal
 		terminal.setTerminalID("" + globals.getTerminalID());
-		terminal.setEntryMode(globals.getEntryMode());
-		terminal.setIPv4Address(globals.getiPv4Address());
-		terminal.setTerminalCapabilityCode(globals.getEntryMode());
 
-		terminal.setPinEntry(globals.getPinEntry());
-		terminal.setBalanceInquiry("" + globals.isBalanceEnquiry());
-		terminal.setHostAdjustment("" + globals.isHostAdjustment());
+		terminal.setIPv4Address(globals.getiPv4Address());
+		terminal.setTerminalEnvironmentalCode(TerminalEnvironmentType
+				.valueOf(globals.getClassification()));
+
+		terminal.setPinEntry(PinEntryType.valueOf(globals.getPinEntry()));
+		terminal.setBalanceInquiry(globals.isBalanceEnquiry());
+		terminal.setHostAdjustment(globals.isHostAdjustment());
 
 		// Set Device Type
-		String transactionType = globals.getTransactionType();
-		if (transactionType.equalsIgnoreCase("present"))
-			terminal.setDeviceType("Terminal");
-		else if (transactionType.equalsIgnoreCase("ecommerce"))
-			terminal.setDeviceType("Software");
-		else if (transactionType.equalsIgnoreCase("moto"))
-			terminal.setDeviceType("Mobile");
+
+		String deviceType = globals.getCaptureDevice();
+		terminal.setDeviceType(DeviceTypeCode.fromValue(deviceType));
+
 
 		// Card input code
 		if (globals.getCardReader().equals("magstripe"))
-			terminal.setCardInputCode("MagstripeRead");
+			terminal.setCardInputCode(CardInputCodeType.MagstripeRead);
 		else
-			terminal.setCardInputCode("ManualKeyed");
+			terminal.setCardInputCode(CardInputCodeType.ManualKeyed);
 
 		// Transaction values
 		transaction.setTransactionAmount("0.00");
 
 		transaction.setTransactionID(globals.getSequenceNumber());
-		transaction.setPaymentType(globals.getPaymentType());
+		transaction.setPaymentType(PaymentTypeEnum.fromValue(globals
+				.getPaymentType()));
 		transaction.setReferenceNumber(globals.getReferenceNumber());
 		transaction.setDraftLocatorId(globals.getDraftLocatorId());
 		transaction.setClerkNumber("" + globals.getMerchant().getClerkNumber());
-		transaction.setMarketCode(globals.getTransactionType());
+		transaction.setMarketCode(MarketCodeType.fromValue(globals
+				.getTransactionType()));
 		transaction.setTransactionTimestamp(timestamp);
 		transaction.setSystemTraceId("" + globals.getSystemTraceId());
-		transaction.setTokenRequested("true");
-
+		transaction.setTokenRequested(true);
 
 		// Address
-		address.setBillingAddress1(globals.getAddressline());
-		address.setCity(globals.getCity());
-		address.setState(globals.getState());
-		address.setBillingZipcode(globals.getPostalCode());
-		address.setCountryCode(ISO3166CountryCodeType.fromValue(globals
-				.getCountryCode()));
+		if (globals.getPostalCode() != null) {
+			address.setBillingZipcode(globals.getPostalCode());
+			address.setCity(globals.getCity());
+			address.setState(globals.getState());
+			address.setCountryCode(ISO3166CountryCodeType.fromValue(globals
+					.getCountryCode()));
+		} else
+			address = null;
 
 		// card - credit
-		card.setCardType(globals.getCardType());
+		card.setCardType(CreditCardNetworkType.valueOf(globals.getCardType()));
 		if (globals.isCardKeyed()) {
 			card.setCardNumber(globals.getPrimaryAcountNumber());
 			String[] expirationDate = globals.getExpirationDate().split("-");
 			card.setExpirationMonth(expirationDate[1]);
 			card.setExpirationYear(expirationDate[0]);
-			card.setCVV(globals.getCardSecurityCode());
+			if (!globals.getCardSecurityCode().isEmpty())
+				card.setCVV(globals.getCardSecurityCode());
+			else
+				card.setCVV(null);
 
 		} else if (globals.isCardSwiped()) {
-			if (globals.getTrack1Data() != null) {
+			if (globals.getEntryMode().equalsIgnoreCase("track1")) {
 				card.setTrack1Data(globals.getTrack1Data());
-			} else if (globals.getTrack2Data() != null) {
+			} else if (globals.getEntryMode().equalsIgnoreCase("track2")) {
 				card.setTrack2Data(globals.getTrack2Data());
 			}
 		}
@@ -628,29 +762,29 @@ public class CreateJsonRequest {
 
 		// Terminal
 		terminal.setTerminalID("" + globals.getTerminalID());
-		terminal.setEntryMode(globals.getEntryMode());
-		terminal.setIPv4Address(globals.getiPv4Address());
-		terminal.setTerminalCapabilityCode(globals.getEntryMode());
 
-		terminal.setPinEntry(globals.getPinEntry());
-		terminal.setBalanceInquiry("" + globals.isBalanceEnquiry());
-		terminal.setHostAdjustment("" + globals.isHostAdjustment());
+		terminal.setIPv4Address(globals.getiPv4Address());
+		terminal.setTerminalEnvironmentalCode(TerminalEnvironmentType
+				.valueOf(globals.getClassification()));
+
+		terminal.setPinEntry(PinEntryType.valueOf(globals.getPinEntry()));
+		terminal.setBalanceInquiry(globals.isBalanceEnquiry());
+		terminal.setHostAdjustment(globals.isHostAdjustment());
 
 		// Set Device Type
-		String transactionType = globals.getTransactionType();
-		if (transactionType.equalsIgnoreCase("present"))
-			terminal.setDeviceType("Terminal");
-		else if (transactionType.equalsIgnoreCase("ecommerce"))
-			terminal.setDeviceType("Software");
-		else if (transactionType.equalsIgnoreCase("moto"))
-			terminal.setDeviceType("Mobile");
+
+		String deviceType = globals.getCaptureDevice();
+		terminal.setDeviceType(DeviceTypeCode.fromValue(deviceType));
+
 
 		transaction.setTransactionID(globals.getSequenceNumber());
-		transaction.setPaymentType(globals.getPaymentType());
+		transaction.setPaymentType(PaymentTypeEnum.fromValue(globals
+				.getPaymentType()));
 		transaction.setReferenceNumber(globals.getReferenceNumber());
 		transaction.setDraftLocatorId(globals.getDraftLocatorId());
 		transaction.setClerkNumber("" + globals.getMerchant().getClerkNumber());
-		transaction.setMarketCode(globals.getTransactionType());
+		transaction.setMarketCode(MarketCodeType.fromValue(globals
+				.getTransactionType()));
 		transaction.setTransactionTimestamp(timestamp);
 		transaction.setSystemTraceId("" + globals.getSystemTraceId());
 
@@ -682,32 +816,34 @@ public class CreateJsonRequest {
 
 		// Terminal
 		terminal.setTerminalID("" + globals.getTerminalID());
-		terminal.setEntryMode(globals.getEntryMode());
-		terminal.setIPv4Address(globals.getiPv4Address());
-		terminal.setTerminalCapabilityCode(globals.getEntryMode());
 
-		terminal.setPinEntry(globals.getPinEntry());
-		terminal.setBalanceInquiry("" + globals.isBalanceEnquiry());
-		terminal.setHostAdjustment("" + globals.isHostAdjustment());
+		terminal.setIPv4Address(globals.getiPv4Address());
+		terminal.setTerminalEnvironmentalCode(TerminalEnvironmentType
+				.valueOf(globals.getClassification()));
+
+		terminal.setPinEntry(PinEntryType.valueOf(globals.getPinEntry()));
+		terminal.setBalanceInquiry(globals.isBalanceEnquiry());
+		terminal.setHostAdjustment(globals.isHostAdjustment());
 
 		// Set Device Type
 		String transactionType = globals.getTransactionType();
 		if (transactionType.equalsIgnoreCase("present"))
-			terminal.setDeviceType("Terminal");
+			terminal.setDeviceType(DeviceTypeCode.Terminal);
 		else if (transactionType.equalsIgnoreCase("ecommerce"))
-			terminal.setDeviceType("Software");
+			terminal.setDeviceType(DeviceTypeCode.Software);
 		else if (transactionType.equalsIgnoreCase("moto"))
-			terminal.setDeviceType("Mobile");
+			terminal.setDeviceType(DeviceTypeCode.Mobile);
 
 		transaction.setTransactionID(globals.getSequenceNumber());
-		transaction.setPaymentType(globals.getPaymentType());
+		transaction.setPaymentType(PaymentTypeEnum.fromValue(globals
+				.getPaymentType()));
 		transaction.setReferenceNumber(globals.getReferenceNumber());
 		transaction.setDraftLocatorId(globals.getDraftLocatorId());
 		transaction.setClerkNumber("" + globals.getMerchant().getClerkNumber());
-		transaction.setMarketCode(globals.getTransactionType());
+		transaction.setMarketCode(MarketCodeType.fromValue(globals
+				.getTransactionType()));
 		transaction.setTransactionTimestamp(timestamp);
 		transaction.setSystemTraceId("" + globals.getSystemTraceId());
-
 
 		ApigeeObject ao = new ApigeeObject(cred, merchant, terminal,
 				transaction, address, card);
@@ -739,31 +875,33 @@ public class CreateJsonRequest {
 
 		// Terminal
 		terminal.setTerminalID("" + globals.getTerminalID());
-		terminal.setEntryMode(globals.getEntryMode());
-		terminal.setIPv4Address(globals.getiPv4Address());
-		terminal.setTerminalCapabilityCode(globals.getEntryMode());
 
-		terminal.setPinEntry(globals.getPinEntry());
-		terminal.setBalanceInquiry("" + globals.isBalanceEnquiry());
-		terminal.setHostAdjustment("" + globals.isHostAdjustment());
+		terminal.setIPv4Address(globals.getiPv4Address());
+		terminal.setTerminalEnvironmentalCode(TerminalEnvironmentType
+				.valueOf(globals.getClassification()));
+
+		terminal.setPinEntry(PinEntryType.valueOf(globals.getPinEntry()));
+		terminal.setBalanceInquiry(globals.isBalanceEnquiry());
+		terminal.setHostAdjustment(globals.isHostAdjustment());
 
 		// Set Device Type
 		String transactionType = globals.getTransactionType();
 		if (transactionType.equalsIgnoreCase("present"))
-			terminal.setDeviceType("Terminal");
+			terminal.setDeviceType(DeviceTypeCode.Terminal);
 		else if (transactionType.equalsIgnoreCase("ecommerce"))
-			terminal.setDeviceType("Software");
+			terminal.setDeviceType(DeviceTypeCode.Software);
 		else if (transactionType.equalsIgnoreCase("moto"))
-			terminal.setDeviceType("Mobile");
+			terminal.setDeviceType(DeviceTypeCode.Mobile);
 
 		// Card input code
 		if (globals.getCardReader().equals("magstripe"))
-			terminal.setCardInputCode("MagstripeRead");
+			terminal.setCardInputCode(CardInputCodeType.MagstripeRead);
 		else
-			terminal.setCardInputCode("ManualKeyed");
+			terminal.setCardInputCode(CardInputCodeType.ManualKeyed);
 
 		// Transaction values
-		transaction.setCancelType(globals.getCancelTransactionType());
+		transaction.setCancelType(CancelTypeEnum.fromValue(globals
+				.getCancelTransactionType()));
 		transaction.setOriginalAuthCode(globals.getAuthorizationCode());
 		transaction.setOriginalReferenceNumber(globals.getOriginalRefNum());
 		transaction.setOriginalAuthorizedAmount(globals.getTransactionAmount());
@@ -771,43 +909,502 @@ public class CreateJsonRequest {
 		transaction.setOriginalSystemTraceId(""
 				+ globals.getOriginalSystemTraceId());
 		transaction.setReplacementAmount(globals.getReplacementAmount());
-		transaction.setReversalReason(globals.getReversalReason());
+		transaction.setReversalReason(ReversalReasonType.fromValue(globals
+				.getReversalReason()));
 		transaction.setOriginalTransactionTimestamp(timestamp);
 
 		transaction.setTransactionID(globals.getSequenceNumber());
-		transaction.setPaymentType(globals.getPaymentType());
+		transaction.setPaymentType(PaymentTypeEnum.fromValue(globals
+				.getPaymentType()));
 		transaction.setReferenceNumber(globals.getReferenceNumber());
 		transaction.setDraftLocatorId(globals.getDraftLocatorId());
 		transaction.setClerkNumber("" + globals.getMerchant().getClerkNumber());
-		transaction.setMarketCode(globals.getTransactionType());
+		transaction.setMarketCode(MarketCodeType.fromValue(globals
+				.getTransactionType()));
 		transaction.setTransactionTimestamp(timestamp);
 		transaction.setSystemTraceId("" + globals.getSystemTraceId());
-		transaction.setTokenRequested("" + globals.isTokenRequested());
+		transaction.setTokenRequested(globals.isTokenRequested());
 
 		// Address
-		address.setBillingAddress1(globals.getAddressline());
-		address.setCity(globals.getCity());
-		address.setState(globals.getState());
-		address.setBillingZipcode(globals.getPostalCode());
-		address.setCountryCode(ISO3166CountryCodeType.fromValue(globals
-				.getCountryCode()));
+		if (globals.getPostalCode() != null) {
+			address.setBillingZipcode(globals.getPostalCode());
+			address.setCity(globals.getCity());
+			address.setState(globals.getState());
+			address.setCountryCode(ISO3166CountryCodeType.fromValue(globals
+					.getCountryCode()));
+		} else
+			address = null;
 
 		// card - credit
-		card.setCardType(globals.getCardType());
+		card.setCardType(CreditCardNetworkType.valueOf(globals.getCardType()));
 		if (globals.isCardKeyed()) {
 			card.setCardNumber(globals.getPrimaryAcountNumber());
 			String[] expirationDate = globals.getExpirationDate().split("-");
 			card.setExpirationMonth(expirationDate[1]);
 			card.setExpirationYear(expirationDate[0]);
-			card.setCVV(globals.getCardSecurityCode());
+			if (!globals.getCardSecurityCode().isEmpty())
+				card.setCVV(globals.getCardSecurityCode());
+			else
+				card.setCVV(null);
 			if (globals.isCardToken()) {
-				card.setTokenID(globals.getTokenId());
+				card.setTokenId(globals.getTokenId());
 				card.setTokenValue(globals.getTokenValue());
 			}
 		} else if (globals.isCardSwiped()) {
-			if (globals.getTrack1Data() != null) {
+			if (globals.getEntryMode().equalsIgnoreCase("track1")) {
 				card.setTrack1Data(globals.getTrack1Data());
-			} else if (globals.getTrack2Data() != null) {
+			} else if (globals.getEntryMode().equalsIgnoreCase("track2")) {
+				card.setTrack2Data(globals.getTrack2Data());
+			}
+		}
+
+		ApigeeObject ao = new ApigeeObject(cred, merchant, terminal,
+				transaction, address, card);
+		return ao;
+	}
+
+	public ApigeeObject createActivate() {
+		Address address = new Address();
+		Card card = new Card();
+		Credentials cred = new Credentials();
+		Merchant merchant = new Merchant();
+		Terminal terminal = new Terminal();
+		Transaction transaction = new Transaction();
+		String timestamp = DateTime.now().toString();
+
+
+		cred.setAccountID(globals.getUsername());
+		cred.setPassword(globals.getPassword());
+
+		// merchant
+		merchant.setNetworkRouting(globals.getNetworkRouting());
+		merchant.setCashierNumber("" + globals.getCashierNumber());
+		merchant.setLaneNumber(globals.getLaneNumber());
+		merchant.setDivisionNumber(globals.getDivisionNumber());
+		merchant.setChainCode(globals.getChainCode());
+		merchant.setStoreNumber(globals.getStoreNumber());
+		merchant.setMerchantId(globals.getMerchantId());
+
+		// Terminal
+		terminal.setTerminalID("" + "" + globals.getTerminalID());
+
+		terminal.setIPv4Address(globals.getiPv4Address());
+		terminal.setTerminalEnvironmentalCode(TerminalEnvironmentType
+				.valueOf(globals.getClassification()));
+
+		// Set Device Type
+		String transactionType = globals.getTransactionType();
+		if (transactionType.equalsIgnoreCase("present"))
+			terminal.setDeviceType(DeviceTypeCode.Terminal);
+		else if (transactionType.equalsIgnoreCase("ecommerce"))
+			terminal.setDeviceType(DeviceTypeCode.Software);
+		else if (transactionType.equalsIgnoreCase("moto"))
+			terminal.setDeviceType(DeviceTypeCode.Mobile);
+
+		// Card input code
+		if (globals.getCardReader().equals("magstripe"))
+			terminal.setCardInputCode(CardInputCodeType.MagstripeRead);
+		else
+			terminal.setCardInputCode(CardInputCodeType.ManualKeyed);
+
+		// Transaction values
+		transaction.setTransactionID(globals.getSequenceNumber());
+		transaction.setPaymentType(PaymentTypeEnum.fromValue(globals
+				.getPaymentType()));
+		transaction.setReferenceNumber(globals.getReferenceNumber());
+		transaction.setDraftLocatorId(globals.getDraftLocatorId());
+		transaction.setClerkNumber("" + globals.getMerchant().getClerkNumber());
+		transaction.setMarketCode(MarketCodeType.fromValue(globals
+				.getTransactionType()));
+		transaction.setTransactionTimestamp(timestamp);
+		transaction.setSystemTraceId("" + globals.getSystemTraceId());
+		transaction.setTokenRequested(globals.isTokenRequested());
+
+		transaction.setTransactionAmount(globals.getTransactionAmount());
+
+		// Address
+		if (globals.getPostalCode() != null) {
+			address.setBillingZipcode(globals.getPostalCode());
+			address.setCity(globals.getCity());
+			address.setState(globals.getState());
+			address.setCountryCode(ISO3166CountryCodeType.fromValue(globals
+					.getCountryCode()));
+		} else
+			address = null;
+
+		card.setGiftCardSecurityCode(globals.getGiftCardSecurityCode());
+		card.setCardDataKeySerialNumber(globals.getGiftCardPin());
+		// card - credit
+		if (globals.isCardKeyed()) {
+			card.setCardNumber(globals.getPrimaryAcountNumber());
+			String[] expirationDate = globals.getExpirationDate().split("-");
+			card.setExpirationMonth(expirationDate[1]);
+			card.setExpirationYear(expirationDate[0]);
+
+		} else if (globals.isCardSwiped()) {
+			if (globals.getEntryMode().equals("track1")) {
+				card.setTrack1Data(globals.getTrack1Data());
+			} else if (globals.getEntryMode().equals("track2")) {
+				card.setTrack2Data(globals.getTrack2Data());
+			}
+		}
+
+		ApigeeObject ao = new ApigeeObject(cred, merchant, terminal,
+				transaction, address, card);
+		return ao;
+	}
+
+	public ApigeeObject createReload() {
+		Address address = new Address();
+		Card card = new Card();
+		Credentials cred = new Credentials();
+		Merchant merchant = new Merchant();
+		Terminal terminal = new Terminal();
+		Transaction transaction = new Transaction();
+		String timestamp = DateTime.now().toString();
+
+		cred.setAccountID(globals.getUsername());
+		cred.setPassword(globals.getPassword());
+
+		// merchant
+		merchant.setNetworkRouting(globals.getNetworkRouting());
+		merchant.setCashierNumber("" + globals.getCashierNumber());
+		merchant.setLaneNumber(globals.getLaneNumber());
+		merchant.setDivisionNumber(globals.getDivisionNumber());
+		merchant.setChainCode(globals.getChainCode());
+		merchant.setStoreNumber(globals.getStoreNumber());
+		merchant.setMerchantId(globals.getMerchantId());
+
+		// Terminal
+		terminal.setTerminalID("" + "" + globals.getTerminalID());
+
+		terminal.setIPv4Address(globals.getiPv4Address());
+		terminal.setTerminalEnvironmentalCode(TerminalEnvironmentType
+				.valueOf(globals.getClassification()));
+
+		// Set Device Type
+		String transactionType = globals.getTransactionType();
+		if (transactionType.equalsIgnoreCase("present"))
+			terminal.setDeviceType(DeviceTypeCode.Terminal);
+		else if (transactionType.equalsIgnoreCase("ecommerce"))
+			terminal.setDeviceType(DeviceTypeCode.Software);
+		else if (transactionType.equalsIgnoreCase("moto"))
+			terminal.setDeviceType(DeviceTypeCode.Mobile);
+
+		// Card input code
+		if (globals.getCardReader().equals("magstripe"))
+			terminal.setCardInputCode(CardInputCodeType.MagstripeRead);
+		else
+			terminal.setCardInputCode(CardInputCodeType.ManualKeyed);
+
+		// Transaction values
+		transaction.setTransactionID(globals.getSequenceNumber());
+		transaction.setPaymentType(PaymentTypeEnum.fromValue(globals
+				.getPaymentType()));
+		transaction.setReferenceNumber(globals.getReferenceNumber());
+		transaction.setDraftLocatorId(globals.getDraftLocatorId());
+		transaction.setClerkNumber("" + globals.getMerchant().getClerkNumber());
+		transaction.setMarketCode(MarketCodeType.fromValue(globals
+				.getTransactionType()));
+		transaction.setTransactionTimestamp(timestamp);
+		transaction.setSystemTraceId("" + globals.getSystemTraceId());
+		transaction.setTokenRequested(globals.isTokenRequested());
+
+		transaction.setTransactionAmount(globals.getTransactionAmount());
+
+		// Address
+		if (globals.getPostalCode() != null) {
+			address.setBillingZipcode(globals.getPostalCode());
+			address.setCity(globals.getCity());
+			address.setState(globals.getState());
+			address.setCountryCode(ISO3166CountryCodeType.fromValue(globals
+					.getCountryCode()));
+		} else
+			address = null;
+
+		card.setGiftCardSecurityCode(globals.getGiftCardSecurityCode());
+		card.setCardDataKeySerialNumber(globals.getGiftCardPin());
+		// card - credit
+		if (globals.isCardKeyed()) {
+			card.setCardNumber(globals.getPrimaryAcountNumber());
+			String[] expirationDate = globals.getExpirationDate().split("-");
+			card.setExpirationMonth(expirationDate[1]);
+			card.setExpirationYear(expirationDate[0]);
+
+		} else if (globals.isCardSwiped()) {
+			if (globals.getEntryMode().equals("track1")) {
+				card.setTrack1Data(globals.getTrack1Data());
+			} else if (globals.getEntryMode().equals("track2")) {
+				card.setTrack2Data(globals.getTrack2Data());
+			}
+		}
+
+		ApigeeObject ao = new ApigeeObject(cred, merchant, terminal,
+				transaction, address, card);
+		return ao;
+	}
+
+	public ApigeeObject createUnload() {
+		Address address = new Address();
+		Card card = new Card();
+		Credentials cred = new Credentials();
+		Merchant merchant = new Merchant();
+		Terminal terminal = new Terminal();
+		Transaction transaction = new Transaction();
+		String timestamp = DateTime.now().toString();
+
+		cred.setAccountID(globals.getUsername());
+		cred.setPassword(globals.getPassword());
+
+		// merchant
+		merchant.setNetworkRouting(globals.getNetworkRouting());
+		merchant.setCashierNumber("" + globals.getCashierNumber());
+		merchant.setLaneNumber(globals.getLaneNumber());
+		merchant.setDivisionNumber(globals.getDivisionNumber());
+		merchant.setChainCode(globals.getChainCode());
+		merchant.setStoreNumber(globals.getStoreNumber());
+		merchant.setMerchantId(globals.getMerchantId());
+
+		// Terminal
+		terminal.setTerminalID("" + "" + globals.getTerminalID());
+
+		terminal.setIPv4Address(globals.getiPv4Address());
+		terminal.setTerminalEnvironmentalCode(TerminalEnvironmentType
+				.valueOf(globals.getClassification()));
+
+		// Set Device Type
+		String transactionType = globals.getTransactionType();
+		if (transactionType.equalsIgnoreCase("present"))
+			terminal.setDeviceType(DeviceTypeCode.Terminal);
+		else if (transactionType.equalsIgnoreCase("ecommerce"))
+			terminal.setDeviceType(DeviceTypeCode.Software);
+		else if (transactionType.equalsIgnoreCase("moto"))
+			terminal.setDeviceType(DeviceTypeCode.Mobile);
+
+		// Card input code
+		if (globals.getCardReader().equals("magstripe"))
+			terminal.setCardInputCode(CardInputCodeType.MagstripeRead);
+		else
+			terminal.setCardInputCode(CardInputCodeType.ManualKeyed);
+
+		// Transaction values
+		transaction.setTransactionID(globals.getSequenceNumber());
+		transaction.setPaymentType(PaymentTypeEnum.fromValue(globals
+				.getPaymentType()));
+		transaction.setReferenceNumber(globals.getReferenceNumber());
+		transaction.setDraftLocatorId(globals.getDraftLocatorId());
+		transaction.setClerkNumber("" + globals.getMerchant().getClerkNumber());
+		transaction.setMarketCode(MarketCodeType.fromValue(globals
+				.getTransactionType()));
+		transaction.setTransactionTimestamp(timestamp);
+		transaction.setSystemTraceId("" + globals.getSystemTraceId());
+		transaction.setTokenRequested(globals.isTokenRequested());
+
+		transaction.setTransactionAmount(globals.getTransactionAmount());
+
+		// Address
+		if (globals.getPostalCode() != null) {
+			address.setBillingZipcode(globals.getPostalCode());
+			address.setCity(globals.getCity());
+			address.setState(globals.getState());
+			address.setCountryCode(ISO3166CountryCodeType.fromValue(globals
+					.getCountryCode()));
+		} else
+			address = null;
+
+		card.setGiftCardSecurityCode(globals.getGiftCardSecurityCode());
+		card.setCardDataKeySerialNumber(globals.getGiftCardPin());
+		// card - credit
+		if (globals.isCardKeyed()) {
+			card.setCardNumber(globals.getPrimaryAcountNumber());
+			String[] expirationDate = globals.getExpirationDate().split("-");
+			card.setExpirationMonth(expirationDate[1]);
+			card.setExpirationYear(expirationDate[0]);
+
+		} else if (globals.isCardSwiped()) {
+			if (globals.getEntryMode().equals("track1")) {
+				card.setTrack1Data(globals.getTrack1Data());
+			} else if (globals.getEntryMode().equals("track2")) {
+				card.setTrack2Data(globals.getTrack2Data());
+			}
+		}
+
+		ApigeeObject ao = new ApigeeObject(cred, merchant, terminal,
+				transaction, address, card);
+		return ao;
+	}
+
+	public ApigeeObject createClose() {
+		Address address = new Address();
+		Card card = new Card();
+		Credentials cred = new Credentials();
+		Merchant merchant = new Merchant();
+		Terminal terminal = new Terminal();
+		Transaction transaction = new Transaction();
+		String timestamp = DateTime.now().toString();
+
+		cred.setAccountID(globals.getUsername());
+		cred.setPassword(globals.getPassword());
+
+		// merchant
+		merchant.setNetworkRouting(globals.getNetworkRouting());
+		merchant.setCashierNumber("" + globals.getCashierNumber());
+		merchant.setLaneNumber(globals.getLaneNumber());
+		merchant.setDivisionNumber(globals.getDivisionNumber());
+		merchant.setChainCode(globals.getChainCode());
+		merchant.setStoreNumber(globals.getStoreNumber());
+		merchant.setMerchantId(globals.getMerchantId());
+
+		// Terminal
+		terminal.setTerminalID("" + "" + globals.getTerminalID());
+
+		terminal.setIPv4Address(globals.getiPv4Address());
+		terminal.setTerminalEnvironmentalCode(TerminalEnvironmentType
+				.valueOf(globals.getClassification()));
+
+		// Set Device Type
+		String transactionType = globals.getTransactionType();
+		if (transactionType.equalsIgnoreCase("present"))
+			terminal.setDeviceType(DeviceTypeCode.Terminal);
+		else if (transactionType.equalsIgnoreCase("ecommerce"))
+			terminal.setDeviceType(DeviceTypeCode.Software);
+		else if (transactionType.equalsIgnoreCase("moto"))
+			terminal.setDeviceType(DeviceTypeCode.Mobile);
+
+		// Card input code
+		if (globals.getCardReader().equals("magstripe"))
+			terminal.setCardInputCode(CardInputCodeType.MagstripeRead);
+		else
+			terminal.setCardInputCode(CardInputCodeType.ManualKeyed);
+
+		// Transaction values
+		transaction.setTransactionID(globals.getSequenceNumber());
+		transaction.setPaymentType(PaymentTypeEnum.fromValue(globals
+				.getPaymentType()));
+		transaction.setReferenceNumber(globals.getReferenceNumber());
+		transaction.setDraftLocatorId(globals.getDraftLocatorId());
+		transaction.setClerkNumber("" + globals.getMerchant().getClerkNumber());
+		transaction.setMarketCode(MarketCodeType.fromValue(globals
+				.getTransactionType()));
+		transaction.setTransactionTimestamp(timestamp);
+		transaction.setSystemTraceId("" + globals.getSystemTraceId());
+		transaction.setTokenRequested(globals.isTokenRequested());
+
+		transaction.setTransactionAmount(globals.getTransactionAmount());
+
+		// Address
+		if (globals.getPostalCode() != null) {
+			address.setBillingZipcode(globals.getPostalCode());
+			address.setCity(globals.getCity());
+			address.setState(globals.getState());
+			address.setCountryCode(ISO3166CountryCodeType.fromValue(globals
+					.getCountryCode()));
+		} else
+			address = null;
+
+		card.setGiftCardSecurityCode(globals.getGiftCardSecurityCode());
+		card.setCardDataKeySerialNumber(globals.getGiftCardPin());
+		// card - credit
+		if (globals.isCardKeyed()) {
+			card.setCardNumber(globals.getPrimaryAcountNumber());
+			String[] expirationDate = globals.getExpirationDate().split("-");
+			card.setExpirationMonth(expirationDate[1]);
+			card.setExpirationYear(expirationDate[0]);
+
+		} else if (globals.isCardSwiped()) {
+			if (globals.getEntryMode().equals("track1")) {
+				card.setTrack1Data(globals.getTrack1Data());
+			} else if (globals.getEntryMode().equals("track2")) {
+				card.setTrack2Data(globals.getTrack2Data());
+			}
+		}
+
+		ApigeeObject ao = new ApigeeObject(cred, merchant, terminal,
+				transaction, address, card);
+		return ao;
+	}
+
+	public ApigeeObject createBalanceInquiry() {
+		Address address = new Address();
+		Card card = new Card();
+		Credentials cred = new Credentials();
+		Merchant merchant = new Merchant();
+		Terminal terminal = new Terminal();
+		Transaction transaction = new Transaction();
+		String timestamp = DateTime.now().toString();
+
+		cred.setAccountID(globals.getUsername());
+		cred.setPassword(globals.getPassword());
+
+		// merchant
+		merchant.setNetworkRouting(globals.getNetworkRouting());
+		merchant.setCashierNumber("" + globals.getCashierNumber());
+		merchant.setLaneNumber(globals.getLaneNumber());
+		merchant.setDivisionNumber(globals.getDivisionNumber());
+		merchant.setChainCode(globals.getChainCode());
+		merchant.setStoreNumber(globals.getStoreNumber());
+		merchant.setMerchantId(globals.getMerchantId());
+
+		// Terminal
+		terminal.setTerminalID("" + "" + globals.getTerminalID());
+
+		terminal.setIPv4Address(globals.getiPv4Address());
+		terminal.setTerminalEnvironmentalCode(TerminalEnvironmentType
+				.valueOf(globals.getClassification()));
+
+		// Set Device Type
+		String transactionType = globals.getTransactionType();
+		if (transactionType.equalsIgnoreCase("present"))
+			terminal.setDeviceType(DeviceTypeCode.Terminal);
+		else if (transactionType.equalsIgnoreCase("ecommerce"))
+			terminal.setDeviceType(DeviceTypeCode.Software);
+		else if (transactionType.equalsIgnoreCase("moto"))
+			terminal.setDeviceType(DeviceTypeCode.Mobile);
+
+		// Card input code
+		if (globals.getCardReader().equals("magstripe"))
+			terminal.setCardInputCode(CardInputCodeType.MagstripeRead);
+		else
+			terminal.setCardInputCode(CardInputCodeType.ManualKeyed);
+
+		// Transaction values
+		transaction.setTransactionID(globals.getSequenceNumber());
+		transaction.setPaymentType(PaymentTypeEnum.fromValue(globals
+				.getPaymentType()));
+		transaction.setReferenceNumber(globals.getReferenceNumber());
+		transaction.setDraftLocatorId(globals.getDraftLocatorId());
+		transaction.setClerkNumber("" + globals.getMerchant().getClerkNumber());
+		transaction.setMarketCode(MarketCodeType.fromValue(globals
+				.getTransactionType()));
+		transaction.setTransactionTimestamp(timestamp);
+		transaction.setSystemTraceId("" + globals.getSystemTraceId());
+		transaction.setTokenRequested(globals.isTokenRequested());
+
+		transaction.setTransactionAmount(globals.getTransactionAmount());
+
+		// Address
+		if (globals.getPostalCode() != null) {
+			address.setBillingZipcode(globals.getPostalCode());
+			address.setCity(globals.getCity());
+			address.setState(globals.getState());
+			address.setCountryCode(ISO3166CountryCodeType.fromValue(globals
+					.getCountryCode()));
+		} else
+			address = null;
+
+		card.setGiftCardSecurityCode(globals.getGiftCardSecurityCode());
+		card.setCardDataKeySerialNumber(globals.getGiftCardPin());
+		// card - credit
+		if (globals.isCardKeyed()) {
+			card.setCardNumber(globals.getPrimaryAcountNumber());
+			String[] expirationDate = globals.getExpirationDate().split("-");
+			card.setExpirationMonth(expirationDate[1]);
+			card.setExpirationYear(expirationDate[0]);
+
+		} else if (globals.isCardSwiped()) {
+			if (globals.getEntryMode().equals("track1")) {
+				card.setTrack1Data(globals.getTrack1Data());
+			} else if (globals.getEntryMode().equals("track2")) {
 				card.setTrack2Data(globals.getTrack2Data());
 			}
 		}

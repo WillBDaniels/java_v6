@@ -8,7 +8,11 @@ Information in this sample code is subject to change without notice and does not
 package com.vantiv.pws.apigee.objects;
 
 public class Merchant {
-
+	/*
+	 * Documentation on Merchant can be found at:
+	 * http://dev-vantiv.devportal.apigee.com/docs
+	 * /payment-web-services/api-element-dictionary/rest-merchant-definition
+	 */
 	// Required
 	private String MerchantID;
 	private String MerchantName;
