@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.vantiv.pws.resources.DataStore;
 
 /**
  * This class sends a JSON request to Apigee with RESTFUL services. It returns a
@@ -25,18 +26,21 @@ public class SendJsonRequest {
 
 
 	private String apiKey = "4pQQpyKdAbDTGZvGU5Rh2QdWXzqMfgJh";
-	private String licenseid1 = "572d606c967f412cb8d840e38fb48010$$#$$MphfoMed030iGRXOd6pBhDzGQnzEMmz7$$#$$2015-11-26$$#$$dev_key$$#$$SHA512withRSA$$#$$RSA$$#$$1$$#$$52BC72E18D55CC77AE2DE3C27C0AFE6C0FCE3E3E6C1638EE824E5DB7775ADBBB616D82127D46DF9272D6A39ABC6BA8AD6797000A52F769C982B5360C06CED1FFA8FABA0DEA70E1CD77DC4DAF912E81319538857CAABE16DB6C412AF478BC059B29232337AE09020069B96E741982FB5E6BC053E98FE7C33789288CAA6A9883C0D2380DD1812FCF2681A8B31545B97DD0736EB3ECBD9329F144CDB93C35780559DB6219604ADB3F5A8DC57E06CFD715FFCECD3CB65DE7BFDA065D4DB3BDC84B7E0FD66116C71AC41E0B875BA18C742A8ECE9E690AC37457DD43845F5C64EA00BF7B585A6FCF75A0F398026CD79C74C3C946C11BAFD1404997917C5592B91E8415";
 	private Gson gson = new GsonBuilder().disableHtmlEscaping().create();;
-
+	private DataStore globals;
 	private static Logger logger = org.apache.log4j.Logger
 			.getLogger(SendJsonRequest.class);
 
+	public SendJsonRequest(DataStore ds) {
+		globals = ds;
+
+	}
 
 	public HttpResponse sendJson(ApigeeObject ao, String requestType) {
 		// test env
 		// String apiUrl = "http://vantiv-nonprod-dev.apigee.net/v1/";
-		String apiUrl = "https://apis.cert.vantiv.com/v1/";
-
+		String apiUrl = globals.getApigeeEndpt();
+		String licenseId = globals.getLicenseID();
 		if (requestType != null) {
 
 			if (requestType.equals("authorize")
@@ -98,7 +102,7 @@ public class SendJsonRequest {
 			HttpPost request = new HttpPost(apiUrl);
 			StringEntity params = new StringEntity(jsonData);
 			request.addHeader("apikey", apiKey);
-			request.addHeader("licenseid", licenseid1);
+			request.addHeader("licenseid", licenseId);
 			request.addHeader("Content-Type", "application/json");
 			request.setEntity(params);
 
