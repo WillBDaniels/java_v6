@@ -14,10 +14,13 @@ Information in this sample code is subject to change without notice and does not
  * */
 package com.vantiv.pws.tool.gui;
 
+import java.awt.Desktop;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -135,6 +138,8 @@ public class Home extends JFrame {
 	final JComboBox comboBox_CreditDebitGift;
 
 
+	private JTextArea txtrLicenseId;
+
 	final JRadioButton radioButton_CardSwiped;
 	final JRadioButton radioButton_CardKeyed;
 	final JRadioButton rdbtnTokenRequested;
@@ -167,6 +172,7 @@ public class Home extends JFrame {
 	private JTextField textField_CardEncryptionValue;
 	private JTextField textField_PinEncryptionKey;
 	private JTextField textField_PinEncryptionValue;
+	private JTextField textField_ApigeeEndpt;
 
 	/**
 	 * Launch the application.
@@ -211,14 +217,14 @@ public class Home extends JFrame {
 		globals = new DataStore();
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 706, 620);
+		setBounds(100, 100, 789, 661);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
 		JTabbedPane tabbedPane = new JTabbedPane(SwingConstants.TOP);
-		tabbedPane.setBounds(0, 0, 684, 578);
+		tabbedPane.setBounds(0, 0, 763, 612);
 		contentPane.add(tabbedPane);
 
 		// ******************MAIN TAB*********************//
@@ -258,7 +264,7 @@ public class Home extends JFrame {
 		panel_Main.add(passTxt);
 
 		comboBox_RequestType = new JComboBox();
-		comboBox_RequestType.setBounds(106, 118, 158, 20);
+		comboBox_RequestType.setBounds(106, 288, 158, 20);
 		comboBox_RequestType.setModel(new DefaultComboBoxModel(new String[] {
 				"Authorize", "Purchase", "Capture", "Activate", "Adjust",
 				"BalanceInquiry", "BatchBalance", "Cancel", "Close",
@@ -267,171 +273,168 @@ public class Home extends JFrame {
 		panel_Main.add(comboBox_RequestType);
 
 		JLabel lblRequestType = new JLabel("Request Type");
-		lblRequestType.setBounds(10, 115, 86, 14);
+		lblRequestType.setBounds(10, 291, 86, 14);
 		panel_Main.add(lblRequestType);
 
 		JLabel lblRequestResult = new JLabel("Request Result:");
-		lblRequestResult.setBounds(304, 40, 89, 14);
+		lblRequestResult.setBounds(383, 40, 89, 14);
 		panel_Main.add(lblRequestResult);
 
 		textField_RequestResult = new JTextField();
-		textField_RequestResult.setBounds(423, 37, 100, 20);
+		textField_RequestResult.setBounds(502, 37, 100, 20);
 		textField_RequestResult.setEditable(false);
 		textField_RequestResult.setColumns(10);
 		panel_Main.add(textField_RequestResult);
 
 		JLabel lblAuthorizationCode = new JLabel("Authorization Code:");
-		lblAuthorizationCode.setBounds(304, 65, 106, 14);
+		lblAuthorizationCode.setBounds(383, 65, 106, 14);
 		panel_Main.add(lblAuthorizationCode);
 
 		textField_AuthorizationCode = new JTextField();
 		textField_AuthorizationCode.setEditable(false);
 		textField_AuthorizationCode.setColumns(10);
-		textField_AuthorizationCode.setBounds(423, 62, 100, 20);
+		textField_AuthorizationCode.setBounds(502, 62, 100, 20);
 		panel_Main.add(textField_AuthorizationCode);
 
 		JLabel lblAddressVerification = new JLabel("Address Verification:");
-		lblAddressVerification.setBounds(304, 90, 106, 14);
+		lblAddressVerification.setBounds(383, 90, 106, 14);
 		panel_Main.add(lblAddressVerification);
 
 		txt_AddressVerificationCode = new JTextField();
 		txt_AddressVerificationCode.setText("Code");
 		txt_AddressVerificationCode.setEditable(false);
 		txt_AddressVerificationCode.setColumns(10);
-		txt_AddressVerificationCode.setBounds(423, 87, 100, 20);
+		txt_AddressVerificationCode.setBounds(502, 87, 100, 20);
 		panel_Main.add(txt_AddressVerificationCode);
 
 		txt_AddressVerificationType = new JTextField();
 		txt_AddressVerificationType.setText("Type");
 		txt_AddressVerificationType.setEditable(false);
 		txt_AddressVerificationType.setColumns(10);
-		txt_AddressVerificationType.setBounds(529, 87, 140, 20);
+		txt_AddressVerificationType.setBounds(608, 87, 140, 20);
 		panel_Main.add(txt_AddressVerificationType);
 
 		JLabel lblCardSecurityCode = new JLabel("Card Security Code:");
-		lblCardSecurityCode.setBounds(304, 115, 106, 14);
+		lblCardSecurityCode.setBounds(383, 115, 106, 14);
 		panel_Main.add(lblCardSecurityCode);
 
 		txt_CardSecCode = new JTextField();
 		txt_CardSecCode.setText("Code");
 		txt_CardSecCode.setEditable(false);
 		txt_CardSecCode.setColumns(10);
-		txt_CardSecCode.setBounds(423, 112, 100, 20);
+		txt_CardSecCode.setBounds(502, 112, 100, 20);
 		panel_Main.add(txt_CardSecCode);
 
 		txt_CardSecurityCodeType = new JTextField();
 		txt_CardSecurityCodeType.setText("Type");
 		txt_CardSecurityCodeType.setEditable(false);
 		txt_CardSecurityCodeType.setColumns(10);
-		txt_CardSecurityCodeType.setBounds(530, 112, 139, 20);
+		txt_CardSecurityCodeType.setBounds(609, 112, 139, 20);
 		panel_Main.add(txt_CardSecurityCodeType);
 
 		JLabel lblPaymentServiceResults = new JLabel(
 				"-Payment Service Results-");
 		lblPaymentServiceResults.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblPaymentServiceResults.setBounds(423, 137, 165, 14);
+		lblPaymentServiceResults.setBounds(502, 137, 165, 14);
 		panel_Main.add(lblPaymentServiceResults);
 
 		JLabel lblTransactionId = new JLabel("Transaction Id:");
-		lblTransactionId.setBounds(304, 165, 106, 14);
+		lblTransactionId.setBounds(383, 165, 106, 14);
 		panel_Main.add(lblTransactionId);
 
 		JLabel lblValidationCode = new JLabel("Validation Code:");
-		lblValidationCode.setBounds(304, 190, 106, 14);
+		lblValidationCode.setBounds(383, 190, 106, 14);
 		panel_Main.add(lblValidationCode);
 
 		textField_TransactionId = new JTextField();
 		textField_TransactionId.setText("Code");
 		textField_TransactionId.setEditable(false);
 		textField_TransactionId.setColumns(10);
-		textField_TransactionId.setBounds(423, 162, 100, 20);
+		textField_TransactionId.setBounds(502, 162, 100, 20);
 		panel_Main.add(textField_TransactionId);
 
 		textField_ValidationCode = new JTextField();
 		textField_ValidationCode.setText("Code");
 		textField_ValidationCode.setEditable(false);
 		textField_ValidationCode.setColumns(10);
-		textField_ValidationCode.setBounds(423, 187, 100, 20);
+		textField_ValidationCode.setBounds(502, 187, 100, 20);
 		panel_Main.add(textField_ValidationCode);
 
 		JLabel lblNewLabel_1 = new JLabel("-Request Results-");
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblNewLabel_1.setBounds(423, 11, 140, 14);
+		lblNewLabel_1.setBounds(502, 11, 140, 14);
 		panel_Main.add(lblNewLabel_1);
 
 		// ************ SEND SOAP BUTTON ************* //
 		JButton btnSendSoap = new JButton("Send Request");
-		btnSendSoap.setBounds(10, 181, 100, 23);
+		btnSendSoap.setBounds(10, 355, 100, 23);
 		panel_Main.add(btnSendSoap);
 
 		JLabel lblTransactionTimestamp = new JLabel("Reference Number:");
-		lblTransactionTimestamp.setBounds(304, 215, 121, 14);
+		lblTransactionTimestamp.setBounds(383, 215, 121, 14);
 		panel_Main.add(lblTransactionTimestamp);
 
 		textField_ReferenceNumber = new JTextField();
 		textField_ReferenceNumber.setEditable(false);
 		textField_ReferenceNumber.setColumns(10);
-		textField_ReferenceNumber.setBounds(423, 212, 100, 20);
+		textField_ReferenceNumber.setBounds(502, 212, 100, 20);
 		panel_Main.add(textField_ReferenceNumber);
 
 		JLabel lblDeclineCode = new JLabel("Decline Code:");
-		lblDeclineCode.setBounds(10, 372, 72, 14);
+		lblDeclineCode.setBounds(10, 441, 72, 14);
 		panel_Main.add(lblDeclineCode);
 
 		JLabel lblDeclineMessage = new JLabel("Decline Message:");
-		lblDeclineMessage.setBounds(10, 268, 89, 14);
+		lblDeclineMessage.setBounds(308, 441, 89, 14);
 		panel_Main.add(lblDeclineMessage);
 
-
-		JLabel lblEndPoint = new JLabel("End Point");
+		JLabel lblEndPoint = new JLabel("WSDL End Point");
 		lblEndPoint.setBounds(10, 86, 86, 14);
 		panel_Main.add(lblEndPoint);
 
 		textField_Endpoint = new JTextField();
 		textField_Endpoint.setColumns(10);
 		textField_Endpoint.setText(client.getEndpoint());
-		textField_Endpoint.setBounds(106, 84, 158, 20);
+		textField_Endpoint.setBounds(106, 84, 188, 20);
 		panel_Main.add(textField_Endpoint);
-
 
 		JLabel lblTokenizeResult = new JLabel("-Tokenize Result-");
 		lblTokenizeResult.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblTokenizeResult.setBounds(423, 243, 106, 14);
+		lblTokenizeResult.setBounds(502, 243, 106, 14);
 		panel_Main.add(lblTokenizeResult);
 
 		JLabel lblResult = new JLabel("Result:");
-		lblResult.setBounds(304, 260, 64, 14);
+		lblResult.setBounds(383, 260, 64, 14);
 		panel_Main.add(lblResult);
 
 		JLabel lblTokenId = new JLabel("Token ID:");
-		lblTokenId.setBounds(304, 285, 64, 14);
+		lblTokenId.setBounds(383, 285, 64, 14);
 		panel_Main.add(lblTokenId);
 
 		JLabel lblTokenValue = new JLabel("Token Value:");
-		lblTokenValue.setBounds(304, 310, 72, 14);
+		lblTokenValue.setBounds(383, 310, 72, 14);
 		panel_Main.add(lblTokenValue);
-
 
 		textField_TokenId = new JTextField();
 		textField_TokenId.setEditable(false);
 		textField_TokenId.setColumns(10);
-		textField_TokenId.setBounds(378, 282, 145, 20);
+		textField_TokenId.setBounds(457, 282, 145, 20);
 		panel_Main.add(textField_TokenId);
 
 		textField_TokenValue = new JTextField();
 		textField_TokenValue.setEditable(false);
 		textField_TokenValue.setColumns(10);
-		textField_TokenValue.setBounds(378, 307, 145, 20);
+		textField_TokenValue.setBounds(457, 307, 145, 20);
 		panel_Main.add(textField_TokenValue);
 
 		comboBox_DeliveryMethod = new JComboBox();
 		comboBox_DeliveryMethod.setModel(new DefaultComboBoxModel(new String[] {
 				"Send to PWS (SOAP)", "Send to Apigee (REST)" }));
-		comboBox_DeliveryMethod.setBounds(10, 149, 140, 20);
+		comboBox_DeliveryMethod.setBounds(10, 323, 140, 20);
 		panel_Main.add(comboBox_DeliveryMethod);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(115, 368, 172, 102);
+		scrollPane.setBounds(115, 437, 172, 102);
 		panel_Main.add(scrollPane);
 
 		txtAreaDeclineCode = new JTextArea();
@@ -442,7 +445,7 @@ public class Home extends JFrame {
 		txtAreaDeclineCode.setLineWrap(true);
 
 		JScrollPane scrollPane_3 = new JScrollPane();
-		scrollPane_3.setBounds(115, 243, 172, 102);
+		scrollPane_3.setBounds(413, 437, 172, 102);
 		panel_Main.add(scrollPane_3);
 
 		txtAreaDeclineMsg = new JTextArea();
@@ -452,7 +455,59 @@ public class Home extends JFrame {
 		txtAreaDeclineMsg.setWrapStyleWord(true);
 		txtAreaDeclineMsg.setLineWrap(true);
 
+		JLabel lblApigeeEndpt = new JLabel("Apigee Endpt");
+		lblApigeeEndpt.setBounds(10, 115, 86, 14);
+		panel_Main.add(lblApigeeEndpt);
 
+		textField_ApigeeEndpt = new JTextField();
+		textField_ApigeeEndpt.setColumns(10);
+		textField_ApigeeEndpt.setBounds(106, 112, 188, 20);
+		panel_Main.add(textField_ApigeeEndpt);
+		textField_ApigeeEndpt.setText(globals.getApigeeEndpt());
+
+		JButton btnNewButton = new JButton("Show SOAP logs");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				File soaplogs = new File("logs/SoapLogs.txt");
+				try {
+					Desktop.getDesktop().open(soaplogs);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					errorMessageDialog("Error opening logs");
+				}
+			}
+		});
+		btnNewButton.setBounds(603, 516, 145, 23);
+		panel_Main.add(btnNewButton);
+
+		JButton btnNewButton_1 = new JButton("Show Apigee Logs");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				File apiLogs = new File("logs/ApigeeLog.log");
+				try {
+					Desktop.getDesktop().open(apiLogs);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					errorMessageDialog("Error opening logs");
+				}
+			}
+		});
+		btnNewButton_1.setBounds(603, 550, 145, 23);
+		panel_Main.add(btnNewButton_1);
+
+		JLabel lblApigeeLicenseId = new JLabel("Apigee License ID");
+		lblApigeeLicenseId.setBounds(10, 137, 86, 14);
+		panel_Main.add(lblApigeeLicenseId);
+
+		JScrollPane scrollPane_4 = new JScrollPane();
+		scrollPane_4.setBounds(106, 137, 188, 80);
+		panel_Main.add(scrollPane_4);
+
+		txtrLicenseId = new JTextArea();
+		scrollPane_4.setViewportView(txtrLicenseId);
+		txtrLicenseId.setFont(new Font("Monospaced", Font.PLAIN, 10));
+		txtrLicenseId.setLineWrap(true);
+		txtrLicenseId.setText(globals.getLicenseID());
 
 		btnSendSoap.addActionListener(new ActionListener() {
 			@Override
@@ -460,7 +515,6 @@ public class Home extends JFrame {
 				sendSoap();
 			}
 		});
-
 
 		// ***************************************************************//
 
@@ -896,6 +950,7 @@ public class Home extends JFrame {
 				new String[] { "unknown", "manual", "track1", "track2",
 						"barcode", "ocr", "integrated_circuit",
 						"proximity_vsdc", "proximity_contactless" }));
+
 		comboBox_EntryMode.setSelectedIndex(1);
 		panel_Capture.add(comboBox_EntryMode);
 
@@ -914,6 +969,7 @@ public class Home extends JFrame {
 						"telephone_device", "unattended_atm",
 						"unattended_self_service", "electronic_cash_register",
 						"mobile_contactless_transaction" }));
+		comboBox_Classification.setSelectedIndex(5);
 		panel_Capture.add(comboBox_Classification);
 
 		comboBox_CardReader = new JComboBox();
@@ -949,8 +1005,6 @@ public class Home extends JFrame {
 		});
 		button_3.setBounds(178, 380, 133, 23);
 		panel_Capture.add(button_3);
-
-
 
 		// ***************************************************************//
 
@@ -1010,7 +1064,6 @@ public class Home extends JFrame {
 		textField_GiftCardSecCode.setColumns(10);
 		textField_GiftCardSecCode.setBounds(141, 50, 86, 20);
 		panel_GiftCardInfo.add(textField_GiftCardSecCode);
-
 
 		comboBox_PartialIndicator = new JComboBox();
 		comboBox_PartialIndicator.setModel(new DefaultComboBoxModel(
@@ -1264,8 +1317,8 @@ public class Home extends JFrame {
 				}
 			}
 		});
-		comboBox_CreditDebitGift.setModel(new DefaultComboBoxModel(new String[] {
-				"Credit", "Debit", "Gift Card" }));
+		comboBox_CreditDebitGift.setModel(new DefaultComboBoxModel(
+				new String[] { "Credit", "Debit", "Gift Card" }));
 		comboBox_CreditDebitGift.setBounds(477, 287, 91, 20);
 		panel_CardData.add(comboBox_CreditDebitGift);
 
@@ -1295,18 +1348,21 @@ public class Home extends JFrame {
 		label_4.setBounds(10, 25, 96, 14);
 		panel_GiftCardInfo.add(label_4);
 
-		
+
+
+		// ***************************************************************//
 
 	}
 
 	public void sendSoap() {
-
 
 		String pass = passTxt.getText();
 		String user = userNameTxt.getText();
 		String wsdlLoc = wsdlLocTxt.getText();
 		String requestType = (String) comboBox_RequestType.getSelectedItem();
 		String endpoint = textField_Endpoint.getText();
+		String apiEndpt = textField_ApigeeEndpt.getText();
+		String licenseID = txtrLicenseId.getText();
 		// Create the client
 		client.setUser(user);
 		client.setPass(pass);
@@ -1314,11 +1370,11 @@ public class Home extends JFrame {
 		globals.setPassword(pass);
 		client.setWsdlLocation(wsdlLoc);
 		client.setEndpoint(endpoint);
+		globals.setApigeeEndpt(apiEndpt);
+		globals.setLicenseID(licenseID);
 		// Pass the client and the datastore to the Driver
 		soap_driver = new SoapDriver(client, globals);
 		rest_driver = new RestDriver(globals);
-
-
 
 		// Driver invokes the proper request
 		BatchResponseType batchResponse = null;
@@ -1417,9 +1473,9 @@ public class Home extends JFrame {
 		} else if (batchResponse != null) {
 			System.out.println("batchresposne");
 			textField_RequestResult.setText("null");
-		// // Add the standard print stream to system.out/err
-		// System.setOut(standardOut);
-		// System.setErr(standardErr);
+			// // Add the standard print stream to system.out/err
+			// System.setOut(standardOut);
+			// System.setErr(standardErr);
 		}
 	}
 
@@ -1691,9 +1747,6 @@ public class Home extends JFrame {
 		globals.setCity(city);
 		globals.setState(state);
 		globals.setPostalCode(postalCode);
-
-
-
 
 	}
 
