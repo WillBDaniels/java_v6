@@ -54,7 +54,7 @@ public class RestDriver {
 
 	public RestDriver(DataStore ds) {
 		this.globals = ds;
-		sjr = new SendJsonRequest();
+		sjr = new SendJsonRequest(globals);
 		cjr = new CreateJsonRequest(globals);
 	}
 
