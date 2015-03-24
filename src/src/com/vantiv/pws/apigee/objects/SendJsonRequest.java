@@ -25,7 +25,7 @@ import com.vantiv.pws.resources.DataStore;
 public class SendJsonRequest {
 
 
-	private String apiKey = "4pQQpyKdAbDTGZvGU5Rh2QdWXzqMfgJh";
+	//private String apiKey = "4pQQpyKdAbDTGZvGU5Rh2QdWXzqMfgJh";
 	private Gson gson = new GsonBuilder().disableHtmlEscaping().create();;
 	private DataStore globals;
 	private static Logger logger = org.apache.log4j.Logger
@@ -37,8 +37,6 @@ public class SendJsonRequest {
 	}
 
 	public HttpResponse sendJson(ApigeeObject ao, String requestType) {
-		// test env
-		// String apiUrl = "http://vantiv-nonprod-dev.apigee.net/v1/";
 		String apiUrl = globals.getApigeeEndpt();
 		String licenseId = globals.getLicenseID();
 		if (requestType != null) {
@@ -90,25 +88,22 @@ public class SendJsonRequest {
 
 		}
 
-
 		String jsonData = gson.toJson(ao);
 
 		logger.debug("JSON Request: " + apiUrl + " - " + jsonData);
-
 
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpResponse httpResponse = null;
 		try {
 			HttpPost request = new HttpPost(apiUrl);
 			StringEntity params = new StringEntity(jsonData);
-			request.addHeader("apikey", apiKey);
 			request.addHeader("licenseid", licenseId);
 			request.addHeader("Content-Type", "application/json");
 			request.setEntity(params);
 
 			httpResponse = httpClient.execute(request);
 		} catch (Exception e) {
-			logger.error("Error sending json request to apigee: "
+			logger.error("Error sending json request to Developer Portal: "
 					+ e.getMessage());
 		}
 

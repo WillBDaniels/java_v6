@@ -57,7 +57,6 @@ public class Transaction {
 	public String getAdjustedTotalAmount() {
 		return AdjustedTotalAmount;
 	}
-
 	public void setAdjustedTotalAmount(String adjustedTotalAmount) {
 		AdjustedTotalAmount = adjustedTotalAmount;
 	}
@@ -65,7 +64,6 @@ public class Transaction {
 	public String getSystemTraceId() {
 		return SystemTraceID;
 	}
-
 	public void setSystemTraceId(String systemTraceId) {
 		SystemTraceID = systemTraceId;
 	}
@@ -77,7 +75,6 @@ public class Transaction {
 	public String getTransactionID() {
 		return TransactionID;
 	}
-
 	public void setTransactionID(String transactionID) {
 		TransactionID = transactionID;
 	}
@@ -85,7 +82,6 @@ public class Transaction {
 	public String getTransactionAmount() {
 		return TransactionAmount;
 	}
-
 	public void setTransactionAmount(String transactionAmount) {
 		TransactionAmount = transactionAmount;
 	}
@@ -93,7 +89,6 @@ public class Transaction {
 	public MarketCodeType getMarketCode() {
 		return MarketCode;
 	}
-
 	public void setMarketCode(MarketCodeType marketCode) {
 		MarketCode = marketCode;
 	}
@@ -101,7 +96,6 @@ public class Transaction {
 	public String getTransactionTimestamp() {
 		return TransactionTimestamp;
 	}
-
 	public void setTransactionTimestamp(String transactionTimestamp) {
 		TransactionTimestamp = transactionTimestamp;
 	}
@@ -109,7 +103,6 @@ public class Transaction {
 	public String getClerkNumber() {
 		return ClerkNumber;
 	}
-
 	public void setClerkNumber(String clerkNumber) {
 		ClerkNumber = clerkNumber;
 	}
@@ -117,7 +110,6 @@ public class Transaction {
 	public CancelTypeEnum getCancelType() {
 		return CancelType;
 	}
-
 	public void setCancelType(CancelTypeEnum cancelType) {
 		CancelType = cancelType;
 	}
@@ -125,7 +117,6 @@ public class Transaction {
 	public PaymentTypeEnum getPaymentType() {
 		return PaymentType;
 	}
-
 	public void setPaymentType(PaymentTypeEnum paymentType) {
 		PaymentType = paymentType;
 	}
@@ -133,7 +124,6 @@ public class Transaction {
 	public String getReferenceNumber() {
 		return ReferenceNumber;
 	}
-
 	public void setReferenceNumber(String referenceNumber) {
 		ReferenceNumber = referenceNumber;
 	}
@@ -141,7 +131,6 @@ public class Transaction {
 	public String getDraftLocatorId() {
 		return DraftLocatorId;
 	}
-
 	public void setDraftLocatorId(String draftLocatorId) {
 		DraftLocatorId = draftLocatorId;
 	}
@@ -149,7 +138,6 @@ public class Transaction {
 	public String getAuthorizationCode() {
 		return AuthorizationCode;
 	}
-
 	public void setAuthorizationCode(String authorizationCode) {
 		AuthorizationCode = authorizationCode;
 	}
@@ -157,7 +145,6 @@ public class Transaction {
 	public String getOriginalAuthorizedAmount() {
 		return OriginalAuthorizedAmount;
 	}
-
 	public void setOriginalAuthorizedAmount(String originalAmount) {
 		OriginalAuthorizedAmount = originalAmount;
 	}
@@ -165,7 +152,6 @@ public class Transaction {
 	public String getCaptureAmount() {
 		return CaptureAmount;
 	}
-
 	public void setCaptureAmount(String captureAmount) {
 		CaptureAmount = captureAmount;
 	}
@@ -173,7 +159,6 @@ public class Transaction {
 	public String getCashBackAmount() {
 		return CashBackAmount;
 	}
-
 	public void setCashBackAmount(String cashBackAmount) {
 		CashBackAmount = cashBackAmount;
 	}
@@ -181,7 +166,6 @@ public class Transaction {
 	public String getOriginalTransactionTimestamp() {
 		return OriginalTransactionTimestamp;
 	}
-
 	public void setOriginalTransactionTimestamp(
 			String originalTransactionTimestamp) {
 		OriginalTransactionTimestamp = originalTransactionTimestamp;
@@ -190,7 +174,6 @@ public class Transaction {
 	public String getOriginalSystemTraceId() {
 		return OriginalSystemTraceId;
 	}
-
 	public void setOriginalSystemTraceId(String originalSystemTraceId) {
 		OriginalSystemTraceId = originalSystemTraceId;
 	}
@@ -198,7 +181,6 @@ public class Transaction {
 	public String getOriginalSequenceNumber() {
 		return OriginalSequenceNumber;
 	}
-
 	public void setOriginalSequenceNumber(String originalSequenceNumber) {
 		OriginalSequenceNumber = originalSequenceNumber;
 	}
@@ -206,7 +188,6 @@ public class Transaction {
 	public String getOrignalAuthCode() {
 		return OriginalAuthCode;
 	}
-
 	public void setOriginalAuthCode(String originalAuthCode) {
 		OriginalAuthCode = originalAuthCode;
 	}
@@ -214,7 +195,6 @@ public class Transaction {
 	public String getNetworkResponseCode() {
 		return NetworkResponseCode;
 	}
-
 	public void setNetworkResponseCode(String networkResponseCode) {
 		NetworkResponseCode = networkResponseCode;
 	}
@@ -222,7 +202,6 @@ public class Transaction {
 	public ReversalReasonType getReversalReason() {
 		return ReversalReason;
 	}
-
 	public void setReversalReason(ReversalReasonType reversalReason) {
 		ReversalReason = reversalReason;
 	}
@@ -230,7 +209,6 @@ public class Transaction {
 	public String getReplacementAmount() {
 		return ReplacementAmount;
 	}
-
 	public void setReplacementAmount(String replacementAmount) {
 		ReplacementAmount = replacementAmount;
 	}
@@ -238,7 +216,6 @@ public class Transaction {
 	public String getOriginalReferenceNumber() {
 		return OriginalReferenceNumber;
 	}
-
 	public void setOriginalReferenceNumber(String originalReferenceNumber) {
 		OriginalReferenceNumber = originalReferenceNumber;
 	}
@@ -246,7 +223,6 @@ public class Transaction {
 	public String getTipAmount() {
 		return TipAmount;
 	}
-
 	public void setTipAmount(String tipAmount) {
 		TipAmount = tipAmount;
 	}
@@ -254,7 +230,6 @@ public class Transaction {
 	public String getConvenienceFee() {
 		return ConvenienceFee;
 	}
-
 	public void setConvenienceFee(String convenienceFee) {
 		ConvenienceFee = convenienceFee;
 	}
@@ -262,7 +237,6 @@ public class Transaction {
 	public boolean getTaxExempt() {
 		return TaxExempt;
 	}
-
 	public void setTaxExempt(boolean taxExempt) {
 		TaxExempt = taxExempt;
 	}
@@ -270,7 +244,6 @@ public class Transaction {
 	public boolean getTaxable() {
 		return Taxable;
 	}
-
 	public void setTaxable(boolean taxable) {
 		Taxable = taxable;
 	}
@@ -278,7 +251,6 @@ public class Transaction {
 	public String getTaxAmount() {
 		return TaxAmount;
 	}
-
 	public void setTaxAmount(String taxAmount) {
 		TaxAmount = taxAmount;
 	}
@@ -286,7 +258,6 @@ public class Transaction {
 	public String getPurchaseOrder() {
 		return PurchaseOrder;
 	}
-
 	public void setPurchaseOrder(String purchaseOrder) {
 		PurchaseOrder = purchaseOrder;
 	}
@@ -294,7 +265,6 @@ public class Transaction {
 	public boolean getTokenRequested() {
 		return TokenRequested;
 	}
-
 	public void setTokenRequested(boolean tokenRequested) {
 		TokenRequested = tokenRequested;
 	}
@@ -302,7 +272,6 @@ public class Transaction {
 	public PartialApprovalType getPartialApprovalCode() {
 		return PartialApprovalCode;
 	}
-
 	public void setPartialApprovalCode(PartialApprovalType partialApprovalCode) {
 		PartialApprovalCode = partialApprovalCode;
 	}
@@ -310,9 +279,7 @@ public class Transaction {
 	public String getSystemTraceID() {
 		return SystemTraceID;
 	}
-
 	public void setSystemTraceID(String systemTraceID) {
 		SystemTraceID = systemTraceID;
 	}
-
 }

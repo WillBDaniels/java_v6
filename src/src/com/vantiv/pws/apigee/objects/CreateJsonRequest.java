@@ -43,7 +43,6 @@ public class CreateJsonRequest {
 	public ApigeeObject createAuthorize() {
 		Address address = new Address();
 		Card card = new Card();
-		Credentials cred = new Credentials();
 		Merchant merchant = new Merchant();
 		Terminal terminal = new Terminal();
 		Transaction transaction = new Transaction();
@@ -165,7 +164,6 @@ public class CreateJsonRequest {
 	public ApigeeObject createCapture() {
 		Address address = new Address();
 		Card card = new Card();
-		Credentials cred = new Credentials();
 		Merchant merchant = new Merchant();
 		Terminal terminal = new Terminal();
 		Transaction transaction = new Transaction();
@@ -285,7 +283,6 @@ public class CreateJsonRequest {
 	public ApigeeObject createPurchase() {
 		Address address = new Address();
 		Card card = new Card();
-		Credentials cred = new Credentials();
 		Merchant merchant = new Merchant();
 		Terminal terminal = new Terminal();
 		Transaction transaction = new Transaction();
@@ -422,7 +419,6 @@ public class CreateJsonRequest {
 	public ApigeeObject createCancel() {
 		Address address = new Address();
 		Card card = new Card();
-		Credentials cred = new Credentials();
 		Merchant merchant = new Merchant();
 		Terminal terminal = new Terminal();
 		Transaction transaction = new Transaction();
@@ -553,7 +549,6 @@ public class CreateJsonRequest {
 	public ApigeeObject createRefund() {
 		Address address = new Address();
 		Card card = new Card();
-		Credentials cred = new Credentials();
 		Merchant merchant = new Merchant();
 		Terminal terminal = new Terminal();
 		Transaction transaction = new Transaction();
@@ -649,7 +644,6 @@ public class CreateJsonRequest {
 	public ApigeeObject createTokenize() {
 		Address address = new Address();
 		Card card = new Card();
-		Credentials cred = new Credentials();
 		Merchant merchant = new Merchant();
 		Terminal terminal = new Terminal();
 		Transaction transaction = new Transaction();
@@ -742,7 +736,6 @@ public class CreateJsonRequest {
 	public ApigeeObject createBatchClose() {
 		Address address = new Address();
 		Card card = new Card();
-		Credentials cred = new Credentials();
 		Merchant merchant = new Merchant();
 		Terminal terminal = new Terminal();
 		Transaction transaction = new Transaction();
@@ -795,7 +788,6 @@ public class CreateJsonRequest {
 	public ApigeeObject createBatchBalance() {
 		Address address = new Address();
 		Card card = new Card();
-		Credentials cred = new Credentials();
 		Merchant merchant = new Merchant();
 		Terminal terminal = new Terminal();
 		Transaction transaction = new Transaction();
@@ -854,7 +846,6 @@ public class CreateJsonRequest {
 	public ApigeeObject createAdjust() {
 		Address address = new Address();
 		Card card = new Card();
-		Credentials cred = new Credentials();
 		Merchant merchant = new Merchant();
 		Terminal terminal = new Terminal();
 		Transaction transaction = new Transaction();
@@ -945,7 +936,6 @@ public class CreateJsonRequest {
 	public ApigeeObject createActivate() {
 		Address address = new Address();
 		Card card = new Card();
-		Credentials cred = new Credentials();
 		Merchant merchant = new Merchant();
 		Terminal terminal = new Terminal();
 		Transaction transaction = new Transaction();
@@ -1035,7 +1025,6 @@ public class CreateJsonRequest {
 	public ApigeeObject createReload() {
 		Address address = new Address();
 		Card card = new Card();
-		Credentials cred = new Credentials();
 		Merchant merchant = new Merchant();
 		Terminal terminal = new Terminal();
 		Transaction transaction = new Transaction();
@@ -1125,7 +1114,6 @@ public class CreateJsonRequest {
 	public ApigeeObject createUnload() {
 		Address address = new Address();
 		Card card = new Card();
-		Credentials cred = new Credentials();
 		Merchant merchant = new Merchant();
 		Terminal terminal = new Terminal();
 		Transaction transaction = new Transaction();
@@ -1215,7 +1203,6 @@ public class CreateJsonRequest {
 	public ApigeeObject createClose() {
 		Address address = new Address();
 		Card card = new Card();
-		Credentials cred = new Credentials();
 		Merchant merchant = new Merchant();
 		Terminal terminal = new Terminal();
 		Transaction transaction = new Transaction();
@@ -1305,7 +1292,6 @@ public class CreateJsonRequest {
 	public ApigeeObject createBalanceInquiry() {
 		Address address = new Address();
 		Card card = new Card();
-		Credentials cred = new Credentials();
 		Merchant merchant = new Merchant();
 		Terminal terminal = new Terminal();
 		Transaction transaction = new Transaction();

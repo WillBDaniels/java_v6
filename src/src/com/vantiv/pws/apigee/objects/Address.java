@@ -19,7 +19,6 @@ public class Address {
 	public String getBillingAddress1() {
 		return BillingAddress1;
 	}
-
 	public void setBillingAddress1(String billingAddress1) {
 		BillingAddress1 = billingAddress1;
 	}
@@ -27,7 +26,6 @@ public class Address {
 	public String getCity() {
 		return BillingCity;
 	}
-
 	public void setCity(String city) {
 		BillingCity = city;
 	}
@@ -35,7 +33,6 @@ public class Address {
 	public String getState() {
 		return BillingState;
 	}
-
 	public void setState(String state) {
 		BillingState = state;
 	}
@@ -43,7 +40,6 @@ public class Address {
 	public String getBillingZipcode() {
 		return BillingZipcode;
 	}
-
 	public void setBillingZipcode(String billingZipcode) {
 		BillingZipcode = billingZipcode;
 	}
@@ -51,10 +47,7 @@ public class Address {
 	public ISO3166CountryCodeType getCountryCode() {
 		return CountryCode;
 	}
-
 	public void setCountryCode(ISO3166CountryCodeType countryCode) {
 		CountryCode = countryCode;
 	}
-
-
 }

@@ -35,9 +35,9 @@ import com.vantiv.types.payment.transactions.v6.TransactionStatusType;
 import com.vantiv.types.payment.transactions.v6.UnloadResponse;
 
 /**
- * This class is used to send/receive JSON requests to Apigee through RESTFUL
+ * This class is used to send/receive JSON requests to Developer Portal through RESTFUL
  * services. To send an authorize, call this.startTransaction("Authorize"). It
- * will send a JSON request over HTTP to Apigee, the values for the Authorize
+ * will send a JSON request over HTTP to Developer Portal, the values for the Authorize
  * request will be pulled from the DataStore class. The response comes back as a
  * JSON object from which you can pull the data from. This class converts the
  * JSON response into a Response object. The request and responses are logged by
@@ -493,8 +493,8 @@ public class RestDriver {
 
 	/**
 	 * Create a HashMap of all(most) values that are contained in the http
-	 * response from apigee. The HttpResponse must already be converted to a
-	 * JSON object. This is used when we send a transaction request to Apigee
+	 * response from Developer Portal. The HttpResponse must already be converted to a
+	 * JSON object. This is used when we send a transaction request to Developer Portal
 	 * instead of PWS direct.
 	 */
 	public HashMap<String, String> parseJsonResponse(JSONObject json_object) {
@@ -615,7 +615,7 @@ public class RestDriver {
 
 	/**
 	 * Create a transaction response object from a Json string that was returned
-	 * via apigee. This is used when we send a request through apigee instead of
+	 * via Developer Portal. This is used when we send a request through Developer Portal instead of
 	 * PWS direct.
 	 */
 	public TransactionResponseType createResponseFromApigee(
@@ -649,7 +649,7 @@ public class RestDriver {
 			if (map.containsKey("TransactionStatus")) {
 				String t = map.get("TransactionStatus");
 
-				// apigee refunds are called "returns", so have to convert it to
+				// Developer Portal refunds are called "returns", so have to convert it to
 				// "refunded"
 				if (t.equalsIgnoreCase("returned"))
 					t = "refunded";

@@ -35,11 +35,9 @@ import com.vantiv.types.payment.transactions.v6.TransactionRequestType;
  * This class is used to translate a SOAP request to a Json Request (REST). It
  * is useful if you have consumed the WSDL and have created the java proxy
  * classes as it will convert the Request Object to a JSON object, which can
- * then be sent to Apigee through an HTTP post.
+ * then be sent to Vantiv Developer Portal through an HTTP post.
  */
 public class PWS_ElementTranslator {
-
-	private Credentials credentials;
 
 	private Merchant merchant;
 	private Terminal terminal;
@@ -48,7 +46,6 @@ public class PWS_ElementTranslator {
 	private Card card;
 
 	public PWS_ElementTranslator() {
-		credentials = new Credentials();
 		merchant = new Merchant();
 		terminal = new Terminal();
 		transaction = new Transaction();
@@ -58,12 +55,9 @@ public class PWS_ElementTranslator {
 
 	/**
 	 * Translates a Transaction SOAP Request to an Element Object which can be
-	 * converted to a JSON object and can be sent to Apigee.
+	 * converted to a JSON object and can be sent to Vantiv Developer Portal.
 	 */
 	public ApigeeObject translateFieldstoElement(TransactionRequestType request, BatchRequestType batchRequest) {
-
-		credentials.setAccountID("s.MID5.PAY.WS.NP");
-		credentials.setPassword("Tu2u2AHU");
 
 		AuthorizeRequest authRequest = null;
 		CaptureRequest captRequest = null;
@@ -566,7 +560,7 @@ public class PWS_ElementTranslator {
 					.getClerkNumber().toString());
 		}
 
-		return new ApigeeObject(credentials, merchant, terminal, transaction,
+		return new ApigeeObject(merchant, terminal, transaction,
 				address, card);
 
 	}

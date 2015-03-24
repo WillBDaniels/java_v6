@@ -21,12 +21,10 @@ public class Terminal {
 
 	// Required
 	private String TerminalID;
-
+	private String EntryMode;  
 	private TerminalEnvironmentType TerminalEnvironmentCode;
 	private CardInputCodeType CardInputCode;
 	private PinEntryType PinEntry;
-
-
 	// Optional
 	private String IPv4Address;
 	private String IPv6Address;
@@ -41,18 +39,21 @@ public class Terminal {
 	public String getTerminalID() {
 		return TerminalID;
 	}
-
 	public void setTerminalID(String terminalID) {
 		TerminalID = terminalID;
 	}
 
-
+	public String getEntryMode() {
+		return EntryMode;
+	}
+	public void setEntryMode(String EntryMode) {
+		EntryMode = EntryMode;
+	}
+	
 	public TerminalEnvironmentType getTerminalEnvironmentalCode() {
 		return TerminalEnvironmentCode;
 
 	}
-
-
 	public void setTerminalEnvironmentalCode(
 			TerminalEnvironmentType terminalEnvironmentalCode) {
 		TerminalEnvironmentCode = terminalEnvironmentalCode;
@@ -62,7 +63,6 @@ public class Terminal {
 	public CardInputCodeType getCardInputCode() {
 		return CardInputCode;
 	}
-
 	public void setCardInputCode(CardInputCodeType cardInputCode) {
 		CardInputCode = cardInputCode;
 	}
@@ -70,7 +70,6 @@ public class Terminal {
 	public PinEntryType getPinEntry() {
 		return PinEntry;
 	}
-
 	public void setPinEntry(PinEntryType pinEntry) {
 		PinEntry = pinEntry;
 	}
@@ -78,7 +77,6 @@ public class Terminal {
 	public String getIPv4Address() {
 		return IPv4Address;
 	}
-
 	public void setIPv4Address(String iPv4Address) {
 		IPv4Address = iPv4Address;
 	}
@@ -86,7 +84,6 @@ public class Terminal {
 	public String getIPv6Address() {
 		return IPv6Address;
 	}
-
 	public void setIPv6Address(String iPv6Address) {
 		IPv6Address = iPv6Address;
 	}
@@ -94,7 +91,6 @@ public class Terminal {
 	public boolean isBalanceInquiry() {
 		return BalanceInquiry;
 	}
-
 	public void setBalanceInquiry(boolean balanceInquiry) {
 		BalanceInquiry = balanceInquiry;
 	}
@@ -102,7 +98,6 @@ public class Terminal {
 	public DeviceTypeCode getDeviceType() {
 		return DeviceType;
 	}
-
 	public void setDeviceType(DeviceTypeCode deviceType) {
 		DeviceType = deviceType;
 	}
@@ -110,7 +105,6 @@ public class Terminal {
 	public boolean isHostAdjustment() {
 		return HostAdjustment;
 	}
-
 	public void setHostAdjustment(boolean hostAdjustment) {
 		HostAdjustment = hostAdjustment;
 	}
@@ -118,7 +112,6 @@ public class Terminal {
 	public String getLatitude() {
 		return Latitude;
 	}
-
 	public void setLatitude(String latitude) {
 		Latitude = latitude;
 	}
@@ -126,12 +119,7 @@ public class Terminal {
 	public String getLongitude() {
 		return Longitude;
 	}
-
 	public void setLongitude(String longitude) {
 		Longitude = longitude;
 	}
-
-
-
-
 }

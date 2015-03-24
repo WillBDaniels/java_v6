@@ -9,18 +9,16 @@ package com.vantiv.pws.apigee.objects;
 
 public class ApigeeObject {
 
-	private Credentials credentials;
 	private Merchant merchant;
 	private Terminal terminal;
 	private Transaction transaction;
 	private Address address;
 	private Card card;
 
-	public ApigeeObject(Credentials credentials, Merchant merchant,
+	public ApigeeObject(Merchant merchant,
 			Terminal terminal, Transaction transaction,
 			Address address, Card card) {
 
-		this.credentials = credentials;
 		this.merchant = merchant;
 		this.terminal = terminal;
 		this.transaction = transaction;
@@ -28,18 +26,9 @@ public class ApigeeObject {
 		this.card = card;
 	}
 
-	public Credentials getCredentials() {
-		return credentials;
-	}
-
-	public void setCredentials(Credentials credentials) {
-		this.credentials = credentials;
-	}
-
 	public Merchant getMerchant() {
 		return merchant;
 	}
-
 	public void setMerchant(Merchant merchant) {
 		this.merchant = merchant;
 	}
@@ -47,7 +36,6 @@ public class ApigeeObject {
 	public Terminal getTerminal() {
 		return terminal;
 	}
-
 	public void setTerminal(Terminal terminal) {
 		this.terminal = terminal;
 	}
@@ -55,7 +43,6 @@ public class ApigeeObject {
 	public Transaction getTransaction() {
 		return transaction;
 	}
-
 	public void setTransaction(Transaction transaction) {
 		this.transaction = transaction;
 	}
@@ -63,7 +50,6 @@ public class ApigeeObject {
 	public Address getAddress() {
 		return address;
 	}
-
 	public void setAddress(Address address) {
 		this.address = address;
 	}
@@ -71,11 +57,7 @@ public class ApigeeObject {
 	public Card getCard() {
 		return card;
 	}
-
 	public void setCard(Card card) {
 		this.card = card;
 	}
-
-
-
 }

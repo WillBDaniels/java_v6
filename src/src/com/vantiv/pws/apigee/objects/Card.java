@@ -32,10 +32,7 @@ public class Card {
 	private String CVV;
 	private String CardholderName;
 	private AccountTypeEnum AccountType;
-	private String KeySerialNumber;
-	private String PartialApprovalCode;
-
-	
+	private String KeySerialNumber;	
 
 	public String getTransType() {
 		if (this.GiftCardSecurityCode != null
@@ -54,7 +51,6 @@ public class Card {
 	public String getCardNumber() {
 		return CardNumber;
 	}
-
 	public void setCardNumber(String cardNumber) {
 		CardNumber = cardNumber;
 	}
@@ -62,7 +58,6 @@ public class Card {
 	public String getGiftCardSecurityCode() {
 		return GiftCardSecurityCode;
 	}
-
 	public void setGiftCardSecurityCode(String giftCardSecurityCode) {
 		GiftCardSecurityCode = giftCardSecurityCode;
 	}
@@ -70,7 +65,6 @@ public class Card {
 	public String getExpirationMonth() {
 		return ExpirationMonth;
 	}
-
 	public void setExpirationMonth(String expirationMonth) {
 		ExpirationMonth = expirationMonth;
 	}
@@ -78,7 +72,6 @@ public class Card {
 	public String getExpirationYear() {
 		return ExpirationYear;
 	}
-
 	public void setExpirationYear(String expirationYear) {
 		ExpirationYear = expirationYear;
 	}
@@ -86,7 +79,6 @@ public class Card {
 	public String getTrack1Data() {
 		return Track1Data;
 	}
-
 	public void setTrack1Data(String track1Data) {
 		Track1Data = track1Data;
 	}
@@ -94,7 +86,6 @@ public class Card {
 	public String getEncryptedTrack1Data() {
 		return EncryptedTrack1Data;
 	}
-
 	public void setEncryptedTrack1Data(String encryptedTrack1Data) {
 		EncryptedTrack1Data = encryptedTrack1Data;
 	}
@@ -102,7 +93,6 @@ public class Card {
 	public String getTrack2Data() {
 		return Track2Data;
 	}
-
 	public void setTrack2Data(String track2Data) {
 		Track2Data = track2Data;
 	}
@@ -110,7 +100,6 @@ public class Card {
 	public String getEncryptedTrack2Data() {
 		return EncryptedTrack2Data;
 	}
-
 	public void setEncryptedTrack2Data(String encryptedTrack2Data) {
 		EncryptedTrack2Data = encryptedTrack2Data;
 	}
@@ -118,7 +107,6 @@ public class Card {
 	public String getCardDataKeySerialNumber() {
 		return CardDataKeySerialNumber;
 	}
-
 	public void setCardDataKeySerialNumber(String cardDataKeySerialNumber) {
 		CardDataKeySerialNumber = cardDataKeySerialNumber;
 	}
@@ -126,7 +114,6 @@ public class Card {
 	public EncryptionType getEncryptedFormat() {
 		return EncryptedFormat;
 	}
-
 	public void setEncryptedFormat(EncryptionType encryptedFormat) {
 		EncryptedFormat = encryptedFormat;
 	}
@@ -134,7 +121,6 @@ public class Card {
 	public String getPINBlock() {
 		return PINBlock;
 	}
-
 	public void setPINBlock(String pINBlock) {
 		PINBlock = pINBlock;
 	}
@@ -142,7 +128,6 @@ public class Card {
 	public String getPINBlockEncryptedFormat() {
 		return PINBlockEncryptedFormat;
 	}
-
 	public void setPINBlockEncryptedFormat(String pINBlockEncryptedFormat) {
 		PINBlockEncryptedFormat = pINBlockEncryptedFormat;
 	}
@@ -150,7 +135,6 @@ public class Card {
 	public String getTokenId() {
 		return TokenId;
 	}
-
 	public void setTokenId(String tokenId) {
 		TokenId = tokenId;
 	}
@@ -158,7 +142,6 @@ public class Card {
 	public String getTokenValue() {
 		return TokenValue;
 	}
-
 	public void setTokenValue(String tokenValue) {
 		TokenValue = tokenValue;
 	}
@@ -166,7 +149,6 @@ public class Card {
 	public String getCVV() {
 		return CVV;
 	}
-
 	public void setCVV(String cVV) {
 		CVV = cVV;
 	}
@@ -174,7 +156,6 @@ public class Card {
 	public String getCardholderName() {
 		return CardholderName;
 	}
-
 	public void setCardholderName(String cardholderName) {
 		CardholderName = cardholderName;
 	}
@@ -182,7 +163,6 @@ public class Card {
 	public AccountTypeEnum getAccountType() {
 		return AccountType;
 	}
-
 	public void setAccountType(AccountTypeEnum accountType) {
 		AccountType = accountType;
 	}
@@ -194,17 +174,7 @@ public class Card {
 	public String getKeySerialNumber() {
 		return KeySerialNumber;
 	}
-
 	public void setKeySerialNumber(String keySerialNumber) {
 		KeySerialNumber = keySerialNumber;
 	}
-
-	public String getPartialApprovalCode() {
-		return PartialApprovalCode;
-	}
-
-	public void setPartialApprovalCode(String partialApprovalCode) {
-		PartialApprovalCode = partialApprovalCode;
-	}
-
 }

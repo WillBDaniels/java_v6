@@ -8,18 +8,19 @@ Online developers guide: https://apideveloper.vantiv.com/documentation<br>
 Entry point is Home.java, this will start the GUI.
 
 The Java CXF implementation of Vantiv-Developer-Portal sample code demonstrating how to integrate with both Vantiv-Developer-Portal as well as Vantiv-Payment-Web-Services
-- Contains a REST sample* for integrating to Vantiv-Developer-Portal 
-- Contains a SOAP sample* for integrating to Payment-Web-Services
+- Contains a REST sample* for integrating to Vantiv-Developer-Portal v6.0.7
+- Contains a SOAP sample* for integrating to Payment-Web-Services v6.0.7
 
 * Please note that if you are unsure of which solution which will match your solution needs you should contact a vantiv solution consultant first before starting any development efforts. Not doing so may lead to lost coding time. 
 
 
 Resources used:
-	•	Eclipse Indigo - https://www.eclipse.org/downloads/
+	•	Eclipse Indigo - https://www.eclipse.org/downloads/ (This version of Eclipse is not required to run the application)	
 	•	Java 6 - http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-javase6-419409.html 
 	•	Included in Maven POM.xml file:
 		o	Apache CXF 3.01 – used to consume WSDL and build proxy classes for sending/receiving SOAP messages.
-				 http://cxf.apache.org/download.html
+				http://cxf.apache.org/download.html
+				Please refer to the document in the DOCS folder for instructions on how to install CXF properly.
 		o	GSON 2.2.4 –  used to convert/revert JSON objects.
 				http://mvnrepository.com/artifact/com.google.code.gson/gson/2.2.4
 		o	Log4j – used for logging  REST messages to and from Apigee (NOT USED FOR SOAP LOGGING).
@@ -86,23 +87,6 @@ src - The source folder containing all code.
 	* com.vantiv.pws.tool.gui - contains Home.java which is a GUI interface that can be used to easily set values for sending SOAP requests to PWS and JSON requests to Apigee. This class contains
 							no logic, it is strictly for displaying information easily to the user. 
 									
-
-Vantiv-Developer-Portal and Vantiv-Payment-Web-Services
-=======================================================
-*** IMPORTANT You will need to create a project at http://vantiv.devportal.apigee.com/ in order to get access to the sandbox and test your code
-
-Integration Guidelines available here: Coming
-Online developers guide: Coming
-
-Entry point is Home.java, this will start the GUI.
-
-The Java CXF implementation of Vantiv-Developer-Portal sample code demonstrating how to integrate with both Vantiv-Developer-Portal as well as Vantiv-Payment-Web-Services
-- Contains a REST sample* for integrating to Vantiv-Developer-Portal 
-- Contains a SOAP sample* for integrating to Payment-Web-Services
-
-* Please note that if you are unsure of which solution which will match your solution needs you should contact a vantiv solution consultant first before starting any development efforts. Not doing so may lead to lost coding time. 
-
-
 Table of Contents
 =======================
 logs - This folder contains SoapLog.txt and ApigeeLog.txt. These files log the request and responses of all SOAP/REST requests.
