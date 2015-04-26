@@ -1,0 +1,3515 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:sch0="urn:com:vantiv:types:payment:transactions:v6" xmlns:sch1="urn:com:vantiv:types:common:v6" xmlns:sch2="urn:com:vantiv:types:payment:instruments:v6" xmlns:sch3="urn:com:vantiv:types:payment:systems:v6" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="urn:com:vantiv:services:merchant:payments:v6" targetNamespace="urn:com:vantiv:services:merchant:payments:v6">
+  <wsdl:types>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ct="urn:com:vantiv:types:common:v6" xmlns:pi="urn:com:vantiv:types:payment:instruments:v6" xmlns:ps="urn:com:vantiv:types:payment:systems:v6" xmlns:pt="urn:com:vantiv:types:payment:transactions:v6" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:com:vantiv:types:payment:transactions:v6">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">
+            _ _
+            __ ____ _ _ __ | |_(_)_ __
+            \ \ / / _` | '_ \| __| \ \ / /
+            \ V / (_| | | | | |_| |\ V /
+            \_/ \__,_|_| |_|\__|_| \_/
+
+            Data Types representing Payment Transactions
+            Copyright 2014 Vantiv
+            Version: 6.0.7
+        </xsd:documentation>
+</xsd:annotation>
+<xsd:import namespace="urn:com:vantiv:types:payment:instruments:v6"/>
+<xsd:import namespace="urn:com:vantiv:types:payment:systems:v6"/>
+<xsd:import namespace="urn:com:vantiv:types:common:v6"/>
+<xsd:complexType name="BalanceType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">A list of Additional Amounts returned by the payment service
+            </xsd:documentation>
+</xsd:annotation>
+<xsd:sequence>
+<xsd:element minOccurs="0" name="BeginningBalance" type="ct:BalanceAmountType"/>
+<xsd:element minOccurs="0" name="EndingBalance" type="ct:BalanceAmountType"/>
+<xsd:element minOccurs="0" name="AvailableBalance" type="ct:BalanceAmountType"/>
+<xsd:element minOccurs="0" name="Authorized" type="ct:BalanceAmountType"/>
+<xsd:element minOccurs="0" name="PreAuthorized" type="ct:BalanceAmountType"/>
+<xsd:element minOccurs="0" name="Cash" type="ct:BalanceAmountType"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="AdjustRequest">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Adjustment Transaction Request</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:TransactionRequestType">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="OriginalReferenceNumber" type="pt:ReferenceNumberType"/>
+<xsd:element name="AuthorizationCode" type="pt:AuthorizationCodeType"/>
+<xsd:element name="Credit" type="pi:CreditInstrumentType"/>
+<xsd:element name="OriginalAmount" type="ct:AmountType"/>
+<xsd:element name="AdjustedTotalAmount" type="ct:AmountType"/>
+<xsd:element minOccurs="0" name="TipAmount" type="ct:AmountType"/>
+<xsd:element minOccurs="0" name="ConvenienceFee" type="ct:AmountType"/>
+<xsd:element minOccurs="0" name="Tax" type="pt:TaxAmountType"/>
+<xsd:element minOccurs="0" name="PurchaseOrder" type="pt:PurchaseOrderType"/>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="AdjustResponse">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Adjustment Transaction Response</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:TransactionResponseType">
+<xsd:sequence/>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="AuthorizeRequest">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Authorization Transaction Request</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:TransactionRequestType">
+<xsd:sequence>
+<xsd:element name="TransactionAmount" type="ct:AmountType"/>
+<xsd:choice>
+<xsd:sequence>
+<xsd:element name="Credit" type="pi:CreditInstrumentType"/>
+<xsd:element minOccurs="0" name="Tax" type="pt:TaxAmountType"/>
+<xsd:element minOccurs="0" name="PurchaseOrder" type="pt:PurchaseOrderType"/>
+<xsd:element minOccurs="0" name="IncrementalAuthorization" type="pt:IncrementalAuthorizationType"/>
+</xsd:sequence>
+<xsd:sequence>
+<xsd:element name="Gift" type="pi:GiftInstrumentType"/>
+</xsd:sequence>
+</xsd:choice>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="AuthorizeResponse">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Authorization Transaction Response</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:TransactionResponseType">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="IncrementalAuthorization" type="pt:IncrementalAuthorizationType"/>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="CloseBatchRequest">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Close Batch Transaction Request</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:BatchRequestType"/>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="CloseBatchResponse">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Close Batch Transaction Response</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:BatchResponseType"/>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="CancelRequest">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Cancel Transaction Request</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:TransactionRequestType">
+<xsd:sequence>
+<xsd:element name="CancelType" type="pt:CancelTransactionType"/>
+<xsd:element minOccurs="0" name="OriginalAmount" type="ct:AmountType"/>
+<xsd:element minOccurs="0" name="OriginalTransactionTimestamp" type="xsd:dateTime"/>
+<xsd:element minOccurs="0" name="OriginalSystemTraceId" type="pt:SystemTraceType"/>
+<xsd:element minOccurs="0" name="OriginalReferenceNumber" type="pt:ReferenceNumberType"/>
+<xsd:element minOccurs="0" name="OriginalSequenceNumber" type="ps:SequenceType"/>
+<xsd:element minOccurs="0" name="OriginalAuthCode" type="xsd:string"/>
+<xsd:element minOccurs="0" name="ReversalReason" type="pt:ReversalReasonType"/>
+<xsd:choice minOccurs="0">
+<xsd:sequence>
+<xsd:choice>
+<xsd:element name="Credit" type="pi:CreditInstrumentType"/>
+<xsd:element name="Debit" type="pi:DebitInstrumentType"/>
+</xsd:choice>
+<xsd:element minOccurs="0" name="ReplacementAmount" type="ct:ReplacementAmountType"/>
+</xsd:sequence>
+<xsd:sequence>
+<xsd:element name="Gift" type="pi:GiftInstrumentType"/>
+<xsd:element minOccurs="0" name="VirtualGiftCardBIN" type="ct:String10"/>
+</xsd:sequence>
+</xsd:choice>
+<xsd:element minOccurs="0" name="IncrementalAuthorization" type="pt:IncrementalAuthorizationType"/>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="CancelResponse">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Cancel Transaction Response</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:TransactionResponseType">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="IncrementalAuthorization" type="pt:IncrementalAuthorizationType"/>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="CaptureRequest">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Capture Transaction Request</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:TransactionRequestType">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="AuthorizationCode" type="pt:AuthorizationCodeType"/>
+<xsd:element minOccurs="0" name="OriginalAmount" type="ct:AmountType"/>
+<xsd:element name="CaptureAmount" type="ct:AmountType"/>
+<xsd:element minOccurs="0" name="OriginalTransactionTimestamp" type="xsd:dateTime"/>
+<xsd:element minOccurs="0" name="OriginalReferenceNumber" type="pt:ReferenceNumberType"/>
+<xsd:element minOccurs="0" name="ForceCapture" type="xsd:boolean"/>
+<xsd:choice minOccurs="0">
+<xsd:sequence>
+<xsd:element name="Credit" type="pi:CreditInstrumentType"/>
+<xsd:element minOccurs="0" name="TipAmount" type="ct:AmountType"/>
+<xsd:element minOccurs="0" name="ConvenienceFee" type="ct:AmountType"/>
+<xsd:element minOccurs="0" name="Tax" type="pt:TaxAmountType"/>
+<xsd:element minOccurs="0" name="PurchaseOrder" type="pt:PurchaseOrderType"/>
+</xsd:sequence>
+<xsd:sequence>
+<xsd:element name="Gift" type="pi:GiftInstrumentType"/>
+</xsd:sequence>
+</xsd:choice>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="CaptureResponse">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Capture Transaction Response</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:TransactionResponseType"/>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="EchoRequest">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Used to test Connections</xsd:documentation>
+</xsd:annotation>
+<xsd:sequence>
+<xsd:element name="Test" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="EchoResponse">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Used to test Connections</xsd:documentation>
+</xsd:annotation>
+<xsd:all>
+<xsd:element name="Response" type="xsd:string"/>
+<xsd:element name="ProjectVersion" type="xsd:string"/>
+<xsd:element name="BuildNumber" type="xsd:string"/>
+<xsd:element name="RevisionNumber" type="xsd:string"/>
+<xsd:element minOccurs="0" name="HostEnvironment" type="xsd:string"/>
+</xsd:all>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="PurchaseRequest">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Purchase Transaction Request</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:TransactionRequestType">
+<xsd:sequence>
+<xsd:element name="TransactionAmount" type="ct:AmountType"/>
+<xsd:element minOccurs="0" name="AuthorizationCode" type="pt:AuthorizationCodeType"/>
+<xsd:choice>
+<xsd:sequence>
+<xsd:choice>
+<xsd:element name="Credit" type="pi:CreditInstrumentType"/>
+<xsd:element name="Debit" type="pi:DebitInstrumentType"/>
+</xsd:choice>
+<xsd:element minOccurs="0" name="TipAmount" type="ct:AmountType"/>
+<xsd:element minOccurs="0" name="ConvenienceFee" type="ct:AmountType"/>
+<xsd:element minOccurs="0" name="Tax" type="pt:TaxAmountType"/>
+<xsd:element minOccurs="0" name="PurchaseOrder" type="pt:PurchaseOrderType"/>
+<xsd:element minOccurs="0" name="CashBackAmount" type="ct:AmountType"/>
+</xsd:sequence>
+<xsd:sequence>
+<xsd:element name="Gift" type="pi:GiftInstrumentType"/>
+</xsd:sequence>
+</xsd:choice>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="PurchaseResponse">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Purchase Transaction Response</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:TransactionResponseType"/>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="RefundRequest">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Refund Transaction Request</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:TransactionRequestType">
+<xsd:sequence>
+<xsd:element name="RefundAmount" type="ct:AmountType"/>
+<xsd:choice minOccurs="0">
+<xsd:sequence>
+<xsd:choice>
+<xsd:element name="Credit" type="pi:CreditInstrumentType"/>
+<xsd:element name="Debit" type="pi:DebitInstrumentType"/>
+</xsd:choice>
+<xsd:element minOccurs="0" name="ConvenienceFee" type="ct:AmountType"/>
+<xsd:element minOccurs="0" name="Tax" type="pt:TaxAmountType"/>
+<xsd:element minOccurs="0" name="PurchaseOrder" type="pt:PurchaseOrderType"/>
+</xsd:sequence>
+<xsd:sequence>
+<xsd:element name="Gift" type="pi:GiftInstrumentType"/>
+</xsd:sequence>
+</xsd:choice>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="RefundResponse">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Refund Transaction Response</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:TransactionResponseType"/>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="TokenizeRequest">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Tokenization Transaction Request</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:TransactionRequestType">
+<xsd:sequence>
+<xsd:choice>
+<xsd:sequence>
+<xsd:choice>
+<xsd:element name="Credit" type="pi:CreditInstrumentType"/>
+<xsd:element name="Debit" type="pi:DebitInstrumentType"/>
+</xsd:choice>
+</xsd:sequence>
+<xsd:sequence>
+<xsd:element name="Gift" type="pi:GiftInstrumentType"/>
+</xsd:sequence>
+</xsd:choice>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="TokenizeResponse">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Tokenization Transaction Response</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:TransactionResponseType"/>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="UpdateCardRequest">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Update Card Request</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:TransactionRequestType">
+<xsd:sequence>
+<xsd:choice>
+<xsd:element name="Credit" type="pi:CreditInstrumentType"/>
+</xsd:choice>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="UpdateCardResponse">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Update Card Response</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:TransactionResponseType"/>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="ActivateRequest">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Activate Transaction Request</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:TransactionRequestType">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="TransactionAmount" type="ct:AmountType"/>
+<xsd:sequence>
+<xsd:choice>
+<xsd:element name="Gift" type="pi:GiftInstrumentType"/>
+<xsd:element name="VirtualGift" type="pi:VirtualGiftInstrumentType"/>
+</xsd:choice>
+</xsd:sequence>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="ActivateResponse">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Activate Transaction Response</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:TransactionResponseType">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="VirtualGiftCardSecurityCode" type="ct:NumericStringRange4-12Inclusive"/>
+<xsd:element minOccurs="0" name="VirtualGiftCardPrimaryAccountNumber" type="pi:PrimaryAccountNumberType"/>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="UnloadRequest">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Unload Transaction Request</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:TransactionRequestType">
+<xsd:sequence>
+<xsd:element name="TransactionAmount" type="ct:AmountType"/>
+<xsd:sequence>
+<xsd:element name="Gift" type="pi:GiftInstrumentType"/>
+</xsd:sequence>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="UnloadResponse">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Unload Transaction Response</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:TransactionResponseType"/>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="ReloadRequest">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Reload Transaction Request</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:TransactionRequestType">
+<xsd:sequence>
+<xsd:element name="TransactionAmount" type="ct:AmountType"/>
+<xsd:sequence>
+<xsd:element name="Gift" type="pi:GiftInstrumentType"/>
+</xsd:sequence>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="ReloadResponse">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Reload Transaction Response</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:TransactionResponseType"/>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="BalanceInquiryRequest">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Balance Inquiry Transaction Request</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:TransactionRequestType">
+<xsd:choice>
+<xsd:sequence>
+<xsd:element name="Gift" type="pi:GiftInstrumentType"/>
+</xsd:sequence>
+<xsd:sequence>
+<xsd:element name="Credit" type="pi:CreditInstrumentType"/>
+</xsd:sequence>
+<xsd:sequence>
+<xsd:element name="Debit" type="pi:DebitInstrumentType"/>
+</xsd:sequence>
+</xsd:choice>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="BalanceInquiryResponse">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Balance Inquiry Transaction Response</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:TransactionResponseType"/>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="CloseRequest">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Close Transaction Request</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:TransactionRequestType">
+<xsd:sequence>
+<xsd:element name="Gift" type="pi:GiftInstrumentType"/>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="CloseResponse">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Close Transaction Response</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:TransactionResponseType"/>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="BatchBalanceRequest">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Batch Balance Transaction Request</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:BatchRequestType">
+<xsd:sequence>
+<xsd:element name="PaymentInstrumentType" type="pi:PaymentInstrumentType"/>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="BatchBalanceResponse">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Batch Balance Transaction Response</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:BatchResponseType">
+<xsd:sequence>
+<xsd:element name="Details">
+<xsd:complexType>
+<xsd:all>
+<xsd:element minOccurs="0" name="Activate" type="pt:BalanceEntry"/>
+<xsd:element minOccurs="0" name="Purchase" type="pt:BalanceEntry"/>
+<xsd:element minOccurs="0" name="Refund" type="pt:BalanceEntry"/>
+<xsd:element minOccurs="0" name="Reload" type="pt:BalanceEntry"/>
+<xsd:element minOccurs="0" name="Unload" type="pt:BalanceEntry"/>
+<xsd:element minOccurs="0" name="Close" type="pt:BalanceEntry"/>
+<xsd:element minOccurs="0" name="Inquiry" type="pt:BalanceEntry"/>
+</xsd:all>
+</xsd:complexType>
+</xsd:element>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:complexType name="MerchantType">
+<xsd:sequence>
+<xsd:element name="MerchantId" type="pt:MerchantIdType"/>
+<xsd:element minOccurs="0" name="NetworkRouting" type="pt:NetworkRoutingType"/>
+<xsd:element minOccurs="0" name="MerchantName" type="ct:String20"/>
+<xsd:element minOccurs="0" name="ClerkNumber" type="pt:ClerkType"/>
+<xsd:element minOccurs="0" name="CashierNumber" type="ct:Number8"/>
+<xsd:element minOccurs="0" name="LaneNumber" type="ct:AlphanumericStringType"/>
+<xsd:element minOccurs="0" name="DivisionNumber" type="ct:AlphanumericStringType"/>
+<xsd:element minOccurs="0" name="ChainCode" type="ct:AlphanumericStringType"/>
+<xsd:element minOccurs="0" name="StoreNumber" type="ct:AlphanumericStringType"/>
+<xsd:group ref="ps:PaymentSystemGroup"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="BillPaymentPayeeType">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="PayeeName" type="ct:String25"/>
+<xsd:element minOccurs="0" name="PayeePhoneNumber" type="ct:String25"/>
+<xsd:element minOccurs="0" name="PayeeAccountNumber" type="ct:String25"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="CreditNetworkResultsType">
+<xsd:sequence>
+<xsd:choice>
+<xsd:element name="CardResultsType" type="pt:CardResultsType"/>
+<xsd:element name="PosaResults" type="xsd:string"/>
+<xsd:element name="MasterCardResults" type="pt:MasterCardResultsType"/>
+<xsd:element name="VisaResults" type="pt:VisaResultsType"/>
+<xsd:element name="DiscoverResults" type="pt:DiscoverCardResultsType"/>
+<xsd:element name="AmericanExpressResults" type="pt:AmericanExpressResultsType"/>
+</xsd:choice>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="CardResultsType">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="TransactionId" type="xsd:string"/>
+<xsd:element minOccurs="0" name="ValidationCode" type="xsd:string"/>
+<xsd:element minOccurs="0" name="AuthorizationCharacteristicsIndicator" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="MasterCardResultsType">
+<xsd:complexContent>
+<xsd:extension base="pt:CardResultsType">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="BanknetDate" type="xsd:date"/>
+<xsd:element minOccurs="0" name="BanknetReference" type="xsd:string"/>
+<xsd:element minOccurs="0" name="BanknetErrorCode" type="xsd:string"/>
+<xsd:element minOccurs="0" name="CvcValidity" type="pt:MasterCardCvcValidityType"/>
+<xsd:element minOccurs="0" name="Category" type="pt:MasterCardCategoryType"/>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+<xsd:complexType name="DiscoverCardResultsType">
+<xsd:complexContent>
+<xsd:extension base="pt:CardResultsType">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="NetworkReferenceId" type="ct:String15"/>
+<xsd:element minOccurs="0" name="ProcessingCode" type="ct:String6"/>
+<xsd:element minOccurs="0" name="SystemTraceAuditNumber" type="ct:String6"/>
+<xsd:element minOccurs="0" name="POSEntryMode" type="ct:String2"/>
+<xsd:element minOccurs="0" name="PINCapability" type="ct:String1"/>
+<xsd:element minOccurs="0" name="TrackIIStatus" type="ct:String2"/>
+<xsd:element minOccurs="0" name="POSData" type="ct:String13"/>
+<xsd:element minOccurs="0" name="ResponseCode" type="ct:String2"/>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+<xsd:complexType name="AmericanExpressResultsType">
+<xsd:complexContent>
+<xsd:extension base="pt:CardResultsType">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="AmexTransactionId" type="ct:String15"/>
+<xsd:element minOccurs="0" name="POSDataCodes" type="ct:String12"/>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+<xsd:complexType name="VisaResultsType">
+<xsd:complexContent>
+<xsd:extension base="pt:CardResultsType">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="Ps2000Qualification" type="ct:String1"/>
+<xsd:element minOccurs="0" name="CardLevelResultsCode" type="ct:String2"/>
+<xsd:element minOccurs="0" name="VisaMultipleClearingSequenceNumber" type="ct:Number2"/>
+<xsd:element minOccurs="0" name="VisaMultipleClearingSequenceCount" type="ct:Number2"/>
+<xsd:element minOccurs="0" name="RequestedPaymentServices" type="ct:String1"/>
+<xsd:element minOccurs="0" name="CAVVCode" type="ct:String1"/>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+<xsd:complexType name="TaxAmountType">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="Taxable" type="xsd:boolean"/>
+<xsd:element minOccurs="0" name="TaxExempt" type="xsd:boolean"/>
+<xsd:element minOccurs="0" name="TaxAmount" type="ct:AmountType"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType abstract="true" name="TransactionRequestType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Base Type for Transaction Requests</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:PaymentRequest">
+<xsd:sequence>
+<xsd:element name="Merchant" type="pt:MerchantType"/>
+<xsd:element name="TransactionType" type="pt:TransactionTypeType"/>
+<xsd:element name="TransactionTimestamp" type="xsd:dateTime"/>
+<xsd:element minOccurs="0" name="PaymentType" type="pt:PaymentType"/>
+<xsd:element minOccurs="0" name="DraftLocatorId" type="ct:String11"/>
+<xsd:element minOccurs="0" name="ReferenceNumber" type="pt:ReferenceNumberType"/>
+<xsd:element minOccurs="0" name="TokenRequested" type="xsd:boolean"/>
+<xsd:element minOccurs="0" name="BillPaymentPayee" type="pt:BillPaymentPayeeType"/>
+<xsd:element minOccurs="0" name="NetworkResponseCode" type="xsd:string"/>
+</xsd:sequence>
+<xsd:attribute name="report-group" type="xsd:string"/>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+<xsd:complexType name="IncrementalAuthorizationType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">
+                Data element that holds information on incremental authorization transactions.
+                Transaction value is the amount to add to the original authorization or the initial amount in the
+                original authorization.
+            </xsd:documentation>
+</xsd:annotation>
+<xsd:sequence>
+<xsd:choice minOccurs="0">
+<xsd:element name="OriginalTransactionId" type="xsd:string"/>
+<xsd:sequence>
+<xsd:element name="BankNetReferenceNumber" type="xsd:string"/>
+<xsd:element name="BankNetSettlementDate" type="xsd:date"/>
+</xsd:sequence>
+</xsd:choice>
+<xsd:element name="Industry" type="pt:IncrementalIndustryType"/>
+<xsd:element name="NumberOfDays">
+<xsd:simpleType>
+<xsd:annotation>
+<xsd:documentation>String value of a number</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:pattern value="[0-9]+"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:element>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType abstract="true" name="BatchRequestType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Base type for Batch Transaction Request</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:PaymentRequest">
+<xsd:sequence>
+<xsd:element name="Merchant" type="pt:MerchantType"/>
+<xsd:element name="TransactionTimestamp" type="xsd:dateTime"/>
+<xsd:element minOccurs="0" name="DraftLocatorId" type="ct:String11"/>
+<xsd:element minOccurs="0" name="Balances" type="pt:BalanceEntry"/>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+<xsd:complexType abstract="true" name="PaymentRequest">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Base Type for Payment Requests</xsd:documentation>
+</xsd:annotation>
+<xsd:attribute name="system-trace-id" type="pt:SystemTraceType"/>
+<xsd:attribute name="merchant-ref-id" type="xsd:string"/>
+</xsd:complexType>
+<xsd:complexType abstract="true" name="PaymentResponse">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Base Type for Payment Responses</xsd:documentation>
+</xsd:annotation>
+<xsd:sequence>
+<xsd:element name="RequestId" type="xsd:string"/>
+<xsd:group maxOccurs="unbounded" minOccurs="0" ref="ct:AdditionalData"/>
+</xsd:sequence>
+<xsd:attribute name="system-trace-id" type="pt:SystemTraceType"/>
+<xsd:attribute name="merchant-ref-id" type="xsd:string"/>
+<xsd:attribute name="report-group" type="xsd:string"/>
+</xsd:complexType>
+<xsd:complexType name="PaymentFault">
+<xsd:complexContent>
+<xsd:extension base="pt:PaymentResponse">
+<xsd:sequence>
+<xsd:element name="message" type="xsd:string"/>
+<xsd:element name="code" type="xsd:string"/>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="RequestValidationFault">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Request Validation Fault</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:PaymentFault"/>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="ServerFault">
+<xsd:complexType>
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Server Fault</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:PaymentFault"/>
+</xsd:complexContent>
+</xsd:complexType>
+</xsd:element>
+<xsd:complexType abstract="true" name="BatchResponseType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Base Type for Batch Transaction Response</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:PaymentResponse">
+<xsd:sequence>
+<xsd:element name="TransactionStatus" type="pt:TransactionStatusType"/>
+<xsd:choice>
+<xsd:sequence>
+<xsd:element name="AuthorizationCode" type="xsd:string"/>
+</xsd:sequence>
+<xsd:sequence>
+<xsd:element name="DeclineCode" type="xsd:string"/>
+<xsd:element name="DeclineMessage" type="xsd:string"/>
+</xsd:sequence>
+</xsd:choice>
+<xsd:element minOccurs="0" name="WorkingKey" type="xsd:string"/>
+<xsd:element minOccurs="0" name="Summary" type="pt:BalanceEntry"/>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+<xsd:complexType name="BalanceEntry">
+<xsd:all>
+<xsd:element minOccurs="0" name="SalesCount" type="xsd:int"/>
+<xsd:element minOccurs="0" name="SalesAmount" type="ct:TotalsAmountType"/>
+<xsd:element minOccurs="0" name="ReturnsCount" type="xsd:int"/>
+<xsd:element minOccurs="0" name="ReturnsAmount" type="ct:TotalsAmountType"/>
+</xsd:all>
+</xsd:complexType>
+<xsd:complexType abstract="true" name="TransactionResponseType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Base Type for Transaction Responses</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pt:PaymentResponse">
+<xsd:sequence>
+<xsd:element name="DemoMode" type="xsd:boolean"/>
+<xsd:element minOccurs="0" name="ReferenceNumber" type="xsd:string"/>
+<xsd:element name="TransactionStatus" type="pt:TransactionStatusType"/>
+<xsd:element name="TransmissionTimestamp" type="xsd:dateTime"/>
+<xsd:element name="TransactionTimestamp" type="xsd:dateTime"/>
+<xsd:element name="JulianDay" type="xsd:int"/>
+<xsd:element name="BatchNumber" type="xsd:int"/>
+<xsd:element name="CardCategory" type="pt:CardCategoryType"/>
+<xsd:choice>
+<xsd:sequence>
+<xsd:element name="AuthorizationCode" type="xsd:string"/>
+</xsd:sequence>
+<xsd:sequence>
+<xsd:element name="DeclineCode" type="xsd:string"/>
+<xsd:element name="DeclineMessage" type="xsd:string"/>
+</xsd:sequence>
+</xsd:choice>
+<xsd:element minOccurs="0" name="AddressVerificationResult" type="pt:AddressVerificationResult"/>
+<xsd:element minOccurs="0" name="CardSecurityCodeResult" type="pt:CardSecurityCodeResult"/>
+<xsd:element minOccurs="0" name="PaymentServiceResults" type="pt:CreditNetworkResultsType"/>
+<xsd:element minOccurs="0" name="Balance" type="pt:BalanceType"/>
+<xsd:element minOccurs="0" name="WorkingKey" type="xsd:string"/>
+<xsd:element minOccurs="0" name="TokenizationResult" type="pt:TokenizationResultType"/>
+<xsd:element minOccurs="0" name="NetworkResponseCode" type="xsd:string"/>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+<xsd:complexType name="TokenizationResultType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Results from tokenization.</xsd:documentation>
+</xsd:annotation>
+<xsd:sequence>
+<xsd:element name="successful" type="xsd:boolean"/>
+<xsd:element name="tokenType" type="pi:TokenType"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="AddressVerificationResult">
+<xsd:all>
+<xsd:element name="Code" type="xsd:string"/>
+<xsd:element name="Type" type="pt:AddressVerificationType"/>
+</xsd:all>
+</xsd:complexType>
+<xsd:simpleType name="AddressVerificationType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Result codes for Address Verification System (AVS)</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:enumeration value="match_address_no_match_zip">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Address Matches, Zip Does Not</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="match_address_incompatible">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Street Addresses Match, Postal Code Not Verified Because Of
+                        Incompatible
+                        Formats
+                    </xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="not_verified_incompatible">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Street Address And Postal Code Not Verified Because Of
+                        Incompatible
+                        Formats
+                    </xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="international_match_d">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Street Addresses And Postal Codes Match (International)
+                    </xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="error">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Error performing AVS verification</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="uk_match_address_match_zip">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Street Address And Postal Codes Match (UK Only)
+                    </xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="not_verified">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Non-AVS Participant Outside The Us; Address Not Verified For
+                        International Transaction
+                    </xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="international_not_verified">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Address Information Not Verified For International Transaction
+                    </xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="international_match_m">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Street Addresses And Postal Codes Match (International)
+                    </xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="no_match_address_no_match_zip">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Neither the Street Address nor ZIP Code match
+                    </xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="address_not_verified_match_zip">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Postal Codes Match. Street Address Not Verified Because Of
+                        Incompatible
+                        Formats
+                    </xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="retry">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Retry, system unavailable or timed out</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="not_supported">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">AVS Currently Not Supported</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="unavailable">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Issuer is unavailable</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="no_match_address_match_xzip">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">For U.S. Addresses, 9 Digits Zip Code Matches, Address Does Not
+                        Match
+                    </xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="match_address_match_xzip">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">For U.S. Addresses, 9 Digits Zip Code Matches, Address Does
+                        Match
+                    </xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="match_address_match_zip">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">For U.S. Addresses, Zip Code Matches, Address Does Match
+                    </xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="no_match_address_match_zip">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">For U.S. Addresses, Zip Code Matches, Address Does Not Match
+                    </xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="AuthorizationCodeType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Authorization code</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:minLength value="1"/>
+<xsd:maxLength value="6"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="CancelTransactionType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Cancel Transaction Types</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:enumeration value="authorize">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Cancel Authorize Transaction</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="purchase">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Cancel Purchase Transaction</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="purchase_cashback">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Cancel Purchase with Cash Back Transaction</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="refund">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Cancel Refund Transaction</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="adjust">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Cancel Adjust Transaction</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="capture">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Cancel Capture Transaction</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="activate">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Cancel Activate Transaction</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="reload">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Cancel Reload Transaction</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="unload">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Cancel Unload Transaction</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="close">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Cancel Close Transaction</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="ReversalReasonType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Reversal Reason Types</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:enumeration value="INCOMPLETE_TRANSACTION">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Incomplete Transaction</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="TIME_OUT">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Time Out</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="INVALID_RESPONSE">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Invalid Response</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="DESTINATION_NOT_AVAILABLE">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Destination Not Available</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="CLERK_CANCELED_TRANSACTION">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Clerk Canceled Transaction</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="CUSTOMER_CANCELED_TRANSACTION">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Customer Canceled Transaction</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="MISDISPENSE">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Misdispense</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="HARDWARE_FAILURE">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Hardware Failure</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="SUSPECTED_FRAUDE">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Suspected Fraude</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="CardCategoryType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Card Categorey Response types</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:enumeration value="unknown">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Card Unknown</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="business">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Business Card</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="corporate">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Corporate Card</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="purchase">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Purchase Card</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="CardholderAuthenticationResultType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Result codes for Cardholder Authentication (Verified by Visa /
+                Mastercard
+                SecureCode)
+            </xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:enumeration value="match">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Validation success</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="mismatch">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Validation failure</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="not_processed">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Validation could not be performed: Issuer system error
+                    </xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="missing">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Validation failure: Invalid data</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="unavailable">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Validation could not be performed: Issuer attempt incomplete
+                    </xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="error">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Validation could not be performed: length error
+                    </xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="CardSecurityCodeResult">
+<xsd:all>
+<xsd:element name="Code" type="xsd:string"/>
+<xsd:element name="Type" type="pt:CardSecurityCodeResultType"/>
+</xsd:all>
+</xsd:complexType>
+<xsd:simpleType name="CardSecurityCodeResultType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Result codes for Card Security Code (Visa/Mastercard)
+            </xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:enumeration value="error">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">There was an error either in the length or calculated value
+                    </xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="match">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Match</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="no_match">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">No Match</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="not_processed">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Not Processed</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="not_processed_blank">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Not Processed Blank</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="missing">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Issuer indicates that CVV2 data should be present on the card,
+                        but the
+                        Merchant has indicated data is not present on the card
+                    </xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="unavailable">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Issuer has not certified for CVV2 or Issuer has not provided
+                        Visa with
+                        the CVV2 encryption keys
+                    </xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="unknown">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Unknown</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="ClerkType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Clerk Number</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:int">
+<xsd:totalDigits value="8"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="MasterCardCvcValidityType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Transaction Types</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:enumeration value="valid">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">There was no error validating CVC</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="error">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">There was an error validating CVC</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="not_processed">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">The CVC value could not be validated</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="MasterCardCategoryType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Transaction Types</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:enumeration value="hotel">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">hotel</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="restaurant">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">restaurant</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="retail">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">retail</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="auto">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">auto</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="direct">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Direct Market</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="travel">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">travel</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="MerchantIdType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Merchant ID Number</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:pattern value="[0-9]{1,36}"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="PurchaseOrderType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Purchase Order</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:minLength value="0"/>
+<xsd:maxLength value="20"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="ReferenceNumberType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Transaction Reference Number</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:minLength value="1"/>
+<xsd:maxLength value="12"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="NetworkRoutingType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Network Routing Number</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:pattern value="[a-zA-Z0-9]{2}"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="SystemTraceType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">system trace id</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:long">
+<xsd:totalDigits value="19"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="PaymentType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Presentment Type</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:enumeration value="single">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Single payment</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="recurring">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Recurring payment</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="installment">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Installment payment</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="billpay">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">One-time bill payment</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="resubmission">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Resubmission</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="TransactionStatusType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Transaction Status</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:enumeration value="authorized">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">The Transaction has been Authorized for payment, pending
+                        Settlement
+                    </xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="not_approved">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">The Transaction has been Declined for payment
+                    </xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="settled">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">The Transaction has been completed and the funds have Settled
+                    </xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="refunded">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">The entire Transaction amount has been refunded
+                    </xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="canceled">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">The previous Authorization for this Transaction has been
+                        Canceled
+                    </xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="partially_canceled">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">The Transaction has been Partially canceled</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="batch_closed">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">The batch has been closed</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="TransactionTypeType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Transaction Types</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:enumeration value="present">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Customer Present Transaction</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="ecommerce">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">eCommerce Transaction</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="moto">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Mail Order / Telephone Order Transaction</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="TotalsCountType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Aqcuiring Institution</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:int">
+<xsd:totalDigits value="6"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="IncrementalIndustryType">
+<xsd:annotation>
+<xsd:documentation>Valid industry codes for incremental authorizations</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:enumeration value="Hotel"/>
+<xsd:enumeration value="Auto"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:schema>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ct="urn:com:vantiv:types:common:v6" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:com:vantiv:types:common:v6">
+<xsd:group name="IPAddressGroup">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">IP Address Types</xsd:documentation>
+</xsd:annotation>
+<xsd:choice>
+<xsd:element name="IPv4Address" type="ct:IPv4AddressType"/>
+<xsd:element name="IPv6Address" type="ct:IPv6AddressType"/>
+</xsd:choice>
+</xsd:group>
+<xsd:complexType name="AddressType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Postal Address</xsd:documentation>
+</xsd:annotation>
+<xsd:sequence>
+<xsd:element minOccurs="0" name="AddressLine" type="ct:String20"/>
+<xsd:element minOccurs="0" name="City" type="ct:String128"/>
+<xsd:element minOccurs="0" name="State" type="ct:StateCodeType"/>
+<xsd:element name="PostalCode" type="ct:ZipCodeType"/>
+<xsd:element minOccurs="0" name="CountryCode" type="ct:ISO3166CountryCodeType"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="AmountType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Data Type for Monetary Values</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="ct:NonNegativeMoney9">
+<xsd:attribute name="currency" type="ct:ISO4217CurrencyCodeType"/>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:complexType name="EncryptedData">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Encrypted Data Element</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="xsd:string">
+<xsd:attribute name="encryption-type" type="ct:EncryptionType" use="required"/>
+<xsd:attribute name="key" type="xsd:string"/>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="EncryptionType">
+<xsd:annotation>
+<xsd:documentation>Encryption Type</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:enumeration value="DUKPT"/>
+<xsd:enumeration value="VOLTAGE"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="ReplacementAmountType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Data Type for Replacement Amount</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="ct:Money10">
+<xsd:attribute name="currency" type="ct:ISO4217CurrencyCodeType"/>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:complexType name="BalanceAmountType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Data Type for Balance Amount</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="ct:Money12">
+<xsd:attribute name="currency" type="ct:ISO4217CurrencyCodeType"/>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:complexType name="TotalsAmountType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Data Type for Batch Close total amounts</xsd:documentation>
+</xsd:annotation>
+<xsd:simpleContent>
+<xsd:extension base="ct:Money12">
+<xsd:attribute name="currency" type="ct:ISO4217CurrencyCodeType"/>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+<xsd:simpleType name="AlphanumericStringType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Alphanumeric String</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:pattern value="[0-9A-Za-z]+"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="EmailAddressType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Email Address</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="ct:String128">
+<xsd:pattern value="[^@]+@[^\.]+\..+"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="GeolocationType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Geolocation Specification</xsd:documentation>
+</xsd:annotation>
+<xsd:sequence>
+<xsd:element name="Latitude" type="xsd:decimal"/>
+<xsd:element name="Longitude" type="xsd:decimal"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:simpleType name="IPv4AddressType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">IP Address v4</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:pattern value="((1?[0-9]?[0-9]|2[0-4][0-9]|25[0-5]).){3}(1?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="IPv6AddressType">
+<xsd:restriction base="xsd:string">
+<xsd:pattern value="([A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4}"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="ISO3166CountryCodeType">
+<xsd:annotation>
+<xsd:documentation>ISO 3166-1 Country Codes</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:enumeration value="AF"/>
+<xsd:enumeration value="AX"/>
+<xsd:enumeration value="AL"/>
+<xsd:enumeration value="DZ"/>
+<xsd:enumeration value="AS"/>
+<xsd:enumeration value="AD"/>
+<xsd:enumeration value="AO"/>
+<xsd:enumeration value="AI"/>
+<xsd:enumeration value="AQ"/>
+<xsd:enumeration value="AG"/>
+<xsd:enumeration value="AR"/>
+<xsd:enumeration value="AM"/>
+<xsd:enumeration value="AW"/>
+<xsd:enumeration value="AU"/>
+<xsd:enumeration value="AT"/>
+<xsd:enumeration value="AZ"/>
+<xsd:enumeration value="BS"/>
+<xsd:enumeration value="BH"/>
+<xsd:enumeration value="BD"/>
+<xsd:enumeration value="BB"/>
+<xsd:enumeration value="BY"/>
+<xsd:enumeration value="BE"/>
+<xsd:enumeration value="BZ"/>
+<xsd:enumeration value="BJ"/>
+<xsd:enumeration value="BM"/>
+<xsd:enumeration value="BT"/>
+<xsd:enumeration value="BO"/>
+<xsd:enumeration value="BA"/>
+<xsd:enumeration value="BW"/>
+<xsd:enumeration value="BV"/>
+<xsd:enumeration value="BR"/>
+<xsd:enumeration value="IO"/>
+<xsd:enumeration value="BN"/>
+<xsd:enumeration value="BG"/>
+<xsd:enumeration value="BF"/>
+<xsd:enumeration value="BI"/>
+<xsd:enumeration value="KH"/>
+<xsd:enumeration value="CM"/>
+<xsd:enumeration value="CA"/>
+<xsd:enumeration value="CV"/>
+<xsd:enumeration value="KY"/>
+<xsd:enumeration value="CF"/>
+<xsd:enumeration value="TD"/>
+<xsd:enumeration value="CL"/>
+<xsd:enumeration value="CN"/>
+<xsd:enumeration value="CX"/>
+<xsd:enumeration value="CC"/>
+<xsd:enumeration value="CO"/>
+<xsd:enumeration value="KM"/>
+<xsd:enumeration value="CG"/>
+<xsd:enumeration value="CD"/>
+<xsd:enumeration value="CK"/>
+<xsd:enumeration value="CR"/>
+<xsd:enumeration value="CI"/>
+<xsd:enumeration value="HR"/>
+<xsd:enumeration value="CU"/>
+<xsd:enumeration value="CY"/>
+<xsd:enumeration value="CZ"/>
+<xsd:enumeration value="DK"/>
+<xsd:enumeration value="DJ"/>
+<xsd:enumeration value="DM"/>
+<xsd:enumeration value="DO"/>
+<xsd:enumeration value="EC"/>
+<xsd:enumeration value="EG"/>
+<xsd:enumeration value="SV"/>
+<xsd:enumeration value="GQ"/>
+<xsd:enumeration value="ER"/>
+<xsd:enumeration value="EE"/>
+<xsd:enumeration value="ET"/>
+<xsd:enumeration value="FK"/>
+<xsd:enumeration value="FO"/>
+<xsd:enumeration value="FJ"/>
+<xsd:enumeration value="FI"/>
+<xsd:enumeration value="FR"/>
+<xsd:enumeration value="GF"/>
+<xsd:enumeration value="PF"/>
+<xsd:enumeration value="TF"/>
+<xsd:enumeration value="GA"/>
+<xsd:enumeration value="GM"/>
+<xsd:enumeration value="GE"/>
+<xsd:enumeration value="DE"/>
+<xsd:enumeration value="GH"/>
+<xsd:enumeration value="GI"/>
+<xsd:enumeration value="GR"/>
+<xsd:enumeration value="GL"/>
+<xsd:enumeration value="GD"/>
+<xsd:enumeration value="GP"/>
+<xsd:enumeration value="GU"/>
+<xsd:enumeration value="GT"/>
+<xsd:enumeration value="GG"/>
+<xsd:enumeration value="GN"/>
+<xsd:enumeration value="GW"/>
+<xsd:enumeration value="GY"/>
+<xsd:enumeration value="HT"/>
+<xsd:enumeration value="HM"/>
+<xsd:enumeration value="VA"/>
+<xsd:enumeration value="HN"/>
+<xsd:enumeration value="HK"/>
+<xsd:enumeration value="HU"/>
+<xsd:enumeration value="IS"/>
+<xsd:enumeration value="IN"/>
+<xsd:enumeration value="ID"/>
+<xsd:enumeration value="IR"/>
+<xsd:enumeration value="IQ"/>
+<xsd:enumeration value="IE"/>
+<xsd:enumeration value="IM"/>
+<xsd:enumeration value="IL"/>
+<xsd:enumeration value="IT"/>
+<xsd:enumeration value="JM"/>
+<xsd:enumeration value="JP"/>
+<xsd:enumeration value="JE"/>
+<xsd:enumeration value="JO"/>
+<xsd:enumeration value="KZ"/>
+<xsd:enumeration value="KE"/>
+<xsd:enumeration value="KI"/>
+<xsd:enumeration value="KP"/>
+<xsd:enumeration value="KR"/>
+<xsd:enumeration value="KW"/>
+<xsd:enumeration value="KG"/>
+<xsd:enumeration value="LA"/>
+<xsd:enumeration value="LV"/>
+<xsd:enumeration value="LB"/>
+<xsd:enumeration value="LS"/>
+<xsd:enumeration value="LR"/>
+<xsd:enumeration value="LY"/>
+<xsd:enumeration value="LI"/>
+<xsd:enumeration value="LT"/>
+<xsd:enumeration value="LU"/>
+<xsd:enumeration value="MO"/>
+<xsd:enumeration value="MK"/>
+<xsd:enumeration value="MG"/>
+<xsd:enumeration value="MW"/>
+<xsd:enumeration value="MY"/>
+<xsd:enumeration value="MV"/>
+<xsd:enumeration value="ML"/>
+<xsd:enumeration value="MT"/>
+<xsd:enumeration value="MH"/>
+<xsd:enumeration value="MQ"/>
+<xsd:enumeration value="MR"/>
+<xsd:enumeration value="MU"/>
+<xsd:enumeration value="YT"/>
+<xsd:enumeration value="MX"/>
+<xsd:enumeration value="FM"/>
+<xsd:enumeration value="MD"/>
+<xsd:enumeration value="MC"/>
+<xsd:enumeration value="MN"/>
+<xsd:enumeration value="MS"/>
+<xsd:enumeration value="MA"/>
+<xsd:enumeration value="MZ"/>
+<xsd:enumeration value="MM"/>
+<xsd:enumeration value="NA"/>
+<xsd:enumeration value="NR"/>
+<xsd:enumeration value="NP"/>
+<xsd:enumeration value="NL"/>
+<xsd:enumeration value="AN"/>
+<xsd:enumeration value="NC"/>
+<xsd:enumeration value="NZ"/>
+<xsd:enumeration value="NI"/>
+<xsd:enumeration value="NE"/>
+<xsd:enumeration value="NG"/>
+<xsd:enumeration value="NU"/>
+<xsd:enumeration value="NF"/>
+<xsd:enumeration value="MP"/>
+<xsd:enumeration value="NO"/>
+<xsd:enumeration value="OM"/>
+<xsd:enumeration value="PK"/>
+<xsd:enumeration value="PW"/>
+<xsd:enumeration value="PS"/>
+<xsd:enumeration value="PA"/>
+<xsd:enumeration value="PG"/>
+<xsd:enumeration value="PY"/>
+<xsd:enumeration value="PE"/>
+<xsd:enumeration value="PH"/>
+<xsd:enumeration value="PN"/>
+<xsd:enumeration value="PL"/>
+<xsd:enumeration value="PT"/>
+<xsd:enumeration value="PR"/>
+<xsd:enumeration value="QA"/>
+<xsd:enumeration value="RE"/>
+<xsd:enumeration value="RO"/>
+<xsd:enumeration value="RU"/>
+<xsd:enumeration value="RW"/>
+<xsd:enumeration value="SH"/>
+<xsd:enumeration value="KN"/>
+<xsd:enumeration value="LC"/>
+<xsd:enumeration value="PM"/>
+<xsd:enumeration value="VC"/>
+<xsd:enumeration value="WS"/>
+<xsd:enumeration value="SM"/>
+<xsd:enumeration value="ST"/>
+<xsd:enumeration value="SA"/>
+<xsd:enumeration value="SN"/>
+<xsd:enumeration value="CS"/>
+<xsd:enumeration value="SC"/>
+<xsd:enumeration value="SL"/>
+<xsd:enumeration value="SG"/>
+<xsd:enumeration value="SK"/>
+<xsd:enumeration value="SI"/>
+<xsd:enumeration value="SB"/>
+<xsd:enumeration value="SO"/>
+<xsd:enumeration value="ZA"/>
+<xsd:enumeration value="GS"/>
+<xsd:enumeration value="ES"/>
+<xsd:enumeration value="LK"/>
+<xsd:enumeration value="SD"/>
+<xsd:enumeration value="SR"/>
+<xsd:enumeration value="SJ"/>
+<xsd:enumeration value="SZ"/>
+<xsd:enumeration value="SE"/>
+<xsd:enumeration value="CH"/>
+<xsd:enumeration value="SY"/>
+<xsd:enumeration value="TW"/>
+<xsd:enumeration value="TJ"/>
+<xsd:enumeration value="TZ"/>
+<xsd:enumeration value="TH"/>
+<xsd:enumeration value="TL"/>
+<xsd:enumeration value="TG"/>
+<xsd:enumeration value="TK"/>
+<xsd:enumeration value="TO"/>
+<xsd:enumeration value="TT"/>
+<xsd:enumeration value="TN"/>
+<xsd:enumeration value="TR"/>
+<xsd:enumeration value="TM"/>
+<xsd:enumeration value="TC"/>
+<xsd:enumeration value="TV"/>
+<xsd:enumeration value="UG"/>
+<xsd:enumeration value="UA"/>
+<xsd:enumeration value="AE"/>
+<xsd:enumeration value="GB"/>
+<xsd:enumeration value="US"/>
+<xsd:enumeration value="UM"/>
+<xsd:enumeration value="UY"/>
+<xsd:enumeration value="UZ"/>
+<xsd:enumeration value="VU"/>
+<xsd:enumeration value="VE"/>
+<xsd:enumeration value="VN"/>
+<xsd:enumeration value="VG"/>
+<xsd:enumeration value="VI"/>
+<xsd:enumeration value="WF"/>
+<xsd:enumeration value="EH"/>
+<xsd:enumeration value="YE"/>
+<xsd:enumeration value="ZM"/>
+<xsd:enumeration value="ZW"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="ISO4217CurrencyCodeType">
+<xsd:annotation>
+<xsd:documentation>ISO 4217 Currency Codes</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:enumeration value="USD"/>
+<xsd:enumeration value="CAD"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="Money9">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">decimal with 7 digits and 2 fractions</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:decimal">
+<xsd:totalDigits value="7"/>
+<xsd:fractionDigits value="2"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="Money10">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">decimal with 8 digits and 2 fractions</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:decimal">
+<xsd:totalDigits value="8"/>
+<xsd:fractionDigits value="2"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="Money12">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">decimal with 10 digits and 2 fractions</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:decimal">
+<xsd:totalDigits value="10"/>
+<xsd:fractionDigits value="2"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="NonNegativeMoney9">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Non-negative decimal with 7 digits and 2 fractions</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="ct:Money9">
+<xsd:minInclusive value="0.00"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="NumericStringRange4-12Inclusive">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">String containing only digits, length is 4 - 12 inclusive</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:pattern value="[0-9]{4,12}"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="Number2">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Number containing 2 digits</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:int">
+<xsd:pattern value="[0-9]{2}"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="Number3">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Number cotaining 3 digits</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:int">
+<xsd:pattern value="[0-9]{3}"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="Number5">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Number cotaining 5 digits</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:int">
+<xsd:pattern value="[0-9]{5}"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="Number6">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Number containing 6 digits</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:int">
+<xsd:pattern value="[0-9]{6}"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="Number8">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Number containing 8 digits</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:int">
+<xsd:pattern value="[0-9]{8}"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="PhoneNumberType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">International Telephone Number</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:pattern value="([1-9][0-9]{0,2})(-[1-9][0-9]{0,4})?(-[1-9][0-9]{0,13})(-[0-9]+)?"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="StateCodeType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">US State Code Abbreviations</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:enumeration value="AL">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Alabama</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="AK">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Alaska</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="AS">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">American Samoa</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="AZ">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Arizona</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="AR">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Arkansas</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="CA">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">California</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="CO">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Colorado</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="CT">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Connecticut</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="DE">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Delaware</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="DC">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">District of Columbia</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="FM">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Federated States of Micronesia</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="FL">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Florida</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="GA">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Georgia</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="GU">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Guam</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="HI">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Hawaii</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="ID">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Idaho</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="IL">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Illinois</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="IN">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Indiana</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="IA">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Iowa</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="KS">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Kansas</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="KY">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Kentucky</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="LA">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Louisiana</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="ME">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Maine</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="MH">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Marshall Islands</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="MD">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Maryland</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="MA">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Massachusetts</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="MI">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Michigan</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="MN">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Minnesota</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="MS">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Mississippi</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="MO">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Missouri</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="MT">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Montana</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="NE">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Nebraska</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="NV">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Nevada</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="NH">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">New Hampshire</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="NJ">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">New Jersey</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="NM">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">New Mexico</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="NY">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">New York</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="NC">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">North Carolina</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="ND">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">North Dakota</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="MP">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Northern Mariana Islands</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="OH">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Ohio</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="OK">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Oklahoma</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="OR">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Oregon</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="PW">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Palau</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="PA">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Pennsylvania</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="PR">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Puerto Rico</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="RI">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Rhode Island</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="SC">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">South Carolina</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="SD">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">South Dakota</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="TN">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Tennessee</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="TX">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Texas</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="UT">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Utah</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="VT">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Vermont</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="VI">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Virgin Islands</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="VA">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Virginia</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="WA">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Washington</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="WV">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">West Virginia</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="WI">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Wisconsin</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="WY">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Wyoming</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="String1">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">String containing 1 characters</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:minLength value="0"/>
+<xsd:maxLength value="1"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="String2">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">String containing 2 characters</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:minLength value="0"/>
+<xsd:maxLength value="2"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="String4">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">String containing 4 characters</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:minLength value="0"/>
+<xsd:maxLength value="4"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="String6">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">String containing 6 characters</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:minLength value="0"/>
+<xsd:maxLength value="6"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="String9">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">String containing 9 characters</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:minLength value="0"/>
+<xsd:maxLength value="9"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="String10">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">String containing 10 characters</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:minLength value="0"/>
+<xsd:maxLength value="10"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="String11">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">String containing 11 characters</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:minLength value="0"/>
+<xsd:maxLength value="11"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="String12">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">String containing 12 characters</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:minLength value="0"/>
+<xsd:maxLength value="12"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="String13">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">String containing 13 characters</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:minLength value="0"/>
+<xsd:maxLength value="13"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="String15">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">String containing 15 characters</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:minLength value="0"/>
+<xsd:maxLength value="15"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="String16">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">String containing 12 characters</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:minLength value="0"/>
+<xsd:maxLength value="16"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="String20">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">String containing 20 characters</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:minLength value="0"/>
+<xsd:maxLength value="20"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="String25">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">String containing 25 characters</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:minLength value="0"/>
+<xsd:maxLength value="25"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="String32">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Normalized String containing 32 characters</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:normalizedString">
+<xsd:minLength value="0"/>
+<xsd:maxLength value="32"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="String40">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Normalized String containing 40 characters</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:normalizedString">
+<xsd:minLength value="0"/>
+<xsd:maxLength value="40"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="String64">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Normalized String containing 64 characters</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:normalizedString">
+<xsd:minLength value="0"/>
+<xsd:maxLength value="64"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="String128">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Normalized String containing 128 characters</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:normalizedString">
+<xsd:minLength value="0"/>
+<xsd:maxLength value="128"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="UnencryptedTrackDataType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Track Data encoded on Card's magnetic stripe</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="76"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="ZipCodeType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">US or Canadian zip codes only</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:pattern value="([0-9]{5}(-[0-9]{4})?)|([ABCEGHJKLMNPRSTVXY]{1}[0-9]{1}[A-Z]{1}[ ]?[0-9]{1}[A-Z]{1}[0-9]{1})"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:group name="AdditionalData">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Additional data represented as key value pairs</xsd:documentation>
+</xsd:annotation>
+<xsd:sequence>
+<xsd:element name="keyValuePair" type="ct:KeyValuePair"/>
+</xsd:sequence>
+</xsd:group>
+<xsd:complexType name="KeyValuePair">
+<xsd:simpleContent>
+<xsd:extension base="xsd:string">
+<xsd:attribute name="key" type="xsd:string"/>
+</xsd:extension>
+</xsd:simpleContent>
+</xsd:complexType>
+</xsd:schema>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ct="urn:com:vantiv:types:common:v6" xmlns:pi="urn:com:vantiv:types:payment:instruments:v6" xmlns:pt="urn:com:vantiv:types:payment:transactions:v6" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:com:vantiv:types:payment:instruments:v6">
+<xsd:import namespace="urn:com:vantiv:types:common:v6"/>
+<xsd:complexType abstract="true" name="CardKeyedType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Data Elements required for Card Not Present transactions</xsd:documentation>
+</xsd:annotation>
+<xsd:sequence>
+<xsd:group ref="pi:PanOrTokenGroup"/>
+<xsd:element minOccurs="0" name="ExpirationDate" type="xsd:gYearMonth"/>
+<xsd:element minOccurs="0" name="CardSecurityCode" type="pi:CardSecurityCodeType"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="CreditOrDebitCardKeyedType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Data Elements required for Gift Card Not Present transactions</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pi:CardKeyedType">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="CardholderName" type="ct:String20"/>
+<xsd:element minOccurs="0" name="ThreeDSecure" type="pi:ThreeDSecureType"/>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+<xsd:complexType name="GiftCardKeyedType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Data Elements required for Gift Card Not Present transactions</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pi:CardKeyedType">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="GiftCardPin" type="pi:GiftCardPinType"/>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+<xsd:complexType name="CardSwipedType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Data Elements required for Card Present transactions</xsd:documentation>
+</xsd:annotation>
+<xsd:choice>
+<xsd:element name="Track1" type="pi:TrackDataType"/>
+<xsd:element name="Track2" type="pi:TrackDataType"/>
+</xsd:choice>
+</xsd:complexType>
+<xsd:complexType name="GiftCardSwipedType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Data Elements required for Gift Card Present transactions</xsd:documentation>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="pi:CardSwipedType">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="CardSecurityCode" type="pi:CardSecurityCodeType"/>
+<xsd:element minOccurs="0" name="GiftCardPin" type="pi:GiftCardPinType"/>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+<xsd:complexType name="TokenType">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="tokenId" type="xsd:string"/>
+<xsd:element name="tokenValue" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:simpleType name="AccountType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Account Types</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:enumeration value="CHECKING">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Checking Account</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="SAVINGS">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Savings Account</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="PaymentInstrumentType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Payment Instrument Types</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:enumeration value="CREDIT">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Credit Card</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="GIFT">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Gift Card</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:complexType name="CreditInstrumentType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Credit Card Payment Instrument</xsd:documentation>
+</xsd:annotation>
+<xsd:sequence>
+<xsd:element minOccurs="0" name="CardholderAddress" type="ct:AddressType"/>
+<xsd:element minOccurs="0" name="PartialApprovalCode" type="pi:PartialIndicatorType"/>
+<xsd:element name="CardType" type="pi:CreditCardNetworkType"/>
+<xsd:group ref="pi:CreditOrDebitCardGroup"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="DebitInstrumentType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Debit Card Payment Instrument</xsd:documentation>
+</xsd:annotation>
+<xsd:sequence>
+<xsd:element minOccurs="0" name="CardholderAddress" type="ct:AddressType"/>
+<xsd:element minOccurs="0" name="PartialApprovalCode" type="pi:PartialIndicatorType"/>
+<xsd:element minOccurs="0" name="BenefitTransactionNumber">
+<xsd:simpleType>
+<xsd:annotation>
+<xsd:documentation>String value of a number</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:pattern value="[0-9]{1,7}"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:element>
+<xsd:element minOccurs="0" name="VoucherNumber">
+<xsd:simpleType>
+<xsd:annotation>
+<xsd:documentation>String value of a number</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:pattern value="[0-9]{1,15}"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:element>
+<xsd:element minOccurs="0" name="PinData" type="ct:EncryptedData"/>
+<xsd:element minOccurs="0" name="AccountType" type="pi:AccountType"/>
+<xsd:group ref="pi:CreditOrDebitCardGroup"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="GiftInstrumentType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Prepaid Payment Instrument</xsd:documentation>
+</xsd:annotation>
+<xsd:sequence>
+<xsd:group ref="pi:GiftCardGroup"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:group name="CreditOrDebitCardGroup">
+<xsd:choice>
+<xsd:element name="CardKeyed" type="pi:CreditOrDebitCardKeyedType"/>
+<xsd:element name="CardSwiped" type="pi:CardSwipedType"/>
+</xsd:choice>
+</xsd:group>
+<xsd:group name="GiftCardGroup">
+<xsd:choice>
+<xsd:element name="CardKeyed" type="pi:GiftCardKeyedType"/>
+<xsd:element name="CardSwiped" type="pi:GiftCardSwipedType"/>
+</xsd:choice>
+</xsd:group>
+<xsd:group name="PanOrTokenGroup">
+<xsd:choice>
+<xsd:element name="PrimaryAccountNumber" type="pi:PrimaryAccountNumberType"/>
+<xsd:element name="EncryptedPrimaryAccountNumber" type="ct:EncryptedData"/>
+<xsd:element name="Token" type="pi:TokenType"/>
+</xsd:choice>
+</xsd:group>
+<xsd:complexType name="VirtualGiftInstrumentType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Virtual Prepaid Payment Instrument</xsd:documentation>
+</xsd:annotation>
+<xsd:sequence>
+<xsd:element name="PrimaryAccountNumberLength" type="ct:Number2"/>
+<xsd:element name="VirtualGiftCardBIN" type="ct:String10"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="ThreeDSecureType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">3D Secure Protocol</xsd:documentation>
+</xsd:annotation>
+<xsd:sequence>
+<xsd:element minOccurs="0" name="TransactionID" type="ct:String40"/>
+<xsd:element name="eCommerceIndicator" type="ct:String1"/>
+<xsd:element minOccurs="0" name="AuthenticationValue" type="ct:String40">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">
+                        3D Secure Cardholder Authentication Value.  This may refer to:
+                        
+                    </xsd:documentation>
+</xsd:annotation>
+</xsd:element>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="TrackDataType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Track Data encoded on Card's magnetic stripe</xsd:documentation>
+</xsd:annotation>
+<xsd:choice>
+<xsd:element name="EncryptedTrackData" type="ct:EncryptedData"/>
+<xsd:element name="TrackData" type="pi:UnencryptedTrackDataType"/>
+</xsd:choice>
+</xsd:complexType>
+<xsd:simpleType name="CardSecurityCodeType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">
+                Card Security Code printed on the Card.  This may refer to:
+                
+            </xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:pattern value="IL|NP|[0-9]{3,4}|"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="GiftCardPinType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">
+                Pin number on the Gift Card.
+            </xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+<xsd:simpleType name="CreditCardNetworkType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Credit Card Network Types</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:enumeration value="visa">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Visa Card Network</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="masterCard">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Master Card Network</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="discover">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Discover Card Network</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="amex">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">American Express Card Network</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="PartialIndicatorType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Partial Approval Indicator Types</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:enumeration value="not_supported">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">(Visa/MC, Dicover, AMEX) Partial approval is not supported</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="supported">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">(Visa/MC, AMEX) Partial approval is supported</xsd:documentation>
+<xsd:documentation xml:lang="en-US">(Discover) Partial approval supported for partial Merchandise and partial Cash over</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="return_balance">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">(AMEX) No partial approval, but return available balance in response</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="partial_cash">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">(Discover) Partial approval supported for full Merchandise and partial Cash over</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="full_cash">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">(Discover) Partial approval supported for full Merchandise and full Cash over</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="partial_merch">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Partial approval supported for partial Merchandise</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="PrimaryAccountNumberType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Primary Account Number printed on Card</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:pattern value="[0-9]{9,32}|[xX]{2}[0-9]{4}"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="UnencryptedTrackDataType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Track Data encoded on Card's magnetic stripe</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:token">
+<xsd:maxLength value="76"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:schema>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ct="urn:com:vantiv:types:common:v6" xmlns:ps="urn:com:vantiv:types:payment:systems:v6" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:com:vantiv:types:payment:systems:v6">
+<xsd:import namespace="urn:com:vantiv:types:common:v6"/>
+<xsd:group name="PaymentSystemGroup">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">The payment systems which originated a transaction</xsd:documentation>
+</xsd:annotation>
+<xsd:choice>
+<xsd:element name="Software" type="ps:PaymentDeviceType"/>
+<xsd:element name="Mobile" type="ps:MobileDeviceType"/>
+<xsd:element name="Terminal" type="ps:PaymentDeviceType"/>
+</xsd:choice>
+</xsd:group>
+<xsd:complexType name="MobileDeviceType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US"/>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="ps:PaymentDeviceType">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="Location" type="ct:GeolocationType"/>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+<xsd:complexType name="PaymentApplicationType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US"/>
+</xsd:annotation>
+<xsd:sequence>
+<xsd:group minOccurs="0" ref="ct:IPAddressGroup"/>
+<xsd:element name="TerminalID" type="ps:TerminalIDType"/>
+<xsd:element minOccurs="0" name="SequenceNumber" type="ps:SequenceType"/>
+</xsd:sequence>
+</xsd:complexType>
+<xsd:complexType name="PaymentDeviceType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US"/>
+</xsd:annotation>
+<xsd:complexContent>
+<xsd:extension base="ps:PaymentApplicationType">
+<xsd:sequence>
+<xsd:element minOccurs="0" name="Classification" type="ps:TerminalClassificationType"/>
+<xsd:element name="EntryMode" type="ps:EntryModeType"/>
+<xsd:element minOccurs="0" name="CardReader" type="ps:CardReaderType"/>
+<xsd:element minOccurs="0" name="PinEntry" type="ps:PinEntryType"/>
+<xsd:element minOccurs="0" name="BalanceInquiry" type="xsd:boolean"/>
+<xsd:element minOccurs="0" name="HostAdjustment" type="xsd:boolean"/>
+</xsd:sequence>
+</xsd:extension>
+</xsd:complexContent>
+</xsd:complexType>
+<xsd:simpleType name="CardReaderType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Card Data Read Capability Type. All values are lower case</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:enumeration value="unknown">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Unknown</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="magstripe">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Magnetic strip read capable</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="barcode">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Bar code read capable</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="ocr">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">OCR read capable</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="chip">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Chip read capable</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="micr">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Magnetic Ink Character Recognition (MICR) read capable</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="micr_image">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Magnetic Ink Character Recognition (MICR) read and image capable</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="proximity">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Proximity read capable</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="none">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Does not have card read capability</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="not_specified">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">card reader capability not specified</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="EntryModeType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Point of Sale Entry Mode. All values are in lower case</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:enumeration value="unknown">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Unknown</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="manual">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Manual Entry</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="track1">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Magnetic Track 1</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="track2">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Magnetic Track 2</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="barcode">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Bar Code Read</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="ocr">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">OCR READ</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="integrated_circuit">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Integrated Circuit Read</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="proximity_vsdc">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Proximity Read Using VSDC Chip</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="proximity_contactless">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Proximity Contactless Mag Stripe</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="PinEntryType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">PIN Data Entry Capability Type.</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:enumeration value="supported">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Device accepts PIN entry</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="none">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Device does not accept PIN entry</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="inoperative">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">PIN entry device is inoperative</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="terminal_verified">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">PIN entry verified by terminal</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="unknown">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Unknown</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="SequenceType">
+<xsd:restriction base="xsd:string">
+<xsd:pattern value="[0-9]{6}"/>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="TerminalClassificationType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Terminal Classes. all values are lower case</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:string">
+<xsd:enumeration value="unspecified">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Unspecified</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="limited_amount_terminal">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Limited amount terminal</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="telephone_device">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Telephone Device</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="unattended_atm">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Unattended Payment Terminal</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="unattended_self_service">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Unattended PaymentSelf Service Terminal</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="electronic_cash_register">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Electronic cash register</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+<xsd:enumeration value="mobile_contactless_transaction">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Mobile contactless transaction</xsd:documentation>
+</xsd:annotation>
+</xsd:enumeration>
+</xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="TerminalIDType">
+<xsd:annotation>
+<xsd:documentation xml:lang="en-US">Unique terminal identification number</xsd:documentation>
+</xsd:annotation>
+<xsd:restriction base="xsd:int">
+<xsd:totalDigits value="3"/>
+</xsd:restriction>
+</xsd:simpleType>
+</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="TokenizeResponse">
+    <wsdl:part element="sch0:TokenizeResponse" name="TokenizeResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ActivateRequest">
+    <wsdl:part element="sch0:ActivateRequest" name="ActivateRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ServerFault">
+    <wsdl:part element="sch0:ServerFault" name="ServerFault">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="CloseResponse">
+    <wsdl:part element="sch0:CloseResponse" name="CloseResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="RefundResponse">
+    <wsdl:part element="sch0:RefundResponse" name="RefundResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="CancelResponse">
+    <wsdl:part element="sch0:CancelResponse" name="CancelResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="RequestValidationFault">
+    <wsdl:part element="sch0:RequestValidationFault" name="RequestValidationFault">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="UpdateCardResponse">
+    <wsdl:part element="sch0:UpdateCardResponse" name="UpdateCardResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="TokenizeRequest">
+    <wsdl:part element="sch0:TokenizeRequest" name="TokenizeRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ActivateResponse">
+    <wsdl:part element="sch0:ActivateResponse" name="ActivateResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="UpdateCardRequest">
+    <wsdl:part element="sch0:UpdateCardRequest" name="UpdateCardRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="UnloadRequest">
+    <wsdl:part element="sch0:UnloadRequest" name="UnloadRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="CloseBatchRequest">
+    <wsdl:part element="sch0:CloseBatchRequest" name="CloseBatchRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="PurchaseRequest">
+    <wsdl:part element="sch0:PurchaseRequest" name="PurchaseRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="AuthorizeResponse">
+    <wsdl:part element="sch0:AuthorizeResponse" name="AuthorizeResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="BalanceInquiryRequest">
+    <wsdl:part element="sch0:BalanceInquiryRequest" name="BalanceInquiryRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="EchoResponse">
+    <wsdl:part element="sch0:EchoResponse" name="EchoResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="AdjustRequest">
+    <wsdl:part element="sch0:AdjustRequest" name="AdjustRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="CloseBatchResponse">
+    <wsdl:part element="sch0:CloseBatchResponse" name="CloseBatchResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ReloadResponse">
+    <wsdl:part element="sch0:ReloadResponse" name="ReloadResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="CancelRequest">
+    <wsdl:part element="sch0:CancelRequest" name="CancelRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="CloseRequest">
+    <wsdl:part element="sch0:CloseRequest" name="CloseRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="RefundRequest">
+    <wsdl:part element="sch0:RefundRequest" name="RefundRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ReloadRequest">
+    <wsdl:part element="sch0:ReloadRequest" name="ReloadRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="AdjustResponse">
+    <wsdl:part element="sch0:AdjustResponse" name="AdjustResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="BatchBalanceRequest">
+    <wsdl:part element="sch0:BatchBalanceRequest" name="BatchBalanceRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="BalanceInquiryResponse">
+    <wsdl:part element="sch0:BalanceInquiryResponse" name="BalanceInquiryResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="CaptureRequest">
+    <wsdl:part element="sch0:CaptureRequest" name="CaptureRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="EchoRequest">
+    <wsdl:part element="sch0:EchoRequest" name="EchoRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="CaptureResponse">
+    <wsdl:part element="sch0:CaptureResponse" name="CaptureResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="AuthorizeRequest">
+    <wsdl:part element="sch0:AuthorizeRequest" name="AuthorizeRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="UnloadResponse">
+    <wsdl:part element="sch0:UnloadResponse" name="UnloadResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="BatchBalanceResponse">
+    <wsdl:part element="sch0:BatchBalanceResponse" name="BatchBalanceResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="PurchaseResponse">
+    <wsdl:part element="sch0:PurchaseResponse" name="PurchaseResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="PaymentPortType">
+    <wsdl:operation name="Tokenize">
+      <wsdl:input message="tns:TokenizeRequest" name="TokenizeRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:TokenizeResponse" name="TokenizeResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:RequestValidationFault" name="RequestValidationFault">
+    </wsdl:fault>
+      <wsdl:fault message="tns:ServerFault" name="ServerFault">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Activate">
+      <wsdl:input message="tns:ActivateRequest" name="ActivateRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:ActivateResponse" name="ActivateResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:RequestValidationFault" name="RequestValidationFault">
+    </wsdl:fault>
+      <wsdl:fault message="tns:ServerFault" name="ServerFault">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Close">
+      <wsdl:input message="tns:CloseRequest" name="CloseRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:CloseResponse" name="CloseResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:RequestValidationFault" name="RequestValidationFault">
+    </wsdl:fault>
+      <wsdl:fault message="tns:ServerFault" name="ServerFault">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Refund">
+      <wsdl:input message="tns:RefundRequest" name="RefundRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:RefundResponse" name="RefundResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:RequestValidationFault" name="RequestValidationFault">
+    </wsdl:fault>
+      <wsdl:fault message="tns:ServerFault" name="ServerFault">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Cancel">
+      <wsdl:input message="tns:CancelRequest" name="CancelRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:CancelResponse" name="CancelResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:RequestValidationFault" name="RequestValidationFault">
+    </wsdl:fault>
+      <wsdl:fault message="tns:ServerFault" name="ServerFault">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateCard">
+      <wsdl:input message="tns:UpdateCardRequest" name="UpdateCardRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:UpdateCardResponse" name="UpdateCardResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:RequestValidationFault" name="RequestValidationFault">
+    </wsdl:fault>
+      <wsdl:fault message="tns:ServerFault" name="ServerFault">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Unload">
+      <wsdl:input message="tns:UnloadRequest" name="UnloadRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:UnloadResponse" name="UnloadResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:RequestValidationFault" name="RequestValidationFault">
+    </wsdl:fault>
+      <wsdl:fault message="tns:ServerFault" name="ServerFault">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="CloseBatch">
+      <wsdl:input message="tns:CloseBatchRequest" name="CloseBatchRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:CloseBatchResponse" name="CloseBatchResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:RequestValidationFault" name="RequestValidationFault">
+    </wsdl:fault>
+      <wsdl:fault message="tns:ServerFault" name="ServerFault">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Purchase">
+      <wsdl:input message="tns:PurchaseRequest" name="PurchaseRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:PurchaseResponse" name="PurchaseResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:RequestValidationFault" name="RequestValidationFault">
+    </wsdl:fault>
+      <wsdl:fault message="tns:ServerFault" name="ServerFault">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Authorize">
+      <wsdl:input message="tns:AuthorizeRequest" name="AuthorizeRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:AuthorizeResponse" name="AuthorizeResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:RequestValidationFault" name="RequestValidationFault">
+    </wsdl:fault>
+      <wsdl:fault message="tns:ServerFault" name="ServerFault">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="BalanceInquiry">
+      <wsdl:input message="tns:BalanceInquiryRequest" name="BalanceInquiryRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:BalanceInquiryResponse" name="BalanceInquiryResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:RequestValidationFault" name="RequestValidationFault">
+    </wsdl:fault>
+      <wsdl:fault message="tns:ServerFault" name="ServerFault">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Echo">
+      <wsdl:input message="tns:EchoRequest" name="EchoRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:EchoResponse" name="EchoResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:RequestValidationFault" name="RequestValidationFault">
+    </wsdl:fault>
+      <wsdl:fault message="tns:ServerFault" name="ServerFault">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Adjust">
+      <wsdl:input message="tns:AdjustRequest" name="AdjustRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:AdjustResponse" name="AdjustResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:RequestValidationFault" name="RequestValidationFault">
+    </wsdl:fault>
+      <wsdl:fault message="tns:ServerFault" name="ServerFault">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Reload">
+      <wsdl:input message="tns:ReloadRequest" name="ReloadRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:ReloadResponse" name="ReloadResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:RequestValidationFault" name="RequestValidationFault">
+    </wsdl:fault>
+      <wsdl:fault message="tns:ServerFault" name="ServerFault">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="BatchBalance">
+      <wsdl:input message="tns:BatchBalanceRequest" name="BatchBalanceRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:BatchBalanceResponse" name="BatchBalanceResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:RequestValidationFault" name="RequestValidationFault">
+    </wsdl:fault>
+      <wsdl:fault message="tns:ServerFault" name="ServerFault">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Capture">
+      <wsdl:input message="tns:CaptureRequest" name="CaptureRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:CaptureResponse" name="CaptureResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:RequestValidationFault" name="RequestValidationFault">
+    </wsdl:fault>
+      <wsdl:fault message="tns:ServerFault" name="ServerFault">
+    </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="PaymentPortTypeSoap11" type="tns:PaymentPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="Tokenize">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="TokenizeRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="TokenizeResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="RequestValidationFault">
+        <soap:fault name="RequestValidationFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ServerFault">
+        <soap:fault name="ServerFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Activate">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="ActivateRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="ActivateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="RequestValidationFault">
+        <soap:fault name="RequestValidationFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ServerFault">
+        <soap:fault name="ServerFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Close">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="CloseRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="CloseResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="RequestValidationFault">
+        <soap:fault name="RequestValidationFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ServerFault">
+        <soap:fault name="ServerFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Refund">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="RefundRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="RefundResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="RequestValidationFault">
+        <soap:fault name="RequestValidationFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ServerFault">
+        <soap:fault name="ServerFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Cancel">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="CancelRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="CancelResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="RequestValidationFault">
+        <soap:fault name="RequestValidationFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ServerFault">
+        <soap:fault name="ServerFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateCard">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="UpdateCardRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="UpdateCardResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="RequestValidationFault">
+        <soap:fault name="RequestValidationFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ServerFault">
+        <soap:fault name="ServerFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Unload">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="UnloadRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="UnloadResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="RequestValidationFault">
+        <soap:fault name="RequestValidationFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ServerFault">
+        <soap:fault name="ServerFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="CloseBatch">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="CloseBatchRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="CloseBatchResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="RequestValidationFault">
+        <soap:fault name="RequestValidationFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ServerFault">
+        <soap:fault name="ServerFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Purchase">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="PurchaseRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="PurchaseResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="RequestValidationFault">
+        <soap:fault name="RequestValidationFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ServerFault">
+        <soap:fault name="ServerFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Authorize">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="AuthorizeRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="AuthorizeResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="RequestValidationFault">
+        <soap:fault name="RequestValidationFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ServerFault">
+        <soap:fault name="ServerFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="BalanceInquiry">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="BalanceInquiryRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="BalanceInquiryResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="RequestValidationFault">
+        <soap:fault name="RequestValidationFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ServerFault">
+        <soap:fault name="ServerFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Echo">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="EchoRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="EchoResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="RequestValidationFault">
+        <soap:fault name="RequestValidationFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ServerFault">
+        <soap:fault name="ServerFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Adjust">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="AdjustRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="AdjustResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="RequestValidationFault">
+        <soap:fault name="RequestValidationFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ServerFault">
+        <soap:fault name="ServerFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Reload">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="ReloadRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="ReloadResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="RequestValidationFault">
+        <soap:fault name="RequestValidationFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ServerFault">
+        <soap:fault name="ServerFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="BatchBalance">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="BatchBalanceRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="BatchBalanceResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="RequestValidationFault">
+        <soap:fault name="RequestValidationFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ServerFault">
+        <soap:fault name="ServerFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Capture">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="CaptureRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="CaptureResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="RequestValidationFault">
+        <soap:fault name="RequestValidationFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ServerFault">
+        <soap:fault name="ServerFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="PaymentPortTypeService">
+    <wsdl:port binding="tns:PaymentPortTypeSoap11" name="PaymentPortTypeSoap11">
+      <soap:address location="https://ws-cert.vantiv.com/merchant/payments-cert/v6"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
